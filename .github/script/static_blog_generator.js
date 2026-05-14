@@ -330,7 +330,7 @@ async function main() {
         title: process.env.ISSUE_TITLE || '',
         body: process.env.ISSUE_BODY || '',
         date: process.env.ISSUE_DATE || new Date().toISOString(),
-        author: process.env.ISSUE_AUTHOR || 'unknown',
+        author: process.env.ISSUE_AUTHOR || buildCfg.author || 'unknown',
         labels: JSON.parse(process.env.ISSUE_LABELS || '[]'),
         id: parseInt(process.env.ISSUE_ID, 10) || 0,
         action: process.env.ISSUE_ACTION || 'opened',
@@ -339,6 +339,11 @@ async function main() {
     const articlesIndex = readJSON(ARTICLES_JSON);
 
     const hasIssue = !!issue.title.trim();
+
+    if (hasIssue && issue.author !== buildCfg.author) {
+        console.log(`Skipped: issue author "${issue.author}" does not match configured author "${buildCfg.author}".`);
+        return;
+    }
 
     if (issue.action === 'deleted') {
         const old = articlesIndex[issue.id];

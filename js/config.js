@@ -53,7 +53,7 @@ export class QxConfig {
                         </svg>
                         <img class="qx-sidebar-avatar-img" src="${ROOT}img/Avatar.png" alt="头像">
                     </div>
-                    <p class="qx-sidebar-name">${d.sidebar.name}</p>
+                    <p class="qx-sidebar-name">${d.site.author}</p>
                     <p class="qx-sidebar-motto">${d.sidebar.motto}</p>
                     <nav class="qx-sidebar-nav">${linksHTML}</nav>
                 </div>
@@ -67,7 +67,7 @@ export class QxConfig {
         const year = start === now ? `${start}` : `${start}-${now}`;
         const html = `
             <footer class="qx-footer">
-                <p class="qx-footer-text">Copyright &copy; ${year} ${d.footer.copyright}. All Rights Reserved.</p>
+                <p class="qx-footer-text">Copyright &copy; ${year} ${d.site.author}. All Rights Reserved.</p>
             </footer>`;
         document.body.insertAdjacentHTML('beforeend', html);
     }

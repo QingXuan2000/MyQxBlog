@@ -2,6 +2,7 @@
     "site": {
         "name": "QxBlog",
         "title": "QxBlog",
+        "author": "QingXuanJun",
         "repoName": "",
         "siteCreatedAt": "2026-03-01T00:00:00Z"
     },
@@ -20,11 +21,8 @@
             { "name": "Example Friend 2", "url": "https://example2.com" }
         ]
     },
-    "footer": {
-        "copyright": "QingXuanJun"
-    },
+    "footer": {},
     "sidebar": {
-        "name": "QingXuanJun",
         "motto": "用代码，写世界。",
         "links": [
             { "text": "<i class=\"fa fa-home\"></i> 首页", "href": "index.html" },
