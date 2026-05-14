@@ -1,4 +1,4 @@
-name: 📝 QingBlog 自动构建运行流
+name: "[CI] QingBlog 自动构建运行流"
 
 on:
   issues:
@@ -6,14 +6,14 @@ on:
 
 jobs:
   build-blog:
-    name: 🚀 QingBlog构建
+    name: "[Build] QingBlog构建"
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
 
     steps:
-      - name: 📥 检出代码仓库
+      - name: "[Checkout] 检出代码仓库"
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
@@ -26,22 +26,22 @@ jobs:
             categories
             index.html
 
-      - name: 🟢 配置 Bun 环境
+      - name: "[Setup] 配置 Bun 环境"
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: 📦 缓存 node_modules
+      - name: "[Cache] 缓存 node_modules"
         uses: actions/cache@v4
         with:
           path: .github/script/node_modules
-          key: bun-modules-${{ runner.os }}-${{ hashFiles('.github/script/bun.lockb') }}
+          key: bun-modules-${{ runner.os }}-${{ hashFiles('.github/script/bun.lock') }}
 
-      - name: 📦安装 Bun 依赖
+      - name: "[Install] 安装 Bun 依赖"
         working-directory: .github/script
         run: bun install
 
-      - name: 🔧启动构建脚本
+      - name: "[Build] 启动构建脚本"
         env:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
@@ -52,9 +52,41 @@ jobs:
           ISSUE_ACTION: ${{ github.event.action }}
         run: bun .github/script/qxBlogBuild.js
 
-      - name: 📤提交并推送更改
+      - name: "[Push] 提交并推送更改"
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "📝 ${{ github.event.action == 'deleted' && '删除文章' || '更新文章' }}: ${{ github.event.issue.title }}"
+          commit_message: "[Update] ${{ github.event.action == 'deleted' && '删除文章' || '更新文章' }}: ${{ github.event.issue.title }}"
           file_pattern: '*'
           push_options: '--force-with-lease'
+
+  deploy:
+    name: "[Deploy] GitHub Pages"
+    runs-on: ubuntu-latest
+    needs: build-blog
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: "[Checkout] 检出代码仓库"
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: "[Setup] 配置 Pages"
+        uses: actions/configure-pages@v4
+
+      - name: "[Prepare] 准备部署文件"
+        run: |
+          mkdir -p _site
+          cp -r index.html 404.html favicon.svg _site/
+          cp -r css js fonts img articles categories about blogData config _site/
+
+      - name: "[Upload] 上传 Pages 产物"
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: "[Deploy] 部署到 GitHub Pages"
+        id: deployment
+        uses: actions/deploy-pages@v4
