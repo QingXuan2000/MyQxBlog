@@ -1,0 +1,47 @@
+name: 📝 QingBlog 自动构建运行流
+
+on:
+  issues:
+    types: [opened, edited, deleted, reopened]
+
+jobs:
+  build-blog:
+    name: 🚀 QingBlog构建
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 检出代码仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🟢 配置 Bun 环境
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: 📦安装 Bun 依赖
+        working-directory: .github/script
+        run: bun install
+
+      - name: 🔧启动构建脚本
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_DATE: ${{ github.event.issue.updated_at }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          ISSUE_LABELS: ${{ toJson(github.event.issue.labels.*.name) }}
+          ISSUE_ID: ${{ github.event.issue.number }}
+          ISSUE_ACTION: ${{ github.event.action }}
+        run: bun .github/script/qxBlogBuild.js
+
+      - name: 📤提交并推送更改
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "📝 ${{ github.event.action == 'deleted' && '删除文章' || '更新文章' }}: ${{ github.event.issue.title }}"
+          file_pattern: '*'
+          push_options: '--force-with-lease'

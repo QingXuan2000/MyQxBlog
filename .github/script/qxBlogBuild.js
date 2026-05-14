@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { JSDOM } = require('jsdom');
 const featherdown = require('featherdown');
 
 const ROOT = path.resolve(__dirname, '../..');
