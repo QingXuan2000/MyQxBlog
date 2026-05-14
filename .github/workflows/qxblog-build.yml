@@ -16,13 +16,26 @@ jobs:
       - name: 📥 检出代码仓库
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}
+          sparse-checkout: |
+            .github/script
+            config
+            blogData
+            articles
+            categories
+            index.html
 
       - name: 🟢 配置 Bun 环境
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      - name: 📦 缓存 node_modules
+        uses: actions/cache@v4
+        with:
+          path: .github/script/node_modules
+          key: bun-modules-${{ runner.os }}-${{ hashFiles('.github/script/bun.lockb') }}
 
       - name: 📦安装 Bun 依赖
         working-directory: .github/script
