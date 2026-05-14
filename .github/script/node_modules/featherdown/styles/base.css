@@ -1,0 +1,262 @@
+:root {
+  --fd-font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --fd-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --fd-color-text: #1f2328;
+  --fd-color-heading: #1f2328;
+  --fd-color-muted: #59636e;
+  --fd-color-border: #d0d7de;
+  --fd-color-surface: #ffffff;
+  --fd-color-subtle: #f6f8fa;
+  --fd-color-link: #0969da;
+  --fd-color-inline-code-bg: rgba(175, 184, 193, 0.2);
+  --fd-color-inline-code-text: #24292f;
+  --fd-color-code-bg: #f6f8fa;
+  --fd-color-code-text: #1f2328;
+  --fd-color-highlight-bg: #fff8c5;
+  --fd-color-code-chrome-bg: #f6f8fa;
+  --fd-color-code-chrome-text: #59636e;
+  --fd-color-code-chrome-border: #d0d7de;
+  --fd-color-callout-note: #0969da;
+  --fd-color-callout-success: #1a7f37;
+  --fd-color-callout-warning: #9a6700;
+  --fd-color-callout-danger: #cf222e;
+}
+
+:root[data-theme="dark"] {
+  --fd-color-text: #e6edf3;
+  --fd-color-heading: #f0f6fc;
+  --fd-color-muted: #9da7b3;
+  --fd-color-border: #3d444d;
+  --fd-color-surface: #0d1117;
+  --fd-color-subtle: #161b22;
+  --fd-color-link: #4493f8;
+  --fd-color-inline-code-bg: rgba(110, 118, 129, 0.4);
+  --fd-color-inline-code-text: #f0f6fc;
+  --fd-color-code-bg: #161b22;
+  --fd-color-code-text: #e6edf3;
+  --fd-color-highlight-bg: rgba(187, 128, 9, 0.28);
+  --fd-color-code-chrome-bg: #161b22;
+  --fd-color-code-chrome-text: #9da7b3;
+  --fd-color-code-chrome-border: #30363d;
+  --fd-color-callout-note: #4493f8;
+  --fd-color-callout-success: #3fb950;
+  --fd-color-callout-warning: #d29922;
+  --fd-color-callout-danger: #f85149;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fd-color-text: #e6edf3;
+    --fd-color-heading: #f0f6fc;
+    --fd-color-muted: #9da7b3;
+    --fd-color-border: #3d444d;
+    --fd-color-surface: #0d1117;
+    --fd-color-subtle: #161b22;
+    --fd-color-link: #4493f8;
+    --fd-color-inline-code-bg: rgba(110, 118, 129, 0.4);
+    --fd-color-inline-code-text: #f0f6fc;
+    --fd-color-code-bg: #161b22;
+    --fd-color-code-text: #e6edf3;
+    --fd-color-highlight-bg: rgba(187, 128, 9, 0.28);
+    --fd-color-code-chrome-bg: #161b22;
+    --fd-color-code-chrome-text: #9da7b3;
+    --fd-color-code-chrome-border: #30363d;
+    --fd-color-callout-note: #4493f8;
+    --fd-color-callout-success: #3fb950;
+    --fd-color-callout-warning: #d29922;
+    --fd-color-callout-danger: #f85149;
+  }
+}
+
+.featherdown-content {
+  color: var(--fd-color-text);
+  font-family: var(--fd-font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+  word-wrap: break-word;
+  background: var(--fd-color-surface);
+}
+
+.featherdown-content > :first-child {
+  margin-top: 0;
+}
+
+.featherdown-content > :last-child {
+  margin-bottom: 0;
+}
+
+.featherdown-content :where(h1, h2, h3, h4, h5, h6) {
+  margin: 1.6em 0 0.55em;
+  line-height: 1.25;
+  color: var(--fd-color-heading);
+  letter-spacing: -0.01em;
+}
+
+.featherdown-content :where(h1) {
+  padding-bottom: 0.3em;
+  margin-bottom: 0.8em;
+  border-bottom: 1px solid var(--fd-color-border);
+  font-size: 2em;
+}
+
+.featherdown-content :where(h2) {
+  padding-bottom: 0.3em;
+  margin-top: 1.9em;
+  margin-bottom: 0.8em;
+  border-bottom: 1px solid var(--fd-color-border);
+  font-size: 1.5em;
+}
+
+.featherdown-content :where(h3) {
+  margin-top: 1.6em;
+  font-size: 1.25em;
+}
+
+.featherdown-content :where(h4) {
+  margin-top: 1.5em;
+  font-size: 1em;
+}
+
+.featherdown-content :where(h5) {
+  margin-top: 1.5em;
+  font-size: 0.875em;
+}
+
+.featherdown-content :where(h6) {
+  margin-top: 1.5em;
+  font-size: 0.85em;
+  color: var(--fd-color-muted);
+}
+
+.featherdown-content :where(p, ul, ol, blockquote, table, pre) {
+  margin: 1rem 0;
+}
+
+.featherdown-content :where(ul, ol) {
+  padding-left: 1.4rem;
+}
+
+.featherdown-content :where(li + li) {
+  margin-top: 0.25rem;
+}
+
+.featherdown-content :where(li > p) {
+  margin: 0.35rem 0;
+}
+
+.featherdown-content :where(a) {
+  color: var(--fd-color-link);
+  text-decoration: none;
+}
+
+.featherdown-content :where(a:visited) {
+  color: var(--fd-color-link);
+}
+
+.featherdown-content :where(a:hover) {
+  text-decoration: underline;
+}
+
+.featherdown-content :where(h1, h2, h3, h4, h5, h6) > a {
+  color: var(--fd-color-heading);
+  text-decoration: none;
+}
+
+.featherdown-content :where(h1, h2, h3, h4, h5, h6) > a:visited {
+  color: var(--fd-color-heading);
+}
+
+.featherdown-content :where(h1, h2, h3, h4, h5, h6) > a:hover {
+  color: var(--fd-color-heading);
+  text-decoration: none;
+}
+
+.featherdown-content :where(blockquote) {
+  margin-inline: 0;
+  padding: 0 1em;
+  border-left: 0.25em solid var(--fd-color-border);
+  background: transparent;
+  color: var(--fd-color-muted);
+}
+
+.featherdown-content :where(code):not(pre code) {
+  font-family: var(--fd-font-mono);
+  font-size: 85%;
+  padding: 0.12em 0.36em;
+  border-radius: 0.25rem;
+  background: var(--fd-color-inline-code-bg);
+  color: var(--fd-color-inline-code-text);
+}
+
+.featherdown-content :where(table) {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+
+.featherdown-content :where(th, td) {
+  border: 1px solid var(--fd-color-border);
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.featherdown-content :where(th) {
+  background: var(--fd-color-subtle);
+}
+
+.featherdown-content .markdown-inline-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  background: var(--fd-color-surface);
+}
+
+.featherdown-content .callout {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--fd-color-border);
+  border-left-width: 4px;
+  border-radius: 0.4rem;
+  background: var(--fd-color-subtle);
+}
+
+.featherdown-content .callout-title {
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--fd-color-heading);
+}
+
+.featherdown-content .callout-note,
+.featherdown-content .callout-info,
+.featherdown-content .callout-important {
+  border-left-color: var(--fd-color-callout-note);
+}
+
+.featherdown-content .callout-tip,
+.featherdown-content .callout-success {
+  border-left-color: var(--fd-color-callout-success);
+}
+
+.featherdown-content .callout-warning,
+.featherdown-content .callout-caution {
+  border-left-color: var(--fd-color-callout-warning);
+}
+
+.featherdown-content .callout-danger,
+.featherdown-content .callout-error {
+  border-left-color: var(--fd-color-callout-danger);
+}
+
+.featherdown-content .chart-mount {
+  margin: 1rem 0;
+  border: 1px dashed var(--fd-color-border);
+  border-radius: 0.4rem;
+  padding: 1rem;
+  min-height: 5.5rem;
+  background: var(--fd-color-subtle);
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QxBlog - Hello World!</title>
+    <link rel="stylesheet" href="../../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/default.css">
+    <script type="module" src="../../js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <article class="qx-post">
+        <header class="qx-post-header">
+            <a href="../../articles/" class="qx-post-back">
+                <i class="fa fa-arrow-left"></i> 返回文章列表
+            </a>
+            <h1 class="qx-post-title">Hello World!</h1>
+            <div class="qx-post-meta">
+                <span class="qx-post-date">2026/05/14</span>
+                <span class="qx-post-author">QingXuan2000</span>
+            </div>
+            <div class="qx-post-labels"><a href="../../categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" class="qx-article-card-label">碎碎念</a>
+<a href="../../categories/%E7%94%9F%E6%B4%BB/" class="qx-article-card-label">生活</a>
+<a href="../../categories/%E5%B7%A5%E4%BD%9C/" class="qx-article-card-label">工作</a></div>
+        </header>
+        <div class="qx-post-body"><p>Hello World!</p></div>
+    </article>
+
+</body>
+
+</html>

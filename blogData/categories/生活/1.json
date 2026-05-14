@@ -1,0 +1,19 @@
+{
+  "label": "生活",
+  "page": 1,
+  "totalPages": 1,
+  "articles": [
+    {
+      "id": 1,
+      "slug": "hello-world",
+      "title": "Hello World!",
+      "author": "QingXuan2000",
+      "date": "2026/05/14",
+      "labels": [
+        "碎碎念",
+        "生活",
+        "工作"
+      ]
+    }
+  ]
+}

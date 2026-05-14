@@ -1,1 +1,14 @@
-{}
+{
+  "1": {
+    "id": 1,
+    "slug": "hello-world",
+    "title": "Hello World!",
+    "author": "QingXuan2000",
+    "date": "2026-05-14T20:48:48.000+08:00",
+    "labels": [
+      "碎碎念",
+      "生活",
+      "工作"
+    ]
+  }
+}
