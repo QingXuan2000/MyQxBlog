@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QxBlog - 首页</title>
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/default.css">
+    <script type="module" src="./js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <section class="qx-hero">
+        <div class="qx-hero-left">
+            <span class="qx-hero-tag">&lt;Blog /&gt;</span>
+            <h1 class="qx-hero-title">「用代码，写世界。」</h1>
+            <p class="qx-hero-sub">Thoughts on code, design, and everything in between.</p>
+        </div>
+        <div class="qx-hero-right">
+            <div class="qx-blobs">
+                <div class="qx-blob qx-blob-a"></div>
+                <div class="qx-blob qx-blob-b"></div>
+                <div class="qx-blob qx-blob-c"></div>
+                <div class="qx-blob qx-blob-d"></div>
+                <div class="qx-blob qx-blob-e"></div>
+            </div>
+        </div>
+        <div class="qx-scroll-hint" aria-hidden="true">
+            <span class="qx-scroll-line"></span>
+        </div>
+    </section>
+
+    <section class="qx-articles">
+        <div class="qx-articles-head">文章</div>
+        <div class="qx-articles-grid"></div>
+        <div class="qx-pagination" id="qxPagination"></div>
+    </section>
+
+</body>
+
+</html>

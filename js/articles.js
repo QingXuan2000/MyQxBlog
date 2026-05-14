@@ -1,0 +1,122 @@
+const ROOT = new URL('..', import.meta.url).href;
+const BLOG_PAGES = new URL('../blogData/articles/', import.meta.url).href;
+const BLOG_CATEGORIES = new URL('../blogData/categories/', import.meta.url).href;
+
+export class QxArticles {
+    constructor(container, paginationEl, label) {
+        this.container = container;
+        this.paginationEl = paginationEl;
+        this.label = label;
+        this.currentPage = 1;
+        this.totalPages = 1;
+    }
+
+    _dataUrl(page) {
+        if (this.label) {
+            return `${BLOG_CATEGORIES}${encodeURIComponent(this.label)}/${page}.json`;
+        }
+        return `${BLOG_PAGES}${page}.json`;
+    }
+
+    async load(page = 1) {
+        const res = await fetch(this._dataUrl(page));
+        if (!res.ok) return;
+        const data = await res.json();
+        this.currentPage = data.page;
+        this.totalPages = data.totalPages;
+        this._render(data.articles);
+        this._renderPagination();
+    }
+
+    _render(articles) {
+        this.container.innerHTML = articles.map(a => {
+            const labelsHTML = (a.labels || []).map(l => {
+                const href = new URL(`categories/${encodeURIComponent(l)}/`, ROOT).pathname;
+                return `<a href="${href}" class="qx-article-card-label">${l}</a>`;
+            }).join('\n');
+            const href = new URL(`articles/pages/${a.id}.html`, ROOT).pathname;
+            return `<a href="${href}" class="qx-article-card">
+                <div class="qx-article-card-date">${a.date}</div>
+                <div class="qx-article-card-title">${a.title}</div>
+                <div class="qx-article-card-labels">${labelsHTML}</div>
+            </a>`;
+        }).join('\n');
+    }
+
+    _renderPagination() {
+        if (!this.paginationEl) return;
+        if (this.totalPages <= 1) {
+            this.paginationEl.style.display = 'none';
+            return;
+        }
+        this.paginationEl.style.display = '';
+
+        const isFirst = this.currentPage === 1;
+        const isLast = this.currentPage === this.totalPages;
+
+        const prevDisabled = isFirst ? ' disabled' : '';
+        let row = `<button class="qx-pagination-nav${prevDisabled}" data-page="${this.currentPage - 1}"${isFirst ? ' disabled' : ''}><i class="fa fa-chevron-left"></i></button>`;
+
+        const pages = this._buildPages();
+        for (const p of pages) {
+            if (p === -1) {
+                row += '<span class="qx-pagination-ellipsis">&hellip;</span>';
+            } else {
+                const cls = p === this.currentPage ? ' is-active' : '';
+                row += `<button class="qx-pagination-btn${cls}" data-page="${p}">${p}</button>`;
+            }
+        }
+
+        const nextDisabled = isLast ? ' disabled' : '';
+        row += `<button class="qx-pagination-nav${nextDisabled}" data-page="${this.currentPage + 1}"${isLast ? ' disabled' : ''}><i class="fa fa-chevron-right"></i></button>`;
+
+        const jump = `<span class="qx-pagination-jump"><input type="number" class="qx-pagination-input" min="1" max="${this.totalPages}" placeholder="${this.currentPage}"><button class="qx-pagination-go">GO</button></span>`;
+
+        this.paginationEl.innerHTML = `<div class="qx-pagination-row">${row}</div><div class="qx-pagination-row">${jump}</div>`;
+
+        const go = (p) => {
+            if (p >= 1 && p <= this.totalPages) {
+                this.load(p);
+                const articles = document.querySelector('.qx-articles');
+                if (articles) articles.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        const input = this.paginationEl.querySelector('.qx-pagination-input');
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') go(parseInt(input.value, 10));
+        });
+        this.paginationEl.querySelector('.qx-pagination-go').addEventListener('click', () => {
+            go(parseInt(input.value, 10));
+        });
+
+        this.paginationEl.querySelectorAll('.qx-pagination-btn, .qx-pagination-nav').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const p = parseInt(btn.dataset.page, 10);
+                this.load(p);
+                const articles = document.querySelector('.qx-articles');
+                if (articles) {
+                    articles.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+    }
+
+    _buildPages() {
+        const total = this.totalPages;
+        const cur = this.currentPage;
+        if (total <= 10) {
+            return Array.from({ length: total }, (_, i) => i + 1);
+        }
+        const pages = [1];
+        const start = Math.max(2, cur - 2);
+        const end = Math.min(total - 1, cur + 2);
+        if (start > 2) pages.push(-1);
+        for (let p = start; p <= end; p++) pages.push(p);
+        if (end < total - 1) pages.push(-1);
+        pages.push(total);
+        return pages;
+    }
+}

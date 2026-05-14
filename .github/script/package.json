@@ -1,0 +1,8 @@
+{
+    "name": "qingblog-scripts",
+    "private": true,
+    "dependencies": {
+        "jsdom": "^25.0.0",
+        "featherdown": "^0.3.0"
+    }
+}

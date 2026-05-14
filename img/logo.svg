@@ -1,0 +1,16 @@
+<svg width="100" height="100" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="310" cy="310" r="250" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+    <circle cx="310" cy="310" r="300" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+    <path d="M315 70L315 550" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="124" y1="213" x2="264" y2="213" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="104" y1="310" x2="284" y2="310" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="124" y1="407" x2="264" y2="407" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="365" y1="115" x2="365" y2="245" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="365" y1="286" x2="365" y2="386" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="365" y1="427" x2="365" y2="507" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="423" y1="490" x2="423" y2="380" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="474" y1="440" x2="474" y2="330" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="423" y1="345" x2="423" y2="255" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="423" y1="220" x2="423" y2="140" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="474" y1="285" x2="474" y2="205" stroke="#ffffff" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QxBlog - 404</title>
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/default.css">
+    <style>
+        .qx-404-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 32px;
+            padding: 10px 24px;
+            border: 1px solid var(--text-body);
+            color: var(--text-body);
+            text-decoration: none;
+            font-size: .9rem;
+            opacity: .6;
+            transition: opacity .2s, background .2s, color .2s;
+        }
+        .qx-404-back:hover {
+            opacity: 1;
+            background: var(--text-body);
+            color: var(--bg-body);
+        }
+    </style>
+    <script type="module" src="./js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <section class="qx-page-hero">
+        <span class="qx-page-hero-tag">&lt;404 /&gt;</span>
+        <h1 class="qx-page-hero-title">页面未找到</h1>
+        <p class="qx-page-hero-sub">你访问的页面不存在，或已被移除。</p>
+        <a href="./index.html" class="qx-404-back">
+            <i class="fa fa-arrow-left"></i> 返回首页
+        </a>
+    </section>
+
+</body>
+
+</html>

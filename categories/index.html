@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QxBlog - 分类</title>
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/default.css">
+    <script type="module" src="../js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <section class="qx-page-hero">
+        <span class="qx-page-hero-tag">&lt;Categories /&gt;</span>
+        <h1 class="qx-page-hero-title">分类</h1>
+        <p class="qx-page-hero-sub">按标签浏览文章。</p>
+    </section>
+
+    <section class="qx-categories">
+        <div class="qx-categories-list"></div>
+    </section>
+
+</body>
+
+</html>
