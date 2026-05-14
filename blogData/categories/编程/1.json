@@ -1,4 +1,5 @@
 {
+  "label": "编程",
   "page": 1,
   "totalPages": 1,
   "articles": [
@@ -12,18 +13,6 @@
         "碎碎念",
         "前端",
         "编程"
-      ]
-    },
-    {
-      "id": 1,
-      "slug": "hello-world",
-      "title": "Hello World!",
-      "author": "QingXuanJun",
-      "date": "2026/05/14",
-      "labels": [
-        "碎碎念",
-        "生活",
-        "工作"
       ]
     }
   ]
