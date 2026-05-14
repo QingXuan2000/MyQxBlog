@@ -1,0 +1,38 @@
+name: "[CI] QingBlog Pages 部署流"
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/workflows/qxblog-build.yml'
+      - '.github/script/**'
+
+jobs:
+  deploy:
+    name: "[Deploy] GitHub Pages"
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: "[Checkout] 检出代码仓库"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: "[Setup] 配置 Pages"
+        uses: actions/configure-pages@v4
+
+      - name: "[Prepare] 准备部署文件"
+        run: |
+          mkdir -p _site
+          cp -r index.html 404.html favicon.svg _site/
+          cp -r css js fonts img articles categories about blogData config _site/
+
+      - name: "[Upload] 上传 Pages 产物"
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: "[Deploy] 部署到 GitHub Pages"
+        uses: actions/deploy-pages@v4
