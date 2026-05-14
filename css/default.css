@@ -999,6 +999,7 @@ body {
     font-weight: 700;
     margin: 40px 0 12px;
     opacity: .9;
+    scroll-margin-top: 72px;
 }
 
 .qx-post-body h3 {
@@ -1006,6 +1007,7 @@ body {
     font-weight: 700;
     margin: 32px 0 8px;
     opacity: .85;
+    scroll-margin-top: 72px;
 }
 
 .qx-post-body p {
