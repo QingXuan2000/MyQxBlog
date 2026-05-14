@@ -64,7 +64,7 @@ async function genArticleHTML(article) {
     ).join('\n');
 
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
@@ -107,7 +107,7 @@ function genCategoryHTML(label, articleCount) {
     const prefix = '../../';
 
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
@@ -229,7 +229,7 @@ function genArticlesListHTML(articles) {
     const prefix = '../';
 
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
@@ -268,7 +268,7 @@ function genCategoriesListHTML() {
     const prefix = '../';
 
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
