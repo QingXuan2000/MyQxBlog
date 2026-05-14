@@ -1,4 +1,4 @@
-name: "[CI] QingBlog Pages 部署流"
+name: "[CI] QingBlog Pages 部署"
 
 on:
   push:

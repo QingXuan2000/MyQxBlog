@@ -1,4 +1,4 @@
-name: "[CI] QingBlog 自动构建运行流"
+name: "[CI] QingBlog Blog 构建"
 
 on:
   issues:
