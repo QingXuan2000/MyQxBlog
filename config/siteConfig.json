@@ -1,34 +1,54 @@
 {
-    "site": {
-        "name": "QxBlog",
-        "title": "QxBlog",
-        "author": "QingXuanJun",
-        "repoName": "",
-        "siteCreatedAt": "2026-03-01T00:00:00Z"
-    },
-    "hero": {
-        "tag": "<Blog />",
-        "title": "「用代码，写世界。」",
-        "subtitle": "Thoughts on code, design, and everything in between."
-    },
-    "about": {
-        "sections": [
-            { "head": "关于我", "text": "一名前端工程师，热爱代码与设计。<br>用技术构建数字世界中的每一个细节。" },
-            { "head": "关于本站", "text": "基于 Issues 驱动的静态博客。<br>通过 GitHub Actions 自动构建部署。" }
-        ],
-        "friendLinks": [
-            { "name": "Example Friend 1", "url": "https://example1.com" },
-            { "name": "Example Friend 2", "url": "https://example2.com" }
-        ]
-    },
-    "footer": {},
-    "sidebar": {
-        "motto": "用代码，写世界。",
-        "links": [
-            { "text": "<i class=\"fa fa-home\"></i> 首页", "href": "index.html" },
-            { "text": "<i class=\"fa fa-file-text\"></i> 文章", "href": "articles/index.html" },
-            { "text": "<i class=\"fa fa-folder\"></i> 分类", "href": "categories/index.html" },
-            { "text": "<i class=\"fa fa-user\"></i> 关于", "href": "about/index.html" }
-        ]
-    }
+  "site": {
+    "name": "QxBlog",
+    "title": "QxBlog",
+    "author": "QingXuanJun",
+    "repoName": "",
+    "siteCreatedAt": "2026-03-01T00:00:00Z"
+  },
+  "hero": {
+    "tag": "<Blog />",
+    "title": "「用代码，写世界。」",
+    "subtitle": "Thoughts on code, design, and everything in between."
+  },
+  "about": {
+    "sections": [
+      {
+        "head": "关于我",
+        "text": "一名前端工程师，热爱代码与设计。<br>用技术构建数字世界中的每一个细节。"
+      },
+      {
+        "head": "关于本站",
+        "text": "基于 Issues 驱动的静态博客。<br>通过 GitHub Actions 自动构建部署。"
+      }
+    ],
+    "friendLinks": [
+      {
+        "name": "小原Blog",
+        "url": "https://blog.meowhead.cn/"
+      }
+    ]
+  },
+  "footer": {},
+  "sidebar": {
+    "motto": "用代码，写世界。",
+    "links": [
+      {
+        "text": "<i class=\"fa fa-home\"></i> 首页",
+        "href": "index.html"
+      },
+      {
+        "text": "<i class=\"fa fa-file-text\"></i> 文章",
+        "href": "articles/index.html"
+      },
+      {
+        "text": "<i class=\"fa fa-folder\"></i> 分类",
+        "href": "categories/index.html"
+      },
+      {
+        "text": "<i class=\"fa fa-user\"></i> 关于",
+        "href": "about/index.html"
+      }
+    ]
+  }
 }
