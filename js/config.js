@@ -112,20 +112,21 @@ export class QxConfig {
                 <nav class="qx-nav">
                     <a href="${logoHref}" class="qx-nav-logo">
                         <svg class="qx-nav-logo-svg" width="32" height="32" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="310" cy="310" r="250" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <circle cx="310" cy="310" r="300" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <path d="M315 70L315 550" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="124" y1="213" x2="264" y2="213" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="104" y1="310" x2="284" y2="310" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="124" y1="407" x2="264" y2="407" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="365" y1="115" x2="365" y2="245" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="365" y1="286" x2="365" y2="386" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="365" y1="427" x2="365" y2="507" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="423" y1="490" x2="423" y2="380" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="474" y1="440" x2="474" y2="330" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="423" y1="345" x2="423" y2="255" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="423" y1="220" x2="423" y2="140" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="474" y1="285" x2="474" y2="205" stroke="currentColor" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+                            <polygon points="570,310 440,535 180,535 50,310 180,85 440,85" stroke="currentColor" stroke-width="18" stroke-linejoin="round"/>
+                            <polygon points="440,385 310,460 180,385 180,235 310,160 440,235" stroke="currentColor" stroke-width="8" opacity="0.4" stroke-linejoin="round"/>
+                            <circle cx="310" cy="310" r="10" fill="currentColor"/>
+                            <circle cx="570" cy="310" r="6" fill="currentColor" opacity="0.5"/>
+                            <circle cx="440" cy="535" r="6" fill="currentColor" opacity="0.5"/>
+                            <circle cx="180" cy="535" r="6" fill="currentColor" opacity="0.5"/>
+                            <circle cx="50" cy="310" r="6" fill="currentColor" opacity="0.5"/>
+                            <circle cx="180" cy="85" r="6" fill="currentColor" opacity="0.5"/>
+                            <circle cx="440" cy="85" r="6" fill="currentColor" opacity="0.5"/>
+                            <circle cx="440" cy="385" r="4" fill="currentColor" opacity="0.3"/>
+                            <circle cx="310" cy="460" r="4" fill="currentColor" opacity="0.3"/>
+                            <circle cx="180" cy="385" r="4" fill="currentColor" opacity="0.3"/>
+                            <circle cx="180" cy="235" r="4" fill="currentColor" opacity="0.3"/>
+                            <circle cx="310" cy="160" r="4" fill="currentColor" opacity="0.3"/>
+                            <circle cx="440" cy="235" r="4" fill="currentColor" opacity="0.3"/>
                         </svg>
                     </a>
                     <span class="qx-nav-brand"></span>
