@@ -609,9 +609,9 @@ body {
 /* ========== Article List ========== */
 
 .qx-articles {
-    max-width: 960px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 80px 8vw 120px;
+    padding: 80px 24px 120px;
 }
 
 .qx-articles-head {
@@ -768,7 +768,9 @@ body {
     text-align: center;
     opacity: .5;
     outline: none;
+    -webkit-appearance: textfield;
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .qx-pagination-input::-webkit-inner-spin-button,
@@ -813,9 +815,9 @@ body {
 /* ========== Page Hero ========== */
 
 .qx-page-hero {
-    max-width: 960px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 80px 8vw 60px;
+    padding: 80px 24px 60px;
 }
 
 .qx-page-hero-tag {
@@ -847,9 +849,9 @@ body {
 /* ========== Categories ========== */
 
 .qx-categories {
-    max-width: 960px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 0 8vw 120px;
+    padding: 0 24px 120px;
 }
 
 .qx-categories-list {
@@ -889,9 +891,9 @@ body {
 /* ========== About ========== */
 
 .qx-about {
-    max-width: 640px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 0 8vw 120px;
+    padding: 0 24px 120px;
 }
 
 .qx-about-section {
@@ -940,9 +942,9 @@ body {
 /* ========== Article Post ========== */
 
 .qx-post {
-    max-width: 720px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 80px 8vw 120px;
+    padding: 80px 24px 120px;
 }
 
 .qx-post-header {
@@ -1098,7 +1100,7 @@ body {
     left: 0;
     right: 0;
     border-top: 1px solid var(--text-body);
-    padding: 32px 8vw;
+    padding: 32px 24px;
     text-align: center;
 }
 

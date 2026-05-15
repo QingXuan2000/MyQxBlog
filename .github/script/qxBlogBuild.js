@@ -84,8 +84,8 @@ async function genArticleHTML(article) {
 <body>
     <article class="qx-post">
         <header class="qx-post-header">
-            <a href="${prefix}articles/" class="qx-post-back">
-                <i class="fa fa-arrow-left"></i> 返回文章列表
+            <a href="javascript:history.back()" class="qx-post-back">
+                <i class="fa fa-arrow-left"></i> 返回上一页
             </a>
             <h1 class="qx-post-title">${article.title}</h1>
             <div class="qx-post-meta">
