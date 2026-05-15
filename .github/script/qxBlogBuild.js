@@ -325,6 +325,13 @@ async function main() {
     const timezoneOffset = buildCfg.timezoneOffset || '+08:00';
     const perPage = buildCfg.maxArticlesPerPage || 15;
 
+    // Sync friend links from build config to site config
+    if (buildCfg.friendLinks) {
+        siteCfg.about = siteCfg.about || {};
+        siteCfg.about.friendLinks = buildCfg.friendLinks;
+        writeJSON(SITE_CONFIG, siteCfg);
+    }
+
     const issue = {
         title: process.env.ISSUE_TITLE || '',
         body: process.env.ISSUE_BODY || '',

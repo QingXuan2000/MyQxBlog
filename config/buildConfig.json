@@ -1,7 +1,7 @@
 {
     "author": "QingXuan2000",
     "timezoneOffset": "+08:00",
-    "maxArticlesPerPage": 15,
+    "maxArticlesPerPage": 20,
     "friendLinks": [
         { "name": "小原Blog", "url": "https://blog.meowhead.cn/" }
     ]
