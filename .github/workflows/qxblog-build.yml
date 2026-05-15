@@ -1,16 +1,18 @@
-name: "[CI] QingBlog Blog 构建"
+name: "[CI] QingBlog 构建与部署"
 
 on:
   issues:
     types: [opened, edited, deleted, reopened]
 
 jobs:
-  build-blog:
-    name: "[Build] QingBlog构建"
+  build-and-deploy:
+    name: "[Build & Deploy] QingBlog"
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
+      pages: write
+      id-token: write
 
     steps:
       - name: "[Checkout] 检出代码仓库"
@@ -18,13 +20,6 @@ jobs:
         with:
           fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}
-          sparse-checkout: |
-            .github/script
-            config
-            blogData
-            articles
-            categories
-            index.html
 
       - name: "[Setup] 配置 Bun 环境"
         uses: oven-sh/setup-bun@v2
@@ -58,3 +53,17 @@ jobs:
           commit_message: "[Update] ${{ github.event.action == 'deleted' && '删除文章' || '更新文章' }}: ${{ github.event.issue.title }}"
           file_pattern: '*'
           push_options: '--force-with-lease'
+
+      - name: "[Prepare] 准备部署文件"
+        run: |
+          mkdir -p _site
+          cp -r index.html 404.html favicon.svg _site/ 2>/dev/null || true
+          cp -r css js fonts img articles categories about blogData config _site/
+
+      - name: "[Upload] 上传 Pages 产物"
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: "[Deploy] 部署到 GitHub Pages"
+        uses: actions/deploy-pages@v4
