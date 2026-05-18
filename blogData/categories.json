@@ -1,11 +1,15 @@
 [
   {
     "label": "前端",
+    "count": 2
+  },
+  {
+    "label": "学习",
     "count": 1
   },
   {
     "label": "工作",
-    "count": 1
+    "count": 2
   },
   {
     "label": "生活",
@@ -17,6 +21,6 @@
   },
   {
     "label": "编程",
-    "count": 1
+    "count": 2
   }
 ]
