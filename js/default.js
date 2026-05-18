@@ -1,5 +1,6 @@
 import { QxConfig } from './config.js';
 import { QxNav } from './nav.js';
+import { QxSearch } from './search.js';
 import { QxArticles } from './articles.js';
 import { QxCategories } from './categories.js';
 import { QxToc } from './toc.js';
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await config.load();
 
     new QxNav();
+    new QxSearch();
 
     const tocBtn = document.querySelector('.js-toc-toggle');
     if (tocBtn && document.querySelector('.qx-post-body')) {

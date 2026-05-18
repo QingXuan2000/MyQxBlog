@@ -131,6 +131,9 @@ export class QxConfig {
                     </a>
                     <span class="qx-nav-brand"></span>
                     <div class="qx-nav-actions">
+                        <button class="qx-nav-btn js-search-toggle" title="搜索">
+                            <i class="fa fa-search"></i>
+                        </button>
                         <button class="qx-nav-btn js-theme-toggle" title="切换主题">
                             <i class="fa fa-sun-o"></i>
                         </button>
@@ -142,6 +145,14 @@ export class QxConfig {
                         </button>
                     </div>
                 </nav>
+                <form class="qx-nav-search" action="#" onsubmit="return false;">
+                    <div class="qx-nav-search-row">
+                        <input class="qx-nav-search-input" type="text" placeholder="搜索...">
+                        <button class="qx-nav-search-submit" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </form>
             </header>`;
         document.body.insertAdjacentHTML('afterbegin', html);
     }

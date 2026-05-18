@@ -1,33 +1,123 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QxBlog - 404</title>
-    <link rel="stylesheet" href="./css/font-awesome.min.css">
-    <link rel="stylesheet" href="./css/default.css">
+    <title>404 - QxBlog</title>
     <style>
-        .qx-404-back {
+        :root, [data-theme="light"] {
+            --bg: #fff;
+            --text: #333;
+        }
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --text: #ddd;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .3s, color .3s;
+        }
+
+        .wrapper {
+            text-align: center;
+            padding: 48px 24px;
+            position: relative;
+        }
+
+        .number {
+            font-size: clamp(8rem, 20vw, 16rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -.04em;
+            color: var(--text);
+            opacity: .08;
+            user-select: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .tag {
+            display: inline-block;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            color: var(--text);
+            opacity: .35;
+            position: relative;
+        }
+
+        .title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .desc {
+            font-size: .95rem;
+            line-height: 1.7;
+            margin-top: 12px;
+            opacity: .5;
+            position: relative;
+        }
+
+        .back {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            margin-top: 32px;
-            padding: 10px 24px;
-            border: 1px solid var(--text-body);
-            color: var(--text-body);
+            margin-top: 36px;
+            padding: 10px 28px;
+            border: 1px solid var(--text);
+            color: var(--text);
             text-decoration: none;
             font-size: .9rem;
+            font-weight: 600;
+            letter-spacing: .02em;
             opacity: .6;
-            transition: opacity .2s, background .2s, color .2s;
+            transition: all .25s;
+            position: relative;
         }
-        .qx-404-back:hover {
+
+        .back:hover {
             opacity: 1;
-            background: var(--text-body);
-            color: var(--bg-body);
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(200px, 40vw, 320px);
+            height: clamp(200px, 40vw, 320px);
+            border-radius: 50%;
+            border: 1px solid var(--text);
+            opacity: .06;
+            pointer-events: none;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .04; }
+            50%      { transform: translate(-50%, -50%) scale(1.08); opacity: .1; }
         }
     </style>
-    <script type="module" src="./js/default.js"></script>
     <script>
         (function () {
             var t = localStorage.getItem('qx-theme');
@@ -36,17 +126,17 @@
         })();
     </script>
 </head>
-
 <body>
-    <section class="qx-page-hero">
-        <span class="qx-page-hero-tag">&lt;404 /&gt;</span>
-        <h1 class="qx-page-hero-title">页面未找到</h1>
-        <p class="qx-page-hero-sub">你访问的页面不存在，或已被移除。</p>
-        <a href="./index.html" class="qx-404-back">
-            <i class="fa fa-arrow-left"></i> 返回首页
+    <div class="wrapper">
+        <div class="glow"></div>
+        <span class="number">404</span>
+        <span class="tag">&lt;404 /&gt;</span>
+        <h1 class="title">页面未找到</h1>
+        <p class="desc">你访问的页面不存在，或已被移除</p>
+        <a href="javascript:history.back()" class="back">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            返回上一页
         </a>
-    </section>
-
+    </div>
 </body>
-
 </html>
