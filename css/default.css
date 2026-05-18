@@ -75,24 +75,29 @@
 
 html {
     height: 100%;
+    overflow-x: hidden;
 }
 
 body {
     position: relative;
     min-height: 100%;
+    padding-top: 56px;
     padding-bottom: 80px;
     font-family: "Inter", sans-serif;
     background: var(--bg-body);
     color: var(--text-body);
     transition: background .3s, color .3s;
-    contain: paint;
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
 /* ========== Nav ========== */
 
 .qx-header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 200;
 }
 
@@ -105,6 +110,7 @@ body {
     background: var(--bg-body);
     color: var(--text-body);
     border-bottom: 1px solid var(--text-body);
+    transition: background .3s;
 }
 
 .qx-nav-logo {
@@ -169,6 +175,7 @@ body {
     position: absolute;
     top: 100%;
     right: 0;
+    width: 25vw;
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
@@ -192,7 +199,8 @@ body {
 }
 
 .qx-nav-search-input {
-    width: 200px;
+    flex: 1;
+    min-width: 0;
     height: 36px;
     padding: 0 12px;
     border: 1px solid var(--text-body);
@@ -230,12 +238,15 @@ body {
     opacity: 1;
 }
 
+@media (max-width: 768px) {
+    .qx-nav-search {
+        width: 60vw;
+    }
+}
+
 @media (max-width: 480px) {
     .qx-nav-search-row {
         padding: 10px 12px;
-    }
-    .qx-nav-search-input {
-        width: 140px;
     }
 }
 
