@@ -17,12 +17,13 @@
     "slug": "qingblog-to-qxblog",
     "title": "QingBlog to QxBlog!",
     "author": "QingXuanJun",
-    "date": "2026-05-15T13:48:53.000+08:00",
+    "date": "2026-05-19T11:12:25.000+08:00",
     "labels": [
       "碎碎念",
       "前端",
       "编程"
-    ]
+    ],
+    "bodyText": "QingBlog正式全新重构为QxBlog啦！\n---\nUI设计全面升级\n直角UI\n扁平化\n现代风\nCI/CD全面升级为Bun + JS\n更快\n更易维护\n前端分页为动态生成\n主要SEO部分，如Title、友情链接等换成静态硬编码\nSEO + HTML语义化全面增强\nfooter精简优化\n新增文章TOC侧边目录\n后续打算：优化SEO，增加Sitemap生成功能"
   },
   "3": {
     "id": 3,
