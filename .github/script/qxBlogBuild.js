@@ -53,6 +53,23 @@ function formatDate(isoStr) {
     return `${y}/${m}/${day}`;
 }
 
+function stripMarkdown(md) {
+    return md
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/!\[.*?\]\(.*?\)/g, '')
+        .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')
+        .replace(/^#{1,6}\s+/gm, '')
+        .replace(/(\*{1,3}|_{1,3})(.*?)\1/g, '$2')
+        .replace(/^>\s+/gm, '')
+        .replace(/^[-*+]\s+/gm, '')
+        .replace(/^\d+\.\s+/gm, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/^\s*[\r\n]/gm, '')
+        .replace(/\n{2,}/g, '\n')
+        .trim();
+}
+
 let siteName = 'QxBlog';
 
 async function genArticleHTML(article) {
@@ -324,6 +341,7 @@ async function main() {
     siteName = siteCfg.site?.name || 'QxBlog';
     const timezoneOffset = buildCfg.timezoneOffset || '+08:00';
     const perPage = buildCfg.maxArticlesPerPage || 15;
+    const searchBodyLength = buildCfg.searchBodyLength ?? 0;
 
     // Sync friend links from build config to site config
     if (buildCfg.friendLinks) {
@@ -362,6 +380,14 @@ async function main() {
         const slug = slugify(issue.title);
         const localDate = convertToLocal(issue.date, timezoneOffset);
 
+        let bodyText = '';
+        if (searchBodyLength !== 0) {
+            bodyText = stripMarkdown(issue.body || '');
+            if (searchBodyLength > 0) {
+                bodyText = bodyText.slice(0, searchBodyLength);
+            }
+        }
+
         const article = {
             id: issue.id,
             slug,
@@ -369,6 +395,7 @@ async function main() {
             author: siteCfg.site?.author || issue.author,
             date: localDate,
             labels: issue.labels,
+            bodyText,
         };
         articlesIndex[issue.id] = article;
 
