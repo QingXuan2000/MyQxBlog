@@ -16,8 +16,15 @@ export class QxSearch {
         if (this.articles) return;
         try {
             const res = await fetch(DATA_URL);
-            const index = await res.json();
-            this.articles = Object.values(index);
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let text = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                text += decoder.decode(value, { stream: true });
+            }
+            this.articles = Object.values(JSON.parse(text));
         } catch (_) {
             this.articles = [];
         }
@@ -140,9 +147,9 @@ export class QxSearch {
     }
 
     _goToSelected(items) {
-        if (this.selectedIdx >= 0 && items) {
-            items[this.selectedIdx].click();
-        }
+        if (!items || !items.length) return;
+        const idx = this.selectedIdx >= 0 ? this.selectedIdx : 0;
+        items[idx].click();
     }
 
     _clear() {
