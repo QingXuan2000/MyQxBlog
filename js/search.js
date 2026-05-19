@@ -16,15 +16,8 @@ export class QxSearch {
         if (this.articles) return;
         try {
             const res = await fetch(DATA_URL);
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let text = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                text += decoder.decode(value, { stream: true });
-            }
-            this.articles = Object.values(JSON.parse(text));
+            const index = await res.json();
+            this.articles = Object.values(index);
         } catch (_) {
             this.articles = [];
         }

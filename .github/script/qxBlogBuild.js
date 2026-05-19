@@ -85,6 +85,7 @@ async function genArticleHTML(article) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
     <title>${siteName} - ${article.title}</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
@@ -128,6 +129,7 @@ function genCategoryHTML(label, articleCount) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
     <title>${siteName} - ${label}</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
@@ -250,6 +252,7 @@ function genArticlesListHTML(articles) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
     <title>${siteName} - 文章</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
@@ -289,6 +292,7 @@ function genCategoriesListHTML() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
     <title>${siteName} - 分类</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">

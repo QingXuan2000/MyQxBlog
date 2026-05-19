@@ -21,7 +21,7 @@
     align-items: center;
     justify-content: center;
     background: var(--bg-body);
-    transition: opacity .4s, visibility .4s;
+    transition: opacity .3s, visibility .3s;
 }
 
 .qx-loader.is-hidden {
@@ -30,34 +30,103 @@
     pointer-events: none;
 }
 
-.qx-loader-rings {
-    width: 80px;
-    height: 80px;
-    animation: loader-spin 2s linear infinite;
+.qx-loader-geo {
+    width: 100px;
+    height: 100px;
 }
 
-.qx-loader-ring {
+/* Orbit rings */
+.qx-loader-orbit-wrap {
+    transform-origin: 310px 310px;
+}
+
+.qx-loader-orbit-wrap:nth-child(1) {
+    animation: loader-orbit-spin 12s linear infinite;
+}
+
+.qx-loader-orbit-wrap:nth-child(2) {
+    animation: loader-orbit-spin 15s linear infinite reverse;
+}
+
+.qx-loader-orbit {
+    fill: none;
     stroke: var(--text-body);
-    stroke-width: 12;
+}
+
+/* Outer hexagon — dash travels around the perimeter (~1560) */
+.qx-loader-outer {
+    fill: none;
+    stroke: var(--text-body);
+    stroke-width: 5;
+    stroke-dasharray: 260 1300;
+    stroke-dashoffset: 0;
+    stroke-linejoin: round;
+    opacity: .4;
+    animation: loader-dash-travel 3s linear infinite;
+}
+
+/* Inner hexagon — slow counter-rotation */
+.qx-loader-inner {
+    fill: none;
+    stroke: var(--text-body);
+    stroke-width: 5;
+    stroke-linejoin: round;
+    opacity: .4;
+    transform-origin: 310px 310px;
+    animation: loader-inner-spin 8s linear infinite;
+}
+
+/* Radial lines */
+.qx-loader-radial {
+    stroke: var(--text-body);
+    stroke-width: 2;
+    opacity: .14;
+}
+
+/* Outer vertex dots */
+.qx-loader-dot {
+    fill: var(--text-body);
     opacity: .3;
+    animation: loader-dot-pulse 3s ease-in-out infinite;
 }
 
-.qx-loader-ring:first-child {
-    opacity: .5;
-    animation: loader-pulse 1.5s ease-in-out infinite;
+/* Inner vertex dots — static, faint */
+.qx-loader-idot {
+    fill: var(--text-body);
+    opacity: .22;
 }
 
-.qx-loader-ring:last-child {
-    animation: loader-pulse 1.5s ease-in-out infinite .75s;
+/* Center core */
+.qx-loader-core {
+    fill: var(--text-body);
+    opacity: .6;
+    transform-origin: 310px 310px;
+    animation: loader-core-pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes loader-spin {
+/* ========== Loader Keyframes ========== */
+
+@keyframes loader-dash-travel {
+    to { stroke-dashoffset: -1560; }
+}
+
+@keyframes loader-dot-pulse {
+    0%, 100% { opacity: .2; }
+    30%      { opacity: .85; }
+    60%      { opacity: .2; }
+}
+
+@keyframes loader-core-pulse {
+    0%, 100% { opacity: .45; transform: scale(1); }
+    50%      { opacity: .95; transform: scale(1.35); }
+}
+
+@keyframes loader-inner-spin {
+    to { transform: rotate(-360deg); }
+}
+
+@keyframes loader-orbit-spin {
     to { transform: rotate(360deg); }
-}
-
-@keyframes loader-pulse {
-    0%, 100% { opacity: .3; }
-    50% { opacity: .7; }
 }
 
 /* ========== Theme Variables ========== */
@@ -65,12 +134,12 @@
 :root,
 [data-theme="light"] {
     --bg-body: #fff;
-    --text-body: #333;
+    --text-body: #1a1a1a;
 }
 
 [data-theme="dark"] {
     --bg-body: #1a1a1a;
-    --text-body: #ddd;
+    --text-body: #eee;
 }
 
 html {
@@ -652,22 +721,40 @@ body {
     flex-shrink: 0;
 }
 
-.qx-sidebar-avatar-rings {
+.qx-sidebar-avatar-geo {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    animation: loader-spin 12s linear infinite;
+    animation: loader-orbit-spin 12s linear infinite;
 }
 
-.qx-sidebar-avatar-ring {
+.qx-sidebar-avatar-outer {
+    fill: none;
     stroke: var(--text-body);
-    stroke-width: 8;
-    opacity: .15;
+    stroke-width: 5;
+    stroke-linejoin: round;
+    opacity: .22;
 }
 
-.qx-sidebar-avatar-ring:first-child {
-    opacity: .25;
+.qx-sidebar-avatar-inner {
+    fill: none;
+    stroke: var(--text-body);
+    stroke-width: 3;
+    stroke-linejoin: round;
+    opacity: .14;
+    transform-origin: 310px 310px;
+    animation: loader-inner-spin 8s linear infinite;
+}
+
+.qx-sidebar-avatar-dot {
+    fill: var(--text-body);
+    opacity: .2;
+}
+
+.qx-sidebar-avatar-idot {
+    fill: var(--text-body);
+    opacity: .12;
 }
 
 .qx-sidebar-avatar-img {
