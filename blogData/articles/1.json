@@ -3,19 +3,6 @@
   "totalPages": 1,
   "articles": [
     {
-      "id": 6,
-      "slug": "测试2",
-      "title": "测试2",
-      "author": "QingXuanJun",
-      "date": "2026/05/19",
-      "labels": [
-        "碎碎念",
-        "前端",
-        "工作",
-        "学习"
-      ]
-    },
-    {
       "id": 4,
       "slug": "关于qxblog",
       "title": "关于QxBlog",
@@ -24,6 +11,19 @@
       "labels": [
         "前端",
         "编程",
+        "工作",
+        "学习"
+      ]
+    },
+    {
+      "id": 6,
+      "slug": "测试2",
+      "title": "测试2",
+      "author": "QingXuanJun",
+      "date": "2026/05/19",
+      "labels": [
+        "碎碎念",
+        "前端",
         "工作",
         "学习"
       ]
