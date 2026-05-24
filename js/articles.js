@@ -78,7 +78,11 @@ export class QxArticles {
             if (p >= 1 && p <= this.totalPages) {
                 this.load(p);
                 const articles = document.querySelector('.qx-articles');
-                if (articles) articles.scrollIntoView({ behavior: 'smooth' });
+                if (articles) {
+                    articles.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             }
         };
 
@@ -91,16 +95,7 @@ export class QxArticles {
         });
 
         this.paginationEl.querySelectorAll('.qx-pagination-btn, .qx-pagination-nav').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const p = parseInt(btn.dataset.page, 10);
-                this.load(p);
-                const articles = document.querySelector('.qx-articles');
-                if (articles) {
-                    articles.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            });
+            btn.addEventListener('click', () => go(parseInt(btn.dataset.page, 10)));
         });
     }
 

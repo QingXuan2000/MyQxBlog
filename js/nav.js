@@ -18,7 +18,8 @@ export class QxNav {
     }
 
     _detectTheme() {
-        this._applyTheme(this.html.getAttribute('data-theme') || 'light');
+        const saved = localStorage.getItem('qx-theme');
+        this._applyTheme(saved || this.html.getAttribute('data-theme') || 'light');
     }
 
     _applyTheme(theme) {
