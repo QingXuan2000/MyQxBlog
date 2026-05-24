@@ -4,19 +4,6 @@
   "totalPages": 1,
   "articles": [
     {
-      "id": 6,
-      "slug": "x4-foundations-x4-基石-新手指南",
-      "title": "X4: Foundations（X4：基石）新手指南",
-      "author": "QingXuanJun",
-      "date": "2026/05/24",
-      "labels": [
-        "碎碎念",
-        "前端",
-        "工作",
-        "学习"
-      ]
-    },
-    {
       "id": 3,
       "slug": "关于我",
       "title": "关于我",
