@@ -1,5 +1,38 @@
 const ROOT = new URL('..', import.meta.url).href;
 
+const LOGO_SVG = `<polygon points="570,310 440,535 180,535 50,310 180,85 440,85" stroke="currentColor" stroke-width="18" stroke-linejoin="round"/>
+<polygon points="440,385 310,460 180,385 180,235 310,160 440,235" stroke="currentColor" stroke-width="8" opacity="0.4" stroke-linejoin="round"/>
+<circle cx="310" cy="310" r="10" fill="currentColor"/>
+<circle cx="570" cy="310" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="440" cy="535" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="180" cy="535" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="50" cy="310" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="180" cy="85" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="440" cy="85" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="440" cy="385" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="310" cy="460" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="180" cy="385" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="180" cy="235" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="310" cy="160" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="440" cy="235" r="4" fill="currentColor" opacity="0.3"/>`;
+
+const SIDEBAR_AVATAR_GEO = `<polygon class="qx-sidebar-avatar-outer"
+                         points="570,310 440,535 180,535 50,310 180,85 440,85"/>
+<polygon class="qx-sidebar-avatar-inner"
+                         points="440,385 310,460 180,385 180,235 310,160 440,235"/>
+<circle cx="570" cy="310" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="440" cy="535" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="180" cy="535" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="50" cy="310" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="180" cy="85" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="440" cy="85" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="440" cy="385" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="310" cy="460" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="180" cy="385" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="180" cy="235" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="310" cy="160" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="440" cy="235" r="2.5" class="qx-sidebar-avatar-idot"/>`;
+
 export class QxConfig {
     constructor() {
         this.data = null;
@@ -48,22 +81,7 @@ export class QxConfig {
                 <div class="qx-sidebar-inner">
                     <div class="qx-sidebar-avatar">
                         <svg class="qx-sidebar-avatar-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <polygon class="qx-sidebar-avatar-outer"
-                                     points="570,310 440,535 180,535 50,310 180,85 440,85"/>
-                            <polygon class="qx-sidebar-avatar-inner"
-                                     points="440,385 310,460 180,385 180,235 310,160 440,235"/>
-                            <circle cx="570" cy="310" r="4" class="qx-sidebar-avatar-dot"/>
-                            <circle cx="440" cy="535" r="4" class="qx-sidebar-avatar-dot"/>
-                            <circle cx="180" cy="535" r="4" class="qx-sidebar-avatar-dot"/>
-                            <circle cx="50" cy="310" r="4" class="qx-sidebar-avatar-dot"/>
-                            <circle cx="180" cy="85" r="4" class="qx-sidebar-avatar-dot"/>
-                            <circle cx="440" cy="85" r="4" class="qx-sidebar-avatar-dot"/>
-                            <circle cx="440" cy="385" r="2.5" class="qx-sidebar-avatar-idot"/>
-                            <circle cx="310" cy="460" r="2.5" class="qx-sidebar-avatar-idot"/>
-                            <circle cx="180" cy="385" r="2.5" class="qx-sidebar-avatar-idot"/>
-                            <circle cx="180" cy="235" r="2.5" class="qx-sidebar-avatar-idot"/>
-                            <circle cx="310" cy="160" r="2.5" class="qx-sidebar-avatar-idot"/>
-                            <circle cx="440" cy="235" r="2.5" class="qx-sidebar-avatar-idot"/>
+                            ${SIDEBAR_AVATAR_GEO}
                         </svg>
                         <img class="qx-sidebar-avatar-img" src="${ROOT}img/Avatar.png" alt="头像">
                     </div>
@@ -161,21 +179,7 @@ export class QxConfig {
                 <nav class="qx-nav">
                     <a href="${logoHref}" class="qx-nav-logo">
                         <svg class="qx-nav-logo-svg" width="32" height="32" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <polygon points="570,310 440,535 180,535 50,310 180,85 440,85" stroke="currentColor" stroke-width="18" stroke-linejoin="round"/>
-                            <polygon points="440,385 310,460 180,385 180,235 310,160 440,235" stroke="currentColor" stroke-width="8" opacity="0.4" stroke-linejoin="round"/>
-                            <circle cx="310" cy="310" r="10" fill="currentColor"/>
-                            <circle cx="570" cy="310" r="6" fill="currentColor" opacity="0.5"/>
-                            <circle cx="440" cy="535" r="6" fill="currentColor" opacity="0.5"/>
-                            <circle cx="180" cy="535" r="6" fill="currentColor" opacity="0.5"/>
-                            <circle cx="50" cy="310" r="6" fill="currentColor" opacity="0.5"/>
-                            <circle cx="180" cy="85" r="6" fill="currentColor" opacity="0.5"/>
-                            <circle cx="440" cy="85" r="6" fill="currentColor" opacity="0.5"/>
-                            <circle cx="440" cy="385" r="4" fill="currentColor" opacity="0.3"/>
-                            <circle cx="310" cy="460" r="4" fill="currentColor" opacity="0.3"/>
-                            <circle cx="180" cy="385" r="4" fill="currentColor" opacity="0.3"/>
-                            <circle cx="180" cy="235" r="4" fill="currentColor" opacity="0.3"/>
-                            <circle cx="310" cy="160" r="4" fill="currentColor" opacity="0.3"/>
-                            <circle cx="440" cy="235" r="4" fill="currentColor" opacity="0.3"/>
+                            ${LOGO_SVG}
                         </svg>
                     </a>
                     <span class="qx-nav-brand"></span>
