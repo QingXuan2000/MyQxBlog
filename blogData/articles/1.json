@@ -3,6 +3,18 @@
   "totalPages": 1,
   "articles": [
     {
+      "id": 5,
+      "slug": "elite-dangerous-精英-危机四伏-新手教程",
+      "title": "Elite Dangerous（精英：危机四伏）新手教程",
+      "author": "QingXuanJun",
+      "date": "2026/05/24",
+      "labels": [
+        "学习",
+        "游戏",
+        "教程"
+      ]
+    },
+    {
       "id": 6,
       "slug": "x4-foundations-x4-基石-新手指南",
       "title": "X4: Foundations（X4：基石）新手指南",
@@ -12,17 +24,6 @@
         "碎碎念",
         "前端",
         "工作",
-        "学习"
-      ]
-    },
-    {
-      "id": 5,
-      "slug": "elite-dangerous-精英-危机四伏-新手教程",
-      "title": "Elite Dangerous（精英：危机四伏）新手教程",
-      "author": "QingXuanJun",
-      "date": "2026/05/24",
-      "labels": [
-        "碎碎念",
         "学习"
       ]
     },
