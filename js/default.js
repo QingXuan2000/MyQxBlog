@@ -145,6 +145,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         lbOverlay.classList.remove('is-dragging');
     });
 
+    lbImg.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
+        isDragging = true;
+        hasDragged = false;
+        lbOverlay.classList.add('is-dragging');
+        dragStartX = e.touches[0].clientX;
+        dragStartY = e.touches[0].clientY;
+    }, { passive: false });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        e.preventDefault();
+        const dx = e.touches[0].clientX - dragStartX;
+        const dy = e.touches[0].clientY - dragStartY;
+        if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+            hasDragged = true;
+        }
+        imgStartX += dx;
+        imgStartY += dy;
+        dragStartX = e.touches[0].clientX;
+        dragStartY = e.touches[0].clientY;
+        applyLbTransform();
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        lbOverlay.classList.remove('is-dragging');
+    });
+
     lbImg.addEventListener('wheel', (e) => {
         if (!lbOverlay.classList.contains('is-open')) return;
         e.preventDefault();

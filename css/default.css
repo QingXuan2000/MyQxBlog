@@ -1377,7 +1377,7 @@ body {
     max-width: 100%;
     height: auto;
     margin: 24px auto;
-    border-radius: 6px;
+    border-radius: 0;
     box-shadow: 0 2px 12px color-mix(in srgb, var(--text-body) 8%, transparent);
     cursor: zoom-in;
     transition: box-shadow .25s, transform .25s;
@@ -1458,7 +1458,7 @@ body {
     inset: 0;
     z-index: 9999;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     background: color-mix(in srgb, var(--bg-body) 92%, transparent);
     opacity: 0;
