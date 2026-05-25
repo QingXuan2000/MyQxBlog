@@ -94,12 +94,17 @@ export class QxConfig {
     }
 
     _renderFooter(d) {
-        const start = new Date(d.site.siteCreatedAt).getFullYear();
-        const now = new Date().getFullYear();
-        const year = start === now ? `${start}` : `${start}-${now}`;
+        const footerContent = d.footerContent || [];
+        
+        if (footerContent.length === 0) {
+            return;
+        }
+        
+        const itemsHTML = footerContent.map(item => `<p class="qx-footer-item">${item}</p>`).join('');
+        
         const html = `
             <footer class="qx-footer">
-                <p class="qx-footer-text">Copyright &copy; ${year} ${d.site.author}. All Rights Reserved.</p>
+                ${itemsHTML}
             </footer>`;
         document.body.insertAdjacentHTML('beforeend', html);
     }

@@ -359,11 +359,10 @@ async function main() {
     const searchBodyLength = buildCfg.searchBodyLength ?? 0;
 
     // Sync friend links from build config to site config
-    if (buildCfg.friendLinks) {
-        siteCfg.about = siteCfg.about || {};
-        siteCfg.about.friendLinks = buildCfg.friendLinks;
-        writeJSON(SITE_CONFIG, siteCfg);
-    }
+    const friendLinks = buildCfg.friendLinks || [];
+    siteCfg.about = siteCfg.about || {};
+    siteCfg.about.friendLinks = friendLinks;
+    writeJSON(SITE_CONFIG, siteCfg);
 
     const issue = {
         title: process.env.ISSUE_TITLE || '',

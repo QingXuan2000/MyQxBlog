@@ -29,7 +29,10 @@
       }
     ]
   },
-  "footer": {},
+  "footerContent": [
+    "Copyright © 2025-2026 QingXuanJun. All rights reserved.",
+    "<a style=\"color: inherit; text-decoration: none;\" href=\"https:\/\/icp.gov.moe\/?keyword=20266099\" target=\"_blank\">萌ICP备20266099号</a>"
+  ],
   "sidebar": {
     "motto": "用代码，写世界。",
     "links": [

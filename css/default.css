@@ -1462,11 +1462,12 @@ body {
     text-align: center;
 }
 
-.qx-footer-text {
+.qx-footer-item {
     font-family: Consolas, "Courier New", monospace;
     font-size: .8rem;
     opacity: .3;
     letter-spacing: .04em;
+    margin: 8px 0;
 }
 
 /* ========== Back to Top ========== */
