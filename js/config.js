@@ -126,52 +126,6 @@ export class QxConfig {
             </div>`;
     }
 
-    static renderLoader() {
-        const dotDelays = ['0s', '.5s', '1s', '1.5s', '2s', '2.5s'];
-        const outerDots = [
-            [570, 310], [440, 535], [180, 535],
-            [50, 310], [180, 85], [440, 85]
-        ];
-        const innerDots = [
-            [440, 385], [310, 460], [180, 385],
-            [180, 235], [310, 160], [440, 235]
-        ];
-        const radialLines = outerDots.map(
-            ([x, y]) => `<line class="qx-loader-radial" x1="310" y1="310" x2="${x}" y2="${y}"/>`
-        ).join('');
-        const dotsHTML = outerDots.map(
-            ([x, y], i) => `<circle class="qx-loader-dot" cx="${x}" cy="${y}" r="5.5" style="animation-delay:${dotDelays[i]}"/>`
-        ).join('');
-        const innerDotsHTML = innerDots.map(
-            ([x, y]) => `<circle class="qx-loader-idot" cx="${x}" cy="${y}" r="3.2"/>`
-        ).join('');
-
-        const html = `
-            <div class="qx-loader">
-                <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g class="qx-loader-orbit-wrap">
-                        <ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85"
-                                 stroke-width="2.5" opacity="0.22"
-                                 transform="rotate(-18, 310, 310)"/>
-                    </g>
-                    <g class="qx-loader-orbit-wrap">
-                        <ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120"
-                                 stroke-width="2.2" opacity="0.16"
-                                 transform="rotate(28, 310, 310)"/>
-                    </g>
-                    ${radialLines}
-                    <polygon class="qx-loader-outer"
-                             points="570,310 440,535 180,535 50,310 180,85 440,85"/>
-                    <polygon class="qx-loader-inner"
-                             points="440,385 310,460 180,385 180,235 310,160 440,235"/>
-                    ${dotsHTML}
-                    ${innerDotsHTML}
-                    <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
-                </svg>
-            </div>`;
-        document.body.insertAdjacentHTML('afterbegin', html);
-    }
-
     static renderNav() {
         const logoHref = new URL('index.html', ROOT).href;
         const html = `

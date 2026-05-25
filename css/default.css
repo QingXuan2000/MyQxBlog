@@ -1379,7 +1379,6 @@ body {
     margin: 24px auto;
     border-radius: 0;
     box-shadow: 0 2px 12px color-mix(in srgb, var(--text-body) 8%, transparent);
-    cursor: zoom-in;
     transition: box-shadow .25s, transform .25s;
 }
 
@@ -1449,66 +1448,6 @@ body {
     opacity: .5;
     text-align: left;
     caption-side: bottom;
-}
-
-/* ========== Image Lightbox ========== */
-
-.qx-lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: color-mix(in srgb, var(--bg-body) 92%, transparent);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .3s, visibility .3s;
-    cursor: grab;
-    overflow: hidden;
-}
-
-.qx-lightbox.is-open {
-    opacity: 1;
-    visibility: visible;
-}
-
-.qx-lightbox.is-dragging {
-    cursor: grabbing;
-    user-select: none;
-}
-
-.qx-lightbox-img {
-    max-width: 95vw;
-    max-height: 95vh;
-    object-fit: contain;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, .35);
-    transition: none;
-    pointer-events: auto;
-}
-
-.qx-lightbox-close {
-    position: absolute;
-    top: 24px;
-    right: 24px;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--text-body);
-    border-radius: 0;
-    background: var(--bg-body);
-    color: var(--text-body);
-    font-size: 1.2rem;
-    cursor: pointer;
-    opacity: .5;
-    transition: opacity .2s;
-    z-index: 1;
-}
-
-.qx-lightbox-close:hover {
-    opacity: 1;
 }
 
 /* ========== Footer ========== */

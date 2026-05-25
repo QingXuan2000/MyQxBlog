@@ -11,6 +11,9 @@ const ARTICLES_DIR = path.join(ROOT, 'articles');
 const ARTICLES_PAGES_DIR = path.join(ARTICLES_DIR, 'pages');
 const CATEGORIES_DIR = path.join(ROOT, 'categories');
 
+const LOADER_CSS = `<style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>`;
+const LOADER_HTML = `<div class="qx-loader"><svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg"><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g><line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/><polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/><polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/><circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/><circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/><circle class="qx-loader-core" cx="310" cy="310" r="8"/></svg></div>`;
+
 function readJSON(fp) {
     if (!fs.existsSync(fp)) return {};
     return JSON.parse(fs.readFileSync(fp, 'utf-8'));
@@ -89,6 +92,7 @@ async function genArticleHTML(article) {
     <title>${siteName} - ${article.title}</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
+    ${LOADER_CSS}
     <script type="module" src="${prefix}js/default.js"></script>
     <script>
         (function () {
@@ -100,6 +104,7 @@ async function genArticleHTML(article) {
 </head>
 
 <body>
+    ${LOADER_HTML}
     <article class="qx-post">
         <header class="qx-post-header">
             <a href="javascript:history.back()" class="qx-post-back">
@@ -133,6 +138,7 @@ function genCategoryHTML(label, articleCount) {
     <title>${siteName} - ${label}</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
+    ${LOADER_CSS}
     <script type="module" src="${prefix}js/default.js"></script>
     <script>
         (function () {
@@ -144,6 +150,7 @@ function genCategoryHTML(label, articleCount) {
 </head>
 
 <body>
+    ${LOADER_HTML}
     <section class="qx-page-hero">
         <span class="qx-page-hero-tag">&lt;Category /&gt;</span>
         <h1 class="qx-page-hero-title">${label}</h1>
@@ -256,6 +263,7 @@ function genArticlesListHTML(articles) {
     <title>${siteName} - 文章</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
+    ${LOADER_CSS}
     <script type="module" src="${prefix}js/default.js"></script>
     <script>
         (function () {
@@ -267,6 +275,7 @@ function genArticlesListHTML(articles) {
 </head>
 
 <body>
+    ${LOADER_HTML}
     <section class="qx-page-hero">
         <span class="qx-page-hero-tag">&lt;Articles /&gt;</span>
         <h1 class="qx-page-hero-title">文章</h1>
@@ -296,6 +305,7 @@ function genCategoriesListHTML() {
     <title>${siteName} - 分类</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
+    ${LOADER_CSS}
     <script type="module" src="${prefix}js/default.js"></script>
     <script>
         (function () {
@@ -307,6 +317,7 @@ function genCategoriesListHTML() {
 </head>
 
 <body>
+    ${LOADER_HTML}
     <section class="qx-page-hero">
         <span class="qx-page-hero-tag">&lt;Categories /&gt;</span>
         <h1 class="qx-page-hero-title">分类</h1>
