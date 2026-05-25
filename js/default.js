@@ -77,6 +77,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     let isDragging = false;
     let hasDragged = false;
     let lbScale = 1;
+    let isPinching = false;
+    let pinchStartDist = 0;
+    let pinchStartScale = 1;
 
     const lockScroll = (locked) => {
         document.documentElement.style.overflow = locked ? 'hidden' : '';
@@ -146,34 +149,75 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     lbImg.addEventListener('touchstart', (e) => {
-        if (e.touches.length !== 1) return;
-        e.preventDefault();
-        isDragging = true;
-        hasDragged = false;
-        lbOverlay.classList.add('is-dragging');
-        dragStartX = e.touches[0].clientX;
-        dragStartY = e.touches[0].clientY;
+        if (e.touches.length === 1) {
+            e.preventDefault();
+            isDragging = true;
+            hasDragged = false;
+            isPinching = false;
+            lbOverlay.classList.add('is-dragging');
+            dragStartX = e.touches[0].clientX;
+            dragStartY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+            e.preventDefault();
+            isDragging = false;
+            isPinching = true;
+            lbOverlay.classList.remove('is-dragging');
+            pinchStartDist = Math.hypot(
+                e.touches[1].clientX - e.touches[0].clientX,
+                e.touches[1].clientY - e.touches[0].clientY
+            );
+            pinchStartScale = lbScale;
+        }
     }, { passive: false });
 
     document.addEventListener('touchmove', (e) => {
-        if (!isDragging || e.touches.length !== 1) return;
-        e.preventDefault();
-        const dx = e.touches[0].clientX - dragStartX;
-        const dy = e.touches[0].clientY - dragStartY;
-        if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
-            hasDragged = true;
+        if (!lbOverlay.classList.contains('is-open')) return;
+        if (e.touches.length === 1 && isDragging) {
+            e.preventDefault();
+            const dx = e.touches[0].clientX - dragStartX;
+            const dy = e.touches[0].clientY - dragStartY;
+            if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+                hasDragged = true;
+            }
+            imgStartX += dx;
+            imgStartY += dy;
+            dragStartX = e.touches[0].clientX;
+            dragStartY = e.touches[0].clientY;
+            applyLbTransform();
+        } else if (e.touches.length === 2 && isPinching) {
+            e.preventDefault();
+            const t0 = e.touches[0];
+            const t1 = e.touches[1];
+            const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+            const oldScale = lbScale;
+            const newScale = Math.min(10, Math.max(0.5, pinchStartScale * (dist / pinchStartDist)));
+            if (newScale === oldScale) return;
+            const imgRect = lbImg.getBoundingClientRect();
+            const cx = ((t0.clientX + t1.clientX) / 2) - imgRect.left;
+            const cy = ((t0.clientY + t1.clientY) / 2) - imgRect.top;
+            const ratio = newScale / oldScale;
+            imgStartX += (ratio - 1) * (imgRect.width / 2 - cx);
+            imgStartY += (ratio - 1) * (imgRect.height / 2 - cy);
+            lbScale = newScale;
+            applyLbTransform();
         }
-        imgStartX += dx;
-        imgStartY += dy;
-        dragStartX = e.touches[0].clientX;
-        dragStartY = e.touches[0].clientY;
-        applyLbTransform();
     }, { passive: false });
 
-    document.addEventListener('touchend', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        lbOverlay.classList.remove('is-dragging');
+    document.addEventListener('touchend', (e) => {
+        if (isPinching && e.touches.length === 1) {
+            isPinching = false;
+            isDragging = true;
+            hasDragged = false;
+            dragStartX = e.touches[0].clientX;
+            dragStartY = e.touches[0].clientY;
+            lbOverlay.classList.add('is-dragging');
+        } else if (isPinching && e.touches.length === 0) {
+            isPinching = false;
+        }
+        if (isDragging && e.touches.length === 0) {
+            isDragging = false;
+            lbOverlay.classList.remove('is-dragging');
+        }
     });
 
     lbImg.addEventListener('wheel', (e) => {
