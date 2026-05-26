@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <title>QxBlog - QxBlog博客框架部署指南</title>
+    <link rel="stylesheet" href="../../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/katex.min.css">
+    <link rel="stylesheet" href="../../css/default.css">
+    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
+    <script type="module" src="../../js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="qx-loader"><svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg"><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g><line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/><polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/><polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/><circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/><circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/><circle class="qx-loader-core" cx="310" cy="310" r="8"/></svg></div>
+    <article class="qx-post">
+        <header class="qx-post-header">
+            <a href="javascript:history.back()" class="qx-post-back">
+                <i class="fa fa-arrow-left"></i> 返回上一页
+            </a>
+            <h1 class="qx-post-title">QxBlog博客框架部署指南</h1>
+            <div class="qx-post-meta">
+                <span class="qx-post-date">2026/05/26</span>
+                <span class="qx-post-author">QingXuanJun</span>
+            </div>
+            <div class="qx-post-labels"><a href="../../categories/%E5%89%8D%E7%AB%AF/" class="qx-article-card-label">前端</a>
+<a href="../../categories/%E7%BC%96%E7%A8%8B/" class="qx-article-card-label">编程</a>
+<a href="../../categories/%E5%AD%A6%E4%B9%A0/" class="qx-article-card-label">学习</a>
+<a href="../../categories/%E6%95%99%E7%A8%8B/" class="qx-article-card-label">教程</a></div>
+        </header>
+        <div class="qx-post-body"><h1 id="qxblog-部署指南"><a class="qx-heading-anchor" href="#qxblog-部署指南">QxBlog 部署指南</a></h1>
+<p>QxBlog 是一个面向技术写作的博客框架，默认主题为 <strong>QxPaper</strong>。</p>
+<p>QxPaper 采用偏技术出版物的设计风格，强调排版、阅读节奏与长内容体验，而不是传统博客常见的卡片化 UI。</p>
+<p>默认特性包括：</p>
+<ul>
+<li>深灰冷白配色</li>
+<li>Typography-first 排版</li>
+<li>GitHub 风格代码高亮</li>
+<li>KaTeX 数学公式</li>
+<li>Unified Markdown 渲染管线</li>
+<li>长文章阅读优化</li>
+<li>GitHub Pages 自动部署</li>
+</ul>
+<hr>
+<h1 id="qxpaper-默认主题"><a class="qx-heading-anchor" href="#qxpaper-默认主题">QxPaper 默认主题</a></h1>
+<p>QxPaper 是 QxBlog 内置的默认主题。</p>
+<p>整体风格偏向：</p>
+<ul>
+<li>Research Terminal</li>
+<li>Technical Publishing</li>
+<li>Markdown-native</li>
+<li>Quiet Interface</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>技术博客</li>
+<li>工程文档</li>
+<li>数学内容</li>
+<li>AI / 系统设计</li>
+<li>长篇文章</li>
+<li>研究笔记</li>
+</ul>
+<p>主题默认：</p>
+<ul>
+<li>使用 72ch 阅读宽度</li>
+<li>优化中英文混排</li>
+<li>支持亮暗色切换</li>
+<li>使用 GitHub 风格代码高亮</li>
+<li>使用 KaTeX 渲染数学公式</li>
+</ul>
+<hr>
+<h1 id="环境要求"><a class="qx-heading-anchor" href="#环境要求">环境要求</a></h1>
+<p>推荐环境：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node.js</td>
+<td>>= 20</td>
+</tr>
+<tr>
+<td>pnpm</td>
+<td>>= 9</td>
+</tr>
+</tbody>
+</table>
+<p>检查版本：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">node</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -v</span></span>
+<span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">pnpm</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -v</span></span></code></pre></figure>
+<hr>
+<h1 id="获取项目"><a class="qx-heading-anchor" href="#获取项目">获取项目</a></h1>
+<p>项目地址：</p>
+<p><a href="https://github.com/QingXuan2000/QxBlog">https://github.com/QingXuan2000/QxBlog</a></p>
+<p>克隆仓库：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> clone</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> https://github.com/QingXuan2000/QxBlog.git</span></span></code></pre></figure>
+<p>进入目录：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">cd</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> QxBlog</span></span></code></pre></figure>
+<hr>
+<h1 id="安装依赖"><a class="qx-heading-anchor" href="#安装依赖">安装依赖</a></h1>
+<p>推荐使用 pnpm：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">pnpm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> install</span></span></code></pre></figure>
+<hr>
+<h1 id="启动开发环境"><a class="qx-heading-anchor" href="#启动开发环境">启动开发环境</a></h1>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">pnpm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> dev</span></span></code></pre></figure>
+<p>默认地址：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>http://localhost:3000</span></span></code></pre></figure>
+<hr>
+<h1 id="配置-github-pages"><a class="qx-heading-anchor" href="#配置-github-pages">配置 GitHub Pages</a></h1>
+<p>如果你的仓库名称不是：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>QxBlog</span></span></code></pre></figure>
+<p>需要修改项目中的 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>base</span></span></code></span> 配置。</p>
+<p>例如：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="ts" data-theme="github-light github-dark"><code data-language="ts" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">base</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"/your-repository-name/"</span></span></code></pre></figure>
+<p>GitHub Pages 最终部署地址通常为：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>https://username.github.io/repository-name/</span></span></code></pre></figure>
+<p>因此 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>base</span></span></code></span> 必须与仓库名保持一致。</p>
+<hr>
+<h1 id="启用-github-pages"><a class="qx-heading-anchor" href="#启用-github-pages">启用 GitHub Pages</a></h1>
+<p>进入仓库：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>Settings</span></span>
+<span data-line=""><span>→ Pages</span></span></code></pre></figure>
+<p>在 Source 中选择：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>GitHub Actions</span></span></code></pre></figure>
+<hr>
+<h1 id="创建-github-actions-工作流"><a class="qx-heading-anchor" href="#创建-github-actions-工作流">创建 GitHub Actions 工作流</a></h1>
+<p>创建文件：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>.github/workflows/deploy.yml</span></span></code></pre></figure>
+<p>写入：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="yml" data-theme="github-light github-dark"><code data-language="yml" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Deploy QxBlog</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  push</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">    branches</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">main</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">permissions</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  contents</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">write</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  pages</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">write</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  id-token</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">write</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">jobs</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  build-and-deploy</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">    runs-on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">ubuntu-latest</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">    steps</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Checkout</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">actions/checkout@v4</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Setup Node.js</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">actions/setup-node@v4</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        with</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">          node-version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">20</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Setup pnpm</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">pnpm/action-setup@v4</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        with</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">          version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">9</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Install dependencies</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">pnpm install</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Build</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">pnpm build</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Deploy</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">peaceiris/actions-gh-pages@v4</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        with</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">          github_token</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">${{ secrets.GITHUB_TOKEN }}</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">          publish_dir</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">./dist</span></span></code></pre></figure>
+<hr>
+<h1 id="提交并部署"><a class="qx-heading-anchor" href="#提交并部署">提交并部署</a></h1>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> add</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> .</span></span>
+<span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> commit</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> "deploy"</span></span>
+<span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> push</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> origin</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> main</span></span></code></pre></figure>
+<p>推送后，GitHub Actions 会自动开始构建。</p>
+<p>部署完成后，可以通过：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>https://username.github.io/repository-name/</span></span></code></pre></figure>
+<p>访问网站。</p>
+<hr>
+<h1 id="编写文章"><a class="qx-heading-anchor" href="#编写文章">编写文章</a></h1>
+<p>文章通常位于：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>content/posts</span></span></code></pre></figure>
+<p>或：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>posts</span></span></code></pre></figure>
+<p>创建 Markdown 文件即可。</p>
+<p>例如：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="md" data-theme="github-light github-dark"><code data-language="md" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">---</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">title</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Hello QxBlog</span></span>
+<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">date</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">2026-05-26</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">---</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#005CC5;--shiki-light-font-weight:bold;--shiki-dark:#79B8FF;--shiki-dark-font-weight:bold"># Hello QxBlog</span></span>
+<span data-line=""> </span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">这是我的第一篇文章。</span></span></code></pre></figure>
+<hr>
+<h1 id="数学公式"><a class="qx-heading-anchor" href="#数学公式">数学公式</a></h1>
+<p>QxBlog 默认使用 KaTeX。</p>
+<p>行内公式：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="md" data-theme="github-light github-dark"><code data-language="md" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">时间复杂度为 $O(n \log n)$</span></span></code></pre></figure>
+<p>块级公式：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="md" data-theme="github-light github-dark"><code data-language="md" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">$$</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">E = mc^2</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">$$</span></span></code></pre></figure>
+<hr>
+<h1 id="代码高亮"><a class="qx-heading-anchor" href="#代码高亮">代码高亮</a></h1>
+<p>默认使用 GitHub 风格代码高亮。</p>
+<p>示例：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="md" data-theme="github-light github-dark"><code data-language="md" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">```ts</span></span>
+<span data-line=""><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">function</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> hello</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">() {</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  console.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">log</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"QxBlog"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">```</span></span></code></pre></figure>
+<p>默认支持：</p>
+<ul>
+<li>行号</li>
+<li>深色 / 浅色主题</li>
+<li>JetBrains Mono 字体</li>
+<li>长代码滚动</li>
+</ul>
+<hr>
+<h1 id="自定义域名可选"><a class="qx-heading-anchor" href="#自定义域名可选">自定义域名（可选）</a></h1>
+<p>进入：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>Settings</span></span>
+<span data-line=""><span>→ Pages</span></span>
+<span data-line=""><span>→ Custom domain</span></span></code></pre></figure>
+<p>填写你的域名。</p>
+<p>例如：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>blog.example.com</span></span></code></pre></figure>
+<p>然后配置 DNS：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CNAME</td>
+<td>username.github.io</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="常见问题"><a class="qx-heading-anchor" href="#常见问题">常见问题</a></h1>
+<h2 id="页面样式丢失"><a class="qx-heading-anchor" href="#页面样式丢失">页面样式丢失</a></h2>
+<p>通常是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>base</span></span></code></span> 配置错误。</p>
+<p>检查：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="ts" data-theme="github-light github-dark"><code data-language="ts" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">base</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"/repository-name/"</span></span></code></pre></figure>
+<p>是否与仓库名一致。</p>
+<hr>
+<h2 id="actions-没有运行"><a class="qx-heading-anchor" href="#actions-没有运行">Actions 没有运行</a></h2>
+<p>检查：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>Settings</span></span>
+<span data-line=""><span>→ Actions</span></span></code></pre></figure>
+<p>是否允许 Workflow 运行。</p>
+<hr>
+<h2 id="数学公式不显示"><a class="qx-heading-anchor" href="#数学公式不显示">数学公式不显示</a></h2>
+<p>确认依赖已正确安装：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">pnpm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> install</span></span></code></pre></figure>
+<hr>
+<h1 id="技术栈"><a class="qx-heading-anchor" href="#技术栈">技术栈</a></h1>
+<p>QxBlog 基于 Unified 生态构建：</p>
+<ul>
+<li>unified</li>
+<li>remark</li>
+<li>rehype</li>
+<li>KaTeX</li>
+<li>GitHub Actions</li>
+</ul>
+<p>默认主题 QxPaper 强调：</p>
+<ul>
+<li>长内容阅读</li>
+<li>技术写作</li>
+<li>Markdown 原生结构</li>
+<li>Typography-first 排版</li>
+<li>低干扰界面</li>
+</ul></div>
+    </article>
+
+</body>
+
+</html>

@@ -1,11 +1,11 @@
 [
   {
     "label": "前端",
-    "count": 2
+    "count": 3
   },
   {
     "label": "学习",
-    "count": 3
+    "count": 4
   },
   {
     "label": "工作",
@@ -13,7 +13,7 @@
   },
   {
     "label": "教程",
-    "count": 2
+    "count": 3
   },
   {
     "label": "游戏",
@@ -29,6 +29,6 @@
   },
   {
     "label": "编程",
-    "count": 2
+    "count": 3
   }
 ]

@@ -76,5 +76,19 @@
       "教程"
     ],
     "markdownPath": "blogData/markdown/6.md"
+  },
+  "7": {
+    "id": 7,
+    "slug": "qxblog博客框架部署指南",
+    "title": "QxBlog博客框架部署指南",
+    "author": "QingXuanJun",
+    "date": "2026-05-26T22:09:31.000+08:00",
+    "labels": [
+      "前端",
+      "编程",
+      "学习",
+      "教程"
+    ],
+    "markdownPath": "blogData/markdown/7.md"
   }
 }
