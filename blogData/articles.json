@@ -11,5 +11,18 @@
       "工作"
     ],
     "markdownPath": "blogData/markdown/1.md"
+  },
+  "2": {
+    "id": 2,
+    "slug": "qingblog-to-qxblog",
+    "title": "QingBlog to QxBlog!",
+    "author": "QingXuanJun",
+    "date": "2026-05-26T21:01:03.000+08:00",
+    "labels": [
+      "碎碎念",
+      "前端",
+      "编程"
+    ],
+    "markdownPath": "blogData/markdown/2.md"
   }
 }
