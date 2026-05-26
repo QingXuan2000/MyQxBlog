@@ -63,5 +63,18 @@
       "教程"
     ],
     "markdownPath": "blogData/markdown/5.md"
+  },
+  "6": {
+    "id": 6,
+    "slug": "x4-foundations-x4-基石-新手指南",
+    "title": "X4: Foundations（X4：基石）新手指南",
+    "author": "QingXuanJun",
+    "date": "2026-05-26T21:05:13.000+08:00",
+    "labels": [
+      "学习",
+      "游戏",
+      "教程"
+    ],
+    "markdownPath": "blogData/markdown/6.md"
   }
 }
