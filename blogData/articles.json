@@ -50,5 +50,18 @@
       "学习"
     ],
     "markdownPath": "blogData/markdown/4.md"
+  },
+  "5": {
+    "id": 5,
+    "slug": "elite-dangerous-精英-危机四伏-新手教程",
+    "title": "Elite Dangerous（精英：危机四伏）新手教程",
+    "author": "QingXuanJun",
+    "date": "2026-05-26T21:04:33.000+08:00",
+    "labels": [
+      "学习",
+      "游戏",
+      "教程"
+    ],
+    "markdownPath": "blogData/markdown/5.md"
   }
 }

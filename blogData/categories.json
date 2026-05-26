@@ -5,11 +5,19 @@
   },
   {
     "label": "学习",
-    "count": 1
+    "count": 2
   },
   {
     "label": "工作",
     "count": 2
+  },
+  {
+    "label": "教程",
+    "count": 1
+  },
+  {
+    "label": "游戏",
+    "count": 1
   },
   {
     "label": "生活",
