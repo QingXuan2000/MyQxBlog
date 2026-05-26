@@ -1,1 +1,15 @@
-{}
+{
+  "1": {
+    "id": 1,
+    "slug": "hello-world",
+    "title": "Hello World!",
+    "author": "QingXuanJun",
+    "date": "2026-05-26T20:57:58.000+08:00",
+    "labels": [
+      "碎碎念",
+      "生活",
+      "工作"
+    ],
+    "markdownPath": "blogData/markdown/1.md"
+  }
+}

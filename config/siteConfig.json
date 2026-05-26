@@ -24,12 +24,8 @@
     ],
     "friendLinks": [
       {
-        "name": "Example Friend 1",
-        "url": "https://example1.com"
-      },
-      {
-        "name": "Example Friend 2",
-        "url": "https://example2.com"
+        "name": "小原Blog",
+        "url": "https://blog.meowhead.cn/"
       }
     ]
   },

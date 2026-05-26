@@ -1,0 +1,5 @@
+/**
+ * Default highlight.js theme for Featherdown’s `hljs`-class output.
+ * Import only when syntax highlighting is enabled; see `assets.styles`.
+ */
+@import "highlight.js/styles/github.min.css";

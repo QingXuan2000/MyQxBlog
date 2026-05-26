@@ -1,0 +1,73 @@
+/**
+ * Featherdown-owned fenced code block chrome (titles, copy shell, line layout).
+ * Syntax highlighting colors live in `highlight.css`.
+ */
+.featherdown-content .code-block {
+  margin: 1rem 0;
+  border: 1px solid var(--fd-color-border);
+  border-radius: 0.4rem;
+  overflow: hidden;
+  background: var(--fd-color-code-chrome-bg);
+}
+
+.featherdown-content .code-block-title {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--fd-color-code-chrome-border);
+  font-family: var(--fd-font-mono);
+  font-size: 0.8rem;
+  color: var(--fd-color-code-chrome-text);
+  background: var(--fd-color-code-chrome-bg);
+}
+
+.featherdown-content .code-block pre {
+  margin: 0;
+  padding: 0.85rem 0.95rem;
+  overflow-x: auto;
+  background: var(--fd-color-code-bg);
+}
+
+.featherdown-content .code-block code {
+  font-family: var(--fd-font-mono);
+  color: var(--fd-color-code-text);
+  background: transparent;
+  font-size: 85%;
+}
+
+.featherdown-content .code-block-copyable {
+  position: relative;
+}
+
+.featherdown-content .code-block-copy-button {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  border: 1px solid var(--fd-color-code-chrome-border);
+  border-radius: 0.35rem;
+  padding: 0.2rem 0.48rem;
+  font-size: 0.74rem;
+  font-family: var(--fd-font-body);
+  color: var(--fd-color-code-chrome-text);
+  background: var(--fd-color-code-chrome-bg);
+  cursor: pointer;
+}
+
+.featherdown-content .code-block-copy-button:hover {
+  filter: brightness(0.96);
+}
+
+.featherdown-content .code-line {
+  display: inline-flex;
+  width: 100%;
+}
+
+.featherdown-content .code-line-highlighted {
+  background: var(--fd-color-highlight-bg);
+}
+
+.featherdown-content .code-line-numbered .code-line-number {
+  flex: 0 0 2.8ch;
+  margin-right: 0.8ch;
+  text-align: right;
+  color: var(--fd-color-muted);
+  user-select: none;
+}

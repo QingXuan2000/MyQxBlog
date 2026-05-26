@@ -1,0 +1,7 @@
+/**
+ * Bundler-oriented KaTeX stylesheet entry.
+ * Resolves `katex/dist/katex.min.css` via the `katex` package (npm / bundlers).
+ * Not intended for raw browser `<link href="…/katex.css">` without a bundler
+ * that inlines or resolves package imports. Do not vendor KaTeX fonts here.
+ */
+@import "katex/dist/katex.min.css";
