@@ -2,22 +2,33 @@ export class QxToc {
     constructor(toggleBtn) {
         this.toggleBtn = toggleBtn;
         this.sidebar = null;
+        this.links = [];
+        this.headings = [];
+        this.activeLink = null;
+        this.scrollRaf = 0;
+        this.headingOffset = 72;
         this._build();
         this._initToggle();
+        this._initScrollSpy();
     }
 
     _build() {
-        const headings = document.querySelectorAll('.qx-post-body h2, .qx-post-body h3');
-        if (headings.length === 0) return;
+        this.headings = Array.from(document.querySelectorAll('.qx-post-body h2, .qx-post-body h3'));
+        if (this.headings.length === 0) return;
 
-        // Show the toggle button
+        const firstHeading = this.headings[0];
+        const parsedOffset = parseFloat(getComputedStyle(firstHeading).scrollMarginTop);
+        if (Number.isFinite(parsedOffset)) {
+            this.headingOffset = parsedOffset;
+        }
+
         this.toggleBtn.style.display = '';
 
-        const itemsHTML = Array.from(headings).map((h, i) => {
+        const itemsHTML = this.headings.map((heading, i) => {
             const id = `qx-toc-${i}`;
-            h.id = id;
-            const indent = h.tagName === 'H3' ? ' qx-toc-indent' : '';
-            return `<a href="#${id}" class="qx-toc-link${indent}">${h.textContent}</a>`;
+            heading.id = id;
+            const indent = heading.tagName === 'H3' ? ' qx-toc-indent-2' : ' qx-toc-indent-1';
+            return `<a href="#${id}" class="qx-toc-link${indent}">${heading.textContent}</a>`;
         }).join('');
 
         const html = `
@@ -29,19 +40,22 @@ export class QxToc {
             </aside>`;
         document.body.insertAdjacentHTML('beforeend', html);
         this.sidebar = document.querySelector('.qx-toc-sidebar');
+        this.links = Array.from(this.sidebar.querySelectorAll('.qx-toc-link'));
 
-        // Smooth scroll to heading, then close sidebar
-        this.sidebar.querySelectorAll('.qx-toc-link').forEach(link => {
+        this.links.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const id = link.getAttribute('href').slice(1);
                 const target = document.getElementById(id);
                 if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
+                    const top = window.scrollY + target.getBoundingClientRect().top - this.headingOffset;
+                    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
                 }
-                this.close();
+                this._updateActiveLink(link);
             });
         });
+
+        this._updateActiveLink(this.links[0]);
     }
 
     _initToggle() {
@@ -55,6 +69,49 @@ export class QxToc {
                 this.close();
             }
         });
+    }
+
+    _initScrollSpy() {
+        if (!this.headings.length || !this.links.length) return;
+
+        const onScroll = () => {
+            if (this.scrollRaf) return;
+            this.scrollRaf = window.requestAnimationFrame(() => {
+                this.scrollRaf = 0;
+                this._syncActiveFromScroll();
+            });
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        this._syncActiveFromScroll();
+    }
+
+    _syncActiveFromScroll() {
+        const offset = this.headingOffset;
+        let current = this.headings[0];
+
+        for (const heading of this.headings) {
+            if (heading.getBoundingClientRect().top <= offset) {
+                current = heading;
+            } else {
+                break;
+            }
+        }
+
+        this._updateActiveLink(this._linkForHeading(current));
+    }
+
+    _linkForHeading(heading) {
+        if (!heading) return null;
+        return this.links.find(link => link.getAttribute('href') === `#${heading.id}`) || null;
+    }
+
+    _updateActiveLink(nextLink) {
+        if (!nextLink || this.activeLink === nextLink) return;
+        if (this.activeLink) this.activeLink.classList.remove('is-active');
+        nextLink.classList.add('is-active');
+        this.activeLink = nextLink;
     }
 
     toggle() {

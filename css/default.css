@@ -80,7 +80,7 @@
     stroke: var(--text-body);
 }
 
-/* Outer hexagon �?dash travels around the perimeter (~1560) */
+/* Outer hexagon 闁?dash travels around the perimeter (~1560) */
 .qx-loader-outer {
     fill: none;
     stroke: var(--text-body);
@@ -92,7 +92,7 @@
     animation: loader-dash-travel 3s linear infinite;
 }
 
-/* Inner hexagon �?slow counter-rotation */
+/* Inner hexagon 闁?slow counter-rotation */
 .qx-loader-inner {
     fill: none;
     stroke: var(--text-body);
@@ -117,7 +117,7 @@
     animation: loader-dot-pulse 3s ease-in-out infinite;
 }
 
-/* Inner vertex dots �?static, faint */
+/* Inner vertex dots 闁?static, faint */
 .qx-loader-idot {
     fill: var(--text-body);
     opacity: .22;
@@ -957,9 +957,10 @@ body {
 
 .qx-toc-head {
     font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
-    font-size: .75rem;
-    font-weight: 500;
-    letter-spacing: var(--tracking-label);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
     opacity: .3;
     margin-bottom: 20px;
 }
@@ -972,24 +973,52 @@ body {
 
 .qx-toc-link {
     display: block;
-    padding: 8px 0;
-    font-size: .88rem;
+    padding: 12px 16px;
+    font-size: .95rem;
     color: var(--text-body);
     text-decoration: none;
-    opacity: .45;
-    transition: opacity .2s;
-    line-height: 1.45;
+    opacity: .6;
+    transition: opacity .2s, border-color .2s;
+    line-height: var(--leading-ui);
+    border: 1px solid transparent;
+    border-radius: 2px;
+}
+
+.qx-toc-link:focus-visible,
+.qx-toc-link.is-active {
+    opacity: 1;
+    border-color: var(--text-body);
+    outline: none;
 }
 
 .qx-toc-link:hover {
-    opacity: .75;
+    opacity: 1;
 }
 
-.qx-toc-link.qx-toc-indent {
-    padding-left: 16px;
-    font-size: .82rem;
+.qx-toc-link.qx-toc-indent-1 {
+    padding-left: 28px;
+    font-size: .9rem;
 }
 
+.qx-toc-link.qx-toc-indent-2 {
+    padding-left: 40px;
+    font-size: .85rem;
+    opacity: .52;
+}
+
+.qx-toc-link.qx-toc-indent-2::before,
+.qx-toc-link.qx-toc-indent-1::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: .45;
+    margin-right: 10px;
+    vertical-align: middle;
+    transform: translateY(-1px);
+}
 /* ========== Article List ========== */
 
 .qx-articles {
@@ -1483,7 +1512,7 @@ body {
     margin: 0;
 }
 
-/* ---- Code Block �?Research Terminal (Unified/Shiki) ---- */
+/* ---- Code Block 闁?Research Terminal (Unified/Shiki) ---- */
 
 /* Code figure wrapper */
 .qx-post-body figure[data-rehype-pretty-code-figure] {
@@ -1494,6 +1523,7 @@ body {
     border-left: 1px solid rgba(127,127,127,.18);
     border-radius: 2px;
     transition: background .3s, border-color .3s;
+    --qx-code-pad-x: 28px;
 }
 
 /* Language title bar */
@@ -1504,7 +1534,7 @@ body {
     letter-spacing: var(--tracking-mono);
     opacity: .6;
     text-transform: uppercase;
-    padding: 12px 28px 0;
+    padding: 12px var(--qx-code-pad-x) 0;
     user-select: none;
 }
 
@@ -1512,7 +1542,7 @@ body {
 .qx-post-body figure[data-rehype-pretty-code-figure] pre {
     position: relative;
     margin: 0;
-    padding: 22px 28px;
+    padding: 22px var(--qx-code-pad-x);
     background: transparent;
     border: none;
     border-radius: 2px;
@@ -1560,7 +1590,7 @@ body {
 .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] {
     display: flex;
     align-items: baseline;
-    padding: 0 12px 0 0;
+    padding: 0 0 0 0;
 }
 
 /* Line number */
@@ -1569,7 +1599,7 @@ body {
     counter-increment: line;
     display: block;
     text-align: right;
-    padding: 0 16px 0 16px;
+    padding: 0 16px;
     color: var(--code-accent);
     opacity: 0.5;
     user-select: none;
@@ -1762,7 +1792,7 @@ body {
     color: var(--bg-body);
 }
 
-/* ============== KaTeX 数学公式样式 ============== */
+/* ============== KaTeX 闁轰焦婢橀鐔煎礂椤掆偓缁憋繝寮藉畡鎵 ============== */
 
 .katex {
     font-size: 1em;
@@ -1774,7 +1804,7 @@ body {
     overflow-y: hidden;
 }
 
-/* 暗黑模式颜色 */
+/* 闁哄棙顨婄划锕€螣閳ュ磭纭€濡増绮忔竟?*/
 [data-theme="dark"] .katex {
     color: rgba(230, 237, 243, 0.92);
 }
@@ -1791,7 +1821,10 @@ body {
     color: inherit;
 }
 
-/* 浅色模式颜色 - 保持 GitHub Primer 风格 */
+/* 婵炴潙鎳撴竟濠偽熼垾宕囩濡増绮忔竟?- 濞ｅ洦绻冪€?GitHub Primer 濡炲瀛╅悧?*/
 [data-theme="light"] .katex {
     color: inherit;
 }
+
+
+
