@@ -160,9 +160,6 @@ export class QxConfig {
                 <form class="qx-nav-search" action="#" onsubmit="return false;">
                     <div class="qx-nav-search-row">
                         <input class="qx-nav-search-input" type="text" placeholder="搜索...">
-                        <button class="qx-nav-search-submit" type="submit">
-                            <i class="fa fa-search"></i>
-                        </button>
                     </div>
                 </form>
             </header>`;

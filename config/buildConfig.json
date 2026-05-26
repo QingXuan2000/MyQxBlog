@@ -2,8 +2,10 @@
     "author": "QingXuan2000",
     "timezoneOffset": "+08:00",
     "maxArticlesPerPage": 20,
-    "searchBodyLength": -1,
     "friendLinks": [
-        { "name": "小原Blog", "url": "https://blog.meowhead.cn/" }
+        {
+            "name": "小原Blog",
+            "url": "https://blog.meowhead.cn/"
+        }
     ]
 }

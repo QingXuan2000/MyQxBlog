@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const featherdown = require('featherdown');
 
 const ROOT = path.resolve(__dirname, '../..');
 const ARTICLES_JSON = path.join(ROOT, 'blogData', 'articles.json');
@@ -75,9 +74,109 @@ function stripMarkdown(md) {
 
 let siteName = 'QxBlog';
 
+function addLazyLoading(html) {
+    return html.replace(/<img(?![^>]*loading)([^>]*)>/g, '<img loading="lazy"$1>');
+}
+
+// ====== Unified Markdown Pipeline ======
+
+let _unifiedProcessor = null;
+
+async function getUnifiedProcessor() {
+    if (_unifiedProcessor) return _unifiedProcessor;
+
+    // 动态导入所有 ESM 模块
+    const [
+        unified,
+        remarkParse,
+        remarkGfm,
+        remarkMath,
+        remarkFrontmatter,
+        remarkBreaks,
+        remarkRehype,
+        rehypeStringify,
+        rehypeSlug,
+        rehypeAutolinkHeadings,
+        rehypeKatex,
+        rehypePrettyCode,
+        shiki
+    ] = await Promise.all([
+        import('unified'),
+        import('remark-parse'),
+        import('remark-gfm'),
+        import('remark-math'),
+        import('remark-frontmatter'),
+        import('remark-breaks'),
+        import('remark-rehype'),
+        import('rehype-stringify'),
+        import('rehype-slug'),
+        import('rehype-autolink-headings'),
+        import('rehype-katex'),
+        import('rehype-pretty-code'),
+        import('shiki')
+    ]);
+
+    // 自定义 getHighlighter
+    async function customGetHighlighter(options) {
+        const highlighter = await shiki.createHighlighter({
+            themes: options.themes,
+            langs: options.langs,
+        });
+        return highlighter;
+    }
+
+    _unifiedProcessor = unified.unified()
+        .use(remarkParse.default)
+        .use(remarkFrontmatter.default)
+        .use(remarkGfm.default)
+        .use(remarkBreaks.default)
+        .use(remarkMath.default)
+        .use(remarkRehype.default, { allowDangerousHtml: true })
+        .use(rehypeSlug.default)
+        .use(rehypeAutolinkHeadings.default, {
+            behavior: 'wrap',
+            properties: { className: ['qx-heading-anchor'] }
+        })
+        .use(rehypeKatex.default, {
+            throwOnError: false,
+            strict: false
+        })
+        .use(rehypePrettyCode.default, {
+            theme: {
+                light: 'github-light',
+                dark: 'github-dark'
+            },
+            keepBackground: false,
+            defaultLang: 'text',
+            transformers: [],
+            getHighlighter: customGetHighlighter,
+            onVisitHighlightedLine(node) {
+                // 高亮行支持（可选）
+            },
+            onVisitHighlightedWord(node) {
+                // 高亮单词支持（可选）
+            },
+            filterMetaString: (meta) => meta.replace(/filename="[^"]*"/, '')
+        })
+        .use(rehypeStringify.default, { allowDangerousHtml: true });
+
+    return _unifiedProcessor;
+}
+
+async function renderMarkdown(body) {
+    const processor = await getUnifiedProcessor();
+    const result = await processor.process(body);
+    let html = String(result);
+    html = addLazyLoading(html);
+    return html;
+}
+
 async function genArticleHTML(article) {
     const prefix = '../../';
-    const bodyHTML = (await featherdown.renderMarkdown(article.body || '')).html;
+    let body = article.body || '';
+
+    const bodyHTML = await renderMarkdown(body);
+
     const labelsHTML = (article.labels || []).map(l =>
         `<a href="${prefix}categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
     ).join('\n');
@@ -91,6 +190,7 @@ async function genArticleHTML(article) {
     <meta name="view-transition" content="same-origin">
     <title>${siteName} - ${article.title}</title>
     <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
+    <link rel="stylesheet" href="${prefix}css/katex.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
     ${LOADER_CSS}
     <script type="module" src="${prefix}js/default.js"></script>
@@ -167,79 +267,14 @@ function genCategoryHTML(label, articleCount) {
 </html>`;
 }
 
-function genCategoryJSON(label, articles, perPage) {
-    const filtered = articles
-        .filter(a => (a.labels || []).includes(label))
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-    const totalPages = Math.ceil(filtered.length / perPage) || 1;
-
-    const catDir = path.join(BLOG_DATA_DIR, 'categories', label);
-    if (filtered.length === 0) {
-        if (fs.existsSync(catDir)) fs.rmSync(catDir, { recursive: true });
-        return;
-    }
-
-    for (let p = 1; p <= totalPages; p++) {
-        const slice = filtered.slice((p - 1) * perPage, p * perPage);
-        writeJSON(path.join(catDir, `${p}.json`), {
-            label,
-            page: p,
-            totalPages,
-            articles: slice.map(a => ({
-                id: a.id,
-                slug: a.slug,
-                title: a.title,
-                author: a.author,
-                date: formatDate(a.date),
-                labels: a.labels,
-            })),
-        });
-    }
-    // Clean up stale page files
-    let p = totalPages + 1;
-    while (fs.existsSync(path.join(catDir, `${p}.json`))) {
-        fs.unlinkSync(path.join(catDir, `${p}.json`));
-        p++;
-    }
-}
-
-function genPaginatedJSON(articles, perPage) {
-    const sorted = articles.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const totalPages = Math.ceil(sorted.length / perPage) || 1;
-
-    if (sorted.length === 0) {
-        // Remove all existing page files when there are no articles
-        const pagesDir = path.join(BLOG_DATA_DIR, 'articles');
-        if (fs.existsSync(pagesDir)) {
-            fs.readdirSync(pagesDir).forEach(f => {
-                if (/^\d+\.json$/.test(f)) fs.unlinkSync(path.join(pagesDir, f));
-            });
-        }
-        return;
-    }
-
-    for (let p = 1; p <= totalPages; p++) {
-        const slice = sorted.slice((p - 1) * perPage, p * perPage);
-        const pageData = {
-            page: p,
-            totalPages,
-            articles: slice.map(a => ({
-                id: a.id,
-                slug: a.slug,
-                title: a.title,
-                author: a.author,
-                date: formatDate(a.date),
-                labels: a.labels,
-            })),
-        };
-        writeJSON(path.join(BLOG_DATA_DIR, 'articles', `${p}.json`), pageData);
-    }
-    // Clean up stale page files
-    let p = totalPages + 1;
-    while (fs.existsSync(path.join(BLOG_DATA_DIR, 'articles', `${p}.json`))) {
-        fs.unlinkSync(path.join(BLOG_DATA_DIR, 'articles', `${p}.json`));
-        p++;
-    }
+function cleanupLegacyPaginationData() {
+    const legacyDirs = [
+        path.join(BLOG_DATA_DIR, 'articles'),
+        path.join(BLOG_DATA_DIR, 'categories'),
+    ];
+    legacyDirs.forEach(dir => {
+        if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
+    });
 }
 
 function genCategoriesJSON(allLabels, articles) {
@@ -356,7 +391,6 @@ async function main() {
     siteName = siteCfg.site?.name || 'QxBlog';
     const timezoneOffset = buildCfg.timezoneOffset || '+08:00';
     const perPage = buildCfg.maxArticlesPerPage || 15;
-    const searchBodyLength = buildCfg.searchBodyLength ?? 0;
 
     // Sync friend links from build config to site config
     const friendLinks = buildCfg.friendLinks || [];
@@ -394,13 +428,21 @@ async function main() {
         const slug = slugify(issue.title);
         const localDate = convertToLocal(issue.date, timezoneOffset);
 
-        let bodyText = '';
-        if (searchBodyLength !== 0) {
-            bodyText = stripMarkdown(issue.body || '');
-            if (searchBodyLength > 0) {
-                bodyText = bodyText.slice(0, searchBodyLength);
-            }
-        }
+        // Save original markdown with frontmatter
+        const markdownDir = path.join(BLOG_DATA_DIR, 'markdown');
+        ensureDir(markdownDir);
+        const markdownPath = path.join(markdownDir, `${issue.id}.md`);
+        const frontmatter = `---
+标题：${issue.title}
+发布日期：${localDate}
+标签：${issue.labels.join(', ')}
+作者：${siteCfg.site?.author || issue.author}
+文章id：${issue.id}
+---
+
+${issue.body || ''}`;
+        fs.writeFileSync(markdownPath, frontmatter, 'utf-8');
+        console.log(`Saved markdown: blogData/markdown/${issue.id}.md`);
 
         const article = {
             id: issue.id,
@@ -409,7 +451,7 @@ async function main() {
             author: siteCfg.site?.author || issue.author,
             date: localDate,
             labels: issue.labels,
-            bodyText,
+            markdownPath: `blogData/markdown/${issue.id}.md`,
         };
         articlesIndex[issue.id] = article;
 
@@ -427,8 +469,8 @@ async function main() {
     const articles = Object.values(articlesIndex);
     const allLabels = [...new Set(articles.flatMap(a => a.labels || []))].sort();
 
-    // Generate paginated JSON files
-    genPaginatedJSON(articles, perPage);
+    // Cleanup legacy paginated data folders from previous versions
+    cleanupLegacyPaginationData();
 
     // Generate categories JSON
     genCategoriesJSON(allLabels, articles);
@@ -440,7 +482,6 @@ async function main() {
         const filtered = articles.filter(a => (a.labels || []).includes(label));
         const catHTML = genCategoryHTML(label, filtered.length);
         fs.writeFileSync(path.join(catDir, 'index.html'), catHTML, 'utf-8');
-        genCategoryJSON(label, articles, perPage);
     });
     // Clean up stale category dirs
     if (fs.existsSync(CATEGORIES_DIR)) {
@@ -452,17 +493,6 @@ async function main() {
             }
         });
     }
-    // Clean up stale category JSON dirs
-    const catDataDir = path.join(BLOG_DATA_DIR, 'categories');
-    if (fs.existsSync(catDataDir)) {
-        fs.readdirSync(catDataDir).forEach(entry => {
-            if (!allLabels.includes(entry)) {
-                const p = path.join(catDataDir, entry);
-                if (fs.statSync(p).isDirectory()) fs.rmSync(p, { recursive: true });
-            }
-        });
-    }
-
     // Generate articles list page
     const articlesListHTML = genArticlesListHTML(articles);
     fs.writeFileSync(path.join(ARTICLES_DIR, 'index.html'), articlesListHTML, 'utf-8');

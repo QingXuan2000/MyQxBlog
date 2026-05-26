@@ -6,9 +6,41 @@
     <meta name="view-transition" content="same-origin">
     <title>404 - QxBlog</title>
     <style>
+        @font-face {
+            font-family: "Inter";
+            src: url("./fonts/Inter/InterVariable.woff2") format("woff2");
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+            unicode-range: U+0020-007E;
+        }
+
+        @font-face {
+            font-family: "Inter";
+            src: url("./fonts/Inter/InterVariable-Italic.woff2") format("woff2");
+            font-weight: 100 900;
+            font-style: italic;
+            font-display: swap;
+            unicode-range: U+0020-007E;
+        }
+
+        @font-face {
+            font-family: "MiSans";
+            src: url("./fonts/MiSans/MiSansVariable.ttf") format("truetype");
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
         :root, [data-theme="light"] {
             --bg: #fff;
             --text: #333;
+            --leading-body: 1.62;
+            --leading-copy: 1.76;
+            --leading-title: 1.1;
+            --tracking-body: .004em;
+            --tracking-ui: .01em;
+            --tracking-mono: .055em;
         }
         [data-theme="dark"] {
             --bg: #1a1a1a;
@@ -18,7 +50,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: "Inter", "MiSans", sans-serif;
+            line-height: var(--leading-body);
+            letter-spacing: var(--tracking-body);
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -38,7 +72,7 @@
             font-size: clamp(8rem, 20vw, 16rem);
             font-weight: 900;
             line-height: 1;
-            letter-spacing: -.04em;
+            letter-spacing: 0;
             color: var(--text);
             opacity: .08;
             user-select: none;
@@ -55,7 +89,8 @@
             font-family: Consolas, "Courier New", monospace;
             font-size: .82rem;
             font-weight: 700;
-            letter-spacing: .1em;
+            line-height: 1.2;
+            letter-spacing: var(--tracking-mono);
             color: var(--text);
             opacity: .35;
             position: relative;
@@ -64,14 +99,16 @@
         .title {
             font-size: clamp(1.5rem, 4vw, 2.2rem);
             font-weight: 800;
-            line-height: 1.3;
+            line-height: var(--leading-title);
+            letter-spacing: 0;
             margin-top: 20px;
             position: relative;
         }
 
         .desc {
             font-size: .95rem;
-            line-height: 1.7;
+            line-height: var(--leading-copy);
+            letter-spacing: var(--tracking-body);
             margin-top: 12px;
             opacity: .5;
             position: relative;
@@ -88,7 +125,8 @@
             text-decoration: none;
             font-size: .9rem;
             font-weight: 600;
-            letter-spacing: .02em;
+            line-height: 1.35;
+            letter-spacing: var(--tracking-ui);
             opacity: .6;
             transition: all .25s;
             position: relative;

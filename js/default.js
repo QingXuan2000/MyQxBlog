@@ -10,6 +10,17 @@ QxConfig.renderNav();
 document.addEventListener('DOMContentLoaded', async () => {
     const config = new QxConfig();
     await config.load();
+    let pageSize;
+    const buildRes = await fetch(new URL('../config/buildConfig.json', import.meta.url));
+    if (!buildRes.ok) {
+        throw new Error('Failed to load config/buildConfig.json');
+    }
+    const buildCfg = await buildRes.json();
+    const size = Number(buildCfg.maxArticlesPerPage);
+    if (!Number.isFinite(size) || size <= 0) {
+        throw new Error('Invalid maxArticlesPerPage in config/buildConfig.json');
+    }
+    pageSize = size;
 
     new QxNav();
     new QxSearch();
@@ -24,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const grid = document.querySelector('.qx-articles-grid');
         const source = pagination.dataset.source;
         const label = source === 'category' ? pagination.dataset.label : null;
-        const articles = new QxArticles(grid, pagination, label);
+        const articles = new QxArticles(grid, pagination, label, pageSize);
         await articles.load(1);
     }
 
@@ -34,20 +45,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         await categories.load();
     }
 
-    document.querySelectorAll('.qx-post-body pre').forEach(pre => {
+    // Unified/Shiki code blocks
+    document.querySelectorAll('.qx-post-body figure[data-rehype-pretty-code-figure]').forEach(figure => {
+        const pre = figure.querySelector('pre');
+        const code = pre?.querySelector('code');
+        
+        // Language label
+        const lang = pre?.dataset.language;
+        if (lang) {
+            const label = document.createElement('figcaption');
+            label.dataset.rehypePrettyCodeTitle = '';
+            label.textContent = lang;
+            figure.insertBefore(label, pre);
+        }
+
+        // Copy button
         const btn = document.createElement('button');
         btn.className = 'qx-code-copy';
         btn.innerHTML = '<i class="fa fa-clipboard"></i>';
         btn.title = '复制代码';
         btn.addEventListener('click', () => {
-            const code = pre.querySelector('code');
-            const text = code ? code.textContent : pre.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                btn.innerHTML = '<i class="fa fa-check"></i>';
-                setTimeout(() => { btn.innerHTML = '<i class="fa fa-clipboard"></i>'; }, 1500);
-            }).catch(() => {});
+            const text = code ? code.textContent : pre?.textContent;
+            if (text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.innerHTML = '<i class="fa fa-check"></i>';
+                    setTimeout(() => { btn.innerHTML = '<i class="fa fa-clipboard"></i>'; }, 1500);
+                }).catch(() => {});
+            }
         });
-        pre.appendChild(btn);
+        figure.appendChild(btn);
     });
 
     document.querySelectorAll('.qx-post-body table').forEach(table => {

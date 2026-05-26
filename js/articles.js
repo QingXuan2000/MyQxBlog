@@ -1,30 +1,52 @@
 const ROOT = new URL('..', import.meta.url).href;
-const BLOG_PAGES = new URL('../blogData/articles/', import.meta.url).href;
-const BLOG_CATEGORIES = new URL('../blogData/categories/', import.meta.url).href;
+const BLOG_ARTICLES = new URL('../blogData/articles.json', import.meta.url).href;
 
 export class QxArticles {
-    constructor(container, paginationEl, label) {
+    constructor(container, paginationEl, label, pageSize) {
         this.container = container;
         this.paginationEl = paginationEl;
         this.label = label;
         this.currentPage = 1;
         this.totalPages = 1;
+        this.totalItems = 0;
+        if (!Number.isFinite(pageSize) || pageSize <= 0) {
+            throw new Error('Invalid maxArticlesPerPage: please set a positive number in config/buildConfig.json');
+        }
+        this.pageSize = pageSize;
+        this.allArticles = [];
     }
 
-    _dataUrl(page) {
-        if (this.label) {
-            return `${BLOG_CATEGORIES}${encodeURIComponent(this.label)}/${page}.json`;
-        }
-        return `${BLOG_PAGES}${page}.json`;
+    async _loadAllArticles() {
+        if (this.allArticles.length > 0) return this.allArticles;
+        const res = await fetch(BLOG_ARTICLES);
+        if (!res.ok) return [];
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : Object.values(data || {});
+        this.allArticles = list.sort((a, b) => new Date(b.date) - new Date(a.date));
+        return this.allArticles;
+    }
+
+    _filterByLabel(articles) {
+        if (!this.label) return articles;
+        return articles.filter(a => Array.isArray(a.labels) && a.labels.includes(this.label));
+    }
+
+    _slicePage(articles, page) {
+        const total = articles.length;
+        this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
+        this.currentPage = Math.min(Math.max(1, page), this.totalPages);
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return articles.slice(start, end);
     }
 
     async load(page = 1) {
-        const res = await fetch(this._dataUrl(page));
-        if (!res.ok) return;
-        const data = await res.json();
-        this.currentPage = data.page;
-        this.totalPages = data.totalPages;
-        this._render(data.articles);
+        const all = await this._loadAllArticles();
+        const filtered = this._filterByLabel(all);
+        this.totalItems = filtered.length;
+        const pageArticles = this._slicePage(filtered, page);
+        this._render(pageArticles);
+        this._renderHeroSub();
         this._renderPagination();
     }
 
@@ -97,6 +119,12 @@ export class QxArticles {
         this.paginationEl.querySelectorAll('.qx-pagination-btn, .qx-pagination-nav').forEach(btn => {
             btn.addEventListener('click', () => go(parseInt(btn.dataset.page, 10)));
         });
+    }
+
+    _renderHeroSub() {
+        const sub = document.querySelector('.qx-page-hero-sub');
+        if (!sub) return;
+        sub.textContent = `共 ${this.totalItems} 篇文章`;
     }
 
     _buildPages() {

@@ -50,13 +50,40 @@ export class QxSearch {
             this._clear();
             return;
         }
+        this._setLoading(true);
         await this._loadIndex();
-        const results = this.articles.filter(a =>
-            a.title.toLowerCase().includes(q) ||
-            (a.labels || []).some(l => l.toLowerCase().includes(q)) ||
-            (a.bodyText || '').toLowerCase().includes(q)
-        );
+        const results = [];
+        for (const a of this.articles) {
+            const titleMatch = a.title.toLowerCase().includes(q);
+            const labelMatch = (a.labels || []).some(l => l.toLowerCase().includes(q));
+            let bodyMatch = false;
+            let bodyText = '';
+            if (a.markdownPath) {
+                try {
+                    const mdRes = await fetch(new URL('../' + a.markdownPath, import.meta.url).href);
+                    bodyText = await mdRes.text();
+                    bodyText = this._stripFrontmatter(bodyText);
+                    bodyMatch = bodyText.toLowerCase().includes(q);
+                } catch (_) {}
+            }
+            if (titleMatch || labelMatch || bodyMatch) {
+                results.push({ ...a, bodyText });
+            }
+        }
+        this._setLoading(false);
         this._renderResults(results);
+    }
+
+    _stripFrontmatter(text) {
+        if (!text) return '';
+        return text.replace(/^---[\s\S]*?---\n*/, '').trim();
+    }
+
+    _setLoading(isLoading) {
+        if (isLoading) {
+            this.dropdown.innerHTML = '<div class="qx-search-loading">搜索中...</div>';
+            this.dropdown.classList.add('is-visible');
+        }
     }
 
     _renderResults(results) {
