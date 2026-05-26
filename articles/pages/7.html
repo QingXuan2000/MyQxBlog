@@ -37,258 +37,108 @@
 <a href="../../categories/%E5%AD%A6%E4%B9%A0/" class="qx-article-card-label">学习</a>
 <a href="../../categories/%E6%95%99%E7%A8%8B/" class="qx-article-card-label">教程</a></div>
         </header>
-        <div class="qx-post-body"><p>QxBlog 是一个面向技术写作的博客框架，默认主题为 <strong>QxPaper</strong>。</p>
-<p>QxPaper 采用偏技术出版物的设计风格，强调排版、阅读节奏与长内容体验，而不是传统博客常见的卡片化 UI。</p>
-<p>默认特性包括：</p>
+        <div class="qx-post-body"><h1 id="qxblog-部署指南github-pages"><a class="qx-heading-anchor" href="#qxblog-部署指南github-pages">QxBlog 部署指南（GitHub Pages）</a></h1>
+<blockquote>
+<p>这篇文章记录如何把 QxBlog 从本地仓库部署到 GitHub Pages，并通过 Issue 驱动持续发布内容。</p>
+</blockquote>
+<h2 id="一部署前准备"><a class="qx-heading-anchor" href="#一部署前准备">一、部署前准备</a></h2>
+<p>在开始前，确认以下条件已经满足：</p>
 <ul>
-<li>深灰冷白配色</li>
-<li>Typography-first 排版</li>
-<li>GitHub 风格代码高亮</li>
-<li>KaTeX 数学公式</li>
-<li>Unified Markdown 渲染管线</li>
-<li>长文章阅读优化</li>
-<li>GitHub Pages 自动部署</li>
+<li>已有 GitHub 账号</li>
+<li>已创建并推送 QxBlog 仓库</li>
+<li>仓库中包含 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>.github/workflows/qxblog-build.yml</span></span></code></span></li>
+<li>已配置 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>config/buildConfig.json</span></span></code></span> 与 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>config/siteConfig.json</span></span></code></span></li>
 </ul>
-<hr>
-<h1 id="qxpaper-默认主题"><a class="qx-heading-anchor" href="#qxpaper-默认主题">QxPaper 默认主题</a></h1>
-<p>QxPaper 是 QxBlog 内置的默认主题。</p>
-<p>整体风格偏向：</p>
+<p>推荐先确认 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>config/buildConfig.json</span></span></code></span> 中的作者字段：</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="json" data-theme="github-light github-dark"><code data-language="json" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">{</span></span>
+<span data-line=""><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">  "author"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"你的GitHub用户名"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span data-line=""><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">  "timezoneOffset"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"+08:00"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span data-line=""><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">  "maxArticlesPerPage"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">20</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span data-line=""><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">  "friendLinks"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: []</span></span>
+<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre></figure>
+<p>其中 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>author</span></span></code></span> 必须与实际发布文章的 GitHub 账号一致，否则工作流可能不会将 Issue 视为有效文章来源。</p>
+<h2 id="二配置站点基础信息"><a class="qx-heading-anchor" href="#二配置站点基础信息">二、配置站点基础信息</a></h2>
+<p>主要修改两个配置文件：</p>
+<ol>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>config/siteConfig.json</span></span></code></span>：站点标题、描述、导航、关于页、页脚等展示内容</li>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>config/buildConfig.json</span></span></code></span>：构建行为、时区、分页、友链等运行配置</li>
+</ol>
+<p>建议先完成这些配置，再进行首次部署，避免上线后出现占位文案。</p>
+<h2 id="三开启-github-pages"><a class="qx-heading-anchor" href="#三开启-github-pages">三、开启 GitHub Pages</a></h2>
+<p>打开仓库设置页：<span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>Settings -> Pages</span></span></code></span></p>
+<p>按下面设置：</p>
+<ol>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>Build and deployment</span></span></code></span> 选择 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>Deploy from a branch</span></span></code></span></li>
+<li>Branch 选择 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>main</span></span></code></span>（或你的默认分支）</li>
+<li>Folder 选择 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>/ (root)</span></span></code></span></li>
+<li>点击保存</li>
+</ol>
+<p>完成后，GitHub 会分配一个默认访问地址：</p>
 <ul>
-<li>Research Terminal</li>
-<li>Technical Publishing</li>
-<li>Markdown-native</li>
-<li>Quiet Interface</li>
+<li>项目页：<span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>https://&#x3C;用户名>.github.io/&#x3C;仓库名>/</span></span></code></span></li>
+<li>若仓库名是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>&#x3C;用户名>.github.io</span></span></code></span>，则可直接使用根域名访问</li>
 </ul>
-<p>适合：</p>
+<h2 id="四通过-issue-发布第一篇文章"><a class="qx-heading-anchor" href="#四通过-issue-发布第一篇文章">四、通过 Issue 发布第一篇文章</a></h2>
+<p>QxBlog 的核心是 “Issue 即文章”。</p>
+<p>发布流程：</p>
+<ol>
+<li>打开仓库 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>Issues</span></span></code></span>，新建 Issue</li>
+<li>标题作为文章标题</li>
+<li>正文使用 Markdown 编写文章内容</li>
+<li>添加一个或多个标签（将作为分类）</li>
+<li>提交 Issue</li>
+</ol>
+<p>随后 GitHub Actions 会自动执行构建，更新：</p>
 <ul>
-<li>技术博客</li>
-<li>工程文档</li>
-<li>数学内容</li>
-<li>AI / 系统设计</li>
-<li>长篇文章</li>
-<li>研究笔记</li>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>blogData/articles.json</span></span></code></span></li>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>blogData/categories.json</span></span></code></span></li>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>articles/pages/{id}.html</span></span></code></span></li>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>categories/{label}/index.html</span></span></code></span></li>
 </ul>
-<p>主题默认：</p>
+<p>通常几分钟后即可在站点看到新文章。</p>
+<h2 id="五常见问题排查"><a class="qx-heading-anchor" href="#五常见问题排查">五、常见问题排查</a></h2>
+<h3 id="1-发布了-issue-但文章没出现"><a class="qx-heading-anchor" href="#1-发布了-issue-但文章没出现">1) 发布了 Issue 但文章没出现</a></h3>
+<p>优先检查：</p>
 <ul>
-<li>使用 72ch 阅读宽度</li>
-<li>优化中英文混排</li>
-<li>支持亮暗色切换</li>
-<li>使用 GitHub 风格代码高亮</li>
-<li>使用 KaTeX 渲染数学公式</li>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>Actions</span></span></code></span> 是否执行成功</li>
+<li>Issue 作者是否等于 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>buildConfig.json</span></span></code></span> 的 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>author</span></span></code></span></li>
+<li>Issue 是否被误关、标签是否异常</li>
+<li>仓库默认分支是否与 Pages 配置分支一致</li>
 </ul>
-<hr>
-<h1 id="环境要求"><a class="qx-heading-anchor" href="#环境要求">环境要求</a></h1>
-<p>推荐环境：</p>
-<table>
-<thead>
-<tr>
-<th>工具</th>
-<th>版本</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Node.js</td>
-<td>>= 20</td>
-</tr>
-<tr>
-<td>pnpm</td>
-<td>>= 9</td>
-</tr>
-</tbody>
-</table>
-<p>检查版本：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">node</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -v</span></span>
-<span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">pnpm</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -v</span></span></code></pre></figure>
-<hr>
-<h1 id="获取项目"><a class="qx-heading-anchor" href="#获取项目">获取项目</a></h1>
-<p>项目地址：</p>
-<p><a href="https://github.com/QingXuan2000/QxBlog">https://github.com/QingXuan2000/QxBlog</a></p>
-<p>克隆仓库：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> clone</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> https://github.com/QingXuan2000/QxBlog.git</span></span></code></pre></figure>
-<p>进入目录：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">cd</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> QxBlog</span></span></code></pre></figure>
-<hr>
-<h1 id="安装依赖"><a class="qx-heading-anchor" href="#安装依赖">安装依赖</a></h1>
-<p>推荐使用 pnpm：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">pnpm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> install</span></span></code></pre></figure>
-<hr>
-<h1 id="启动开发环境"><a class="qx-heading-anchor" href="#启动开发环境">启动开发环境</a></h1>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">pnpm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> dev</span></span></code></pre></figure>
-<p>默认地址：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>http://localhost:3000</span></span></code></pre></figure>
-<hr>
-<h1 id="配置-github-pages"><a class="qx-heading-anchor" href="#配置-github-pages">配置 GitHub Pages</a></h1>
-<p>如果你的仓库名称不是：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>QxBlog</span></span></code></pre></figure>
-<p>需要修改项目中的 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>base</span></span></code></span> 配置。</p>
-<p>例如：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="ts" data-theme="github-light github-dark"><code data-language="ts" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">base</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"/your-repository-name/"</span></span></code></pre></figure>
-<p>GitHub Pages 最终部署地址通常为：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>https://username.github.io/repository-name/</span></span></code></pre></figure>
-<p>因此 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>base</span></span></code></span> 必须与仓库名保持一致。</p>
-<hr>
-<h1 id="启用-github-pages"><a class="qx-heading-anchor" href="#启用-github-pages">启用 GitHub Pages</a></h1>
-<p>进入仓库：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>Settings</span></span>
-<span data-line=""><span>→ Pages</span></span></code></pre></figure>
-<p>在 Source 中选择：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>GitHub Actions</span></span></code></pre></figure>
-<hr>
-<h1 id="创建-github-actions-工作流"><a class="qx-heading-anchor" href="#创建-github-actions-工作流">创建 GitHub Actions 工作流</a></h1>
-<p>创建文件：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>.github/workflows/deploy.yml</span></span></code></pre></figure>
-<p>写入：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="yml" data-theme="github-light github-dark"><code data-language="yml" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Deploy QxBlog</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  push</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">    branches</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">main</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">permissions</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  contents</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">write</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  pages</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">write</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  id-token</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">write</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">jobs</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">  build-and-deploy</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">    runs-on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">ubuntu-latest</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">    steps</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Checkout</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">actions/checkout@v4</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Setup Node.js</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">actions/setup-node@v4</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        with</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">          node-version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">20</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Setup pnpm</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">pnpm/action-setup@v4</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        with</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">          version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">9</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Install dependencies</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">pnpm install</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Build</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">pnpm build</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Deploy</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">peaceiris/actions-gh-pages@v4</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">        with</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">:</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">          github_token</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">${{ secrets.GITHUB_TOKEN }}</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">          publish_dir</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">./dist</span></span></code></pre></figure>
-<hr>
-<h1 id="提交并部署"><a class="qx-heading-anchor" href="#提交并部署">提交并部署</a></h1>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> add</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> .</span></span>
-<span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> commit</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> "deploy"</span></span>
-<span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> push</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> origin</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> main</span></span></code></pre></figure>
-<p>推送后，GitHub Actions 会自动开始构建。</p>
-<p>部署完成后，可以通过：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>https://username.github.io/repository-name/</span></span></code></pre></figure>
-<p>访问网站。</p>
-<hr>
-<h1 id="编写文章"><a class="qx-heading-anchor" href="#编写文章">编写文章</a></h1>
-<p>文章通常位于：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>content/posts</span></span></code></pre></figure>
-<p>或：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>posts</span></span></code></pre></figure>
-<p>创建 Markdown 文件即可。</p>
-<p>例如：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="md" data-theme="github-light github-dark"><code data-language="md" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">---</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">title</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">Hello QxBlog</span></span>
-<span data-line=""><span style="--shiki-light:#22863A;--shiki-dark:#85E89D">date</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF">2026-05-26</span></span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">---</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#005CC5;--shiki-light-font-weight:bold;--shiki-dark:#79B8FF;--shiki-dark-font-weight:bold"># Hello QxBlog</span></span>
-<span data-line=""> </span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">这是我的第一篇文章。</span></span></code></pre></figure>
-<hr>
-<h1 id="数学公式"><a class="qx-heading-anchor" href="#数学公式">数学公式</a></h1>
-<p>QxBlog 默认使用 KaTeX。</p>
-<p>行内公式：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="md" data-theme="github-light github-dark"><code data-language="md" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">时间复杂度为 $O(n \log n)$</span></span></code></pre></figure>
-<p>块级公式：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="md" data-theme="github-light github-dark"><code data-language="md" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">$$</span></span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">E = mc^2</span></span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">$$</span></span></code></pre></figure>
-<hr>
-<h1 id="代码高亮"><a class="qx-heading-anchor" href="#代码高亮">代码高亮</a></h1>
-<p>默认使用 GitHub 风格代码高亮。</p>
-<p>示例：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="md" data-theme="github-light github-dark"><code data-language="md" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">```ts</span></span>
-<span data-line=""><span style="--shiki-light:#D73A49;--shiki-dark:#F97583">function</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0"> hello</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">() {</span></span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">  console.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">log</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"QxBlog"</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">)</span></span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">}</span></span>
-<span data-line=""><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">```</span></span></code></pre></figure>
-<p>默认支持：</p>
+<h3 id="2-首页能打开文章详情-404"><a class="qx-heading-anchor" href="#2-首页能打开文章详情-404">2) 首页能打开，文章详情 404</a></h3>
+<p>可能是构建未完成或 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>articles/pages/{id}.html</span></span></code></span> 尚未生成。先检查最新一次工作流日志，再等待 Pages 刷新。</p>
+<h3 id="3-样式错乱或资源加载失败"><a class="qx-heading-anchor" href="#3-样式错乱或资源加载失败">3) 样式错乱或资源加载失败</a></h3>
+<p>通常与路径有关，检查：</p>
 <ul>
-<li>行号</li>
-<li>深色 / 浅色主题</li>
-<li>JetBrains Mono 字体</li>
-<li>长代码滚动</li>
+<li>仓库名是否变更</li>
+<li>是否把站点部署到了子路径但仍按根路径访问</li>
+<li>浏览器缓存是否未刷新（可强制刷新）</li>
 </ul>
-<hr>
-<h1 id="自定义域名可选"><a class="qx-heading-anchor" href="#自定义域名可选">自定义域名（可选）</a></h1>
-<p>进入：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>Settings</span></span>
-<span data-line=""><span>→ Pages</span></span>
-<span data-line=""><span>→ Custom domain</span></span></code></pre></figure>
-<p>填写你的域名。</p>
-<p>例如：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>blog.example.com</span></span></code></pre></figure>
-<p>然后配置 DNS：</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CNAME</td>
-<td>username.github.io</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h1 id="常见问题"><a class="qx-heading-anchor" href="#常见问题">常见问题</a></h1>
-<h2 id="页面样式丢失"><a class="qx-heading-anchor" href="#页面样式丢失">页面样式丢失</a></h2>
-<p>通常是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>base</span></span></code></span> 配置错误。</p>
-<p>检查：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="ts" data-theme="github-light github-dark"><code data-language="ts" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">base</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF">"/repository-name/"</span></span></code></pre></figure>
-<p>是否与仓库名一致。</p>
-<hr>
-<h2 id="actions-没有运行"><a class="qx-heading-anchor" href="#actions-没有运行">Actions 没有运行</a></h2>
-<p>检查：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>Settings</span></span>
-<span data-line=""><span>→ Actions</span></span></code></pre></figure>
-<p>是否允许 Workflow 运行。</p>
-<hr>
-<h2 id="数学公式不显示"><a class="qx-heading-anchor" href="#数学公式不显示">数学公式不显示</a></h2>
-<p>确认依赖已正确安装：</p>
-<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">pnpm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> install</span></span></code></pre></figure>
-<hr>
-<h1 id="技术栈"><a class="qx-heading-anchor" href="#技术栈">技术栈</a></h1>
-<p>QxBlog 基于 Unified 生态构建：</p>
+<h2 id="六可选绑定自定义域名"><a class="qx-heading-anchor" href="#六可选绑定自定义域名">六、可选：绑定自定义域名</a></h2>
+<p>如果你希望使用自己的域名：</p>
+<ol>
+<li>在 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>Settings -> Pages</span></span></code></span> 填写 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>Custom domain</span></span></code></span></li>
+<li>在 DNS 服务商处配置对应的 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>CNAME</span></span></code></span> 或 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>A</span></span></code></span> 记录</li>
+<li>等待证书签发后启用 HTTPS</li>
+</ol>
+<p>建议保留 GitHub 提供的默认域名作为回退入口，便于排障。</p>
+<h2 id="七关于默认主题-qxpaper"><a class="qx-heading-anchor" href="#七关于默认主题-qxpaper">七、关于默认主题 QxPaper</a></h2>
+<p>QxBlog 默认主题是 <strong>QxPaper</strong>，强调简洁阅读体验：</p>
 <ul>
-<li>unified</li>
-<li>remark</li>
-<li>rehype</li>
-<li>KaTeX</li>
-<li>GitHub Actions</li>
+<li>卡片化信息布局，突出文章内容</li>
+<li>支持目录、代码高亮、数学公式（KaTeX）</li>
+<li>支持全文搜索、分类浏览、前端分页</li>
+<li>内置明暗主题切换</li>
 </ul>
-<p>默认主题 QxPaper 强调：</p>
+<p>常见定制入口：</p>
 <ul>
-<li>长内容阅读</li>
-<li>技术写作</li>
-<li>Markdown 原生结构</li>
-<li>Typography-first 排版</li>
-<li>低干扰界面</li>
-</ul></div>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>css/default.css</span></span></code></span>：视觉样式与主题变量</li>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>js/default.js</span></span></code></span>：主题切换与基础交互</li>
+<li><span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>config/siteConfig.json</span></span></code></span>：文案与导航内容</li>
+</ul>
+<p>建议先配置内容（<span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>siteConfig.json</span></span></code></span>），再调整样式（CSS），最后再改交互（JS）。</p>
+<h2 id="结语"><a class="qx-heading-anchor" href="#结语">结语</a></h2>
+<p>如果你希望一个轻量、可维护、内容驱动的博客系统，QxBlog + GitHub Pages 是非常省心的组合。写作只需要专注 Issue 内容，构建与部署可以交给自动化流程。</p></div>
     </article>
 
 </body>
