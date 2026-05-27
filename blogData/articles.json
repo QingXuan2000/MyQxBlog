@@ -90,5 +90,18 @@
       "教程"
     ],
     "markdownPath": "blogData/markdown/7.md"
+  },
+  "8": {
+    "id": 8,
+    "slug": "qxblog-updata-v0-1-1更新",
+    "title": "QxBlog Updata v0.1.1更新",
+    "author": "QingXuanJun",
+    "date": "2026-05-27T13:32:47.000+08:00",
+    "labels": [
+      "碎碎念",
+      "前端",
+      "编程"
+    ],
+    "markdownPath": "blogData/markdown/8.md"
   }
 }

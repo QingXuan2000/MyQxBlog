@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <title>QxBlog - QxBlog Updata v0.1.1更新</title>
+    <link rel="stylesheet" href="../../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/katex.min.css">
+    <link rel="stylesheet" href="../../css/default.css">
+    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
+    <script type="module" src="../../js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="qx-loader"><svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg"><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g><line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/><polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/><polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/><circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/><circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/><circle class="qx-loader-core" cx="310" cy="310" r="8"/></svg></div>
+    <article class="qx-post">
+        <header class="qx-post-header">
+            <a href="javascript:history.back()" class="qx-post-back">
+                <i class="fa fa-arrow-left"></i> 返回上一页
+            </a>
+            <h1 class="qx-post-title">QxBlog Updata v0.1.1更新</h1>
+            <div class="qx-post-meta">
+                <span class="qx-post-date">2026/05/27</span>
+                <span class="qx-post-author">QingXuanJun</span>
+            </div>
+            <div class="qx-post-labels"><a href="../../categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" class="qx-article-card-label">碎碎念</a>
+<a href="../../categories/%E5%89%8D%E7%AB%AF/" class="qx-article-card-label">前端</a>
+<a href="../../categories/%E7%BC%96%E7%A8%8B/" class="qx-article-card-label">编程</a></div>
+        </header>
+        <div class="qx-post-body"><blockquote>
+<p>QxBlog v0.1.1 发布：引擎升级，阅读体验全面优化</p>
+</blockquote>
+<p>QxBlog 迎来 <strong>v0.1.1</strong> 更新。</p>
+<p>这次版本应该是最后一次对 DOM 结构与项目架构做大规模调整了。未来项目将保持长期稳定，后续迭代只会聚焦于功能增强与细节打磨，不会再有需要大家重写模板或迁移数据的结构性变动。你可以放心地基于当前版本定制主题、撰写内容，把精力集中在写作本身。</p>
+<hr>
+<h2 id="核心改动markdown-引擎从-featherdown-迁移至-unified"><a class="qx-heading-anchor" href="#核心改动markdown-引擎从-featherdown-迁移至-unified">核心改动：Markdown 引擎从 featherdown 迁移至 unified</a></h2>
+<p>这是 v0.1.1 最关键的技术决策。</p>
+<p>过去 QxBlog 使用 featherdown 处理 Markdown 渲染，虽然轻量，但在扩展性上逐渐遇到瓶颈。这次我们将其全面替换为基于 <a href="https://unifiedjs.com/">unified</a> 的现代化文本处理流水线。</p>
+<p>unified 的优势在于插件化架构：解析、转换、生成三个环节可以自由组合插件，像搭积木一样扩展语法支持。迁移完成后，不仅当下的渲染质量得到提升，也为后续引入更多 Markdown 扩展语法（比如自定义容器、脚注等）打下了坚实基础。</p>
+<hr>
+<h2 id="v011-具体带来了哪些变化"><a class="qx-heading-anchor" href="#v011-具体带来了哪些变化">v0.1.1 具体带来了哪些变化？</a></h2>
+<h3 id="1-代码块终于有语法高亮了"><a class="qx-heading-anchor" href="#1-代码块终于有语法高亮了">1. 代码块终于有语法高亮了</a></h3>
+<p>借助 unified 生态的语法高亮能力，文章内的代码块现在支持自动语言检测与着色。无论是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>```js</span></span></code></span> 还是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>```python</span></span></code></span>，都能获得清晰易读的视觉呈现，技术类文章的阅读体验提升非常明显。</p>
+<h3 id="2-搜索引擎改为直接查询本地-markdown-文件"><a class="qx-heading-anchor" href="#2-搜索引擎改为直接查询本地-markdown-文件">2. 搜索引擎改为直接查询本地 Markdown 文件</a></h3>
+<p>我们调整了搜索数据的来源。构建脚本现在会额外把每篇 Issue 的原始 Markdown 正文连同元数据一起，保存到 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>blogData/markdown/{id}.md</span></span></code></span>。站内搜索不再走其他数据层，而是直接读取这些本地 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>.md</span></span></code></span> 文件，查询链路更短，逻辑也更直接。</p>
+<p>同时，这也意味着你的所有文章原文都以标准 Markdown 格式留在了仓库里。日后如果想备份、迁移或者批量处理，直接从 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>blogData/markdown/</span></span></code></span> 目录取走即可，非常方便。</p>
+<h3 id="3-排版与阅读体验优化"><a class="qx-heading-anchor" href="#3-排版与阅读体验优化">3. 排版与阅读体验优化</a></h3>
+<ul>
+<li><strong>阅读宽度调整</strong>：文章正文和列表页的最大宽度从 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>800px</span></span></code></span> 改为 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>72ch</span></span></code></span>。以字符数为基准的度量方式，对中文排版更友好，行长更适宜阅读，能有效减少视线跳跃带来的疲劳感。</li>
+<li><strong>目录样式重构</strong>：DOM 生成的文章目录（TOC）重新设计了样式与交互，层级更清晰，锚点跳转更平滑。</li>
+<li><strong>UI 细节微调</strong>：间距、字号、色彩对比度等做了小幅调整，整体视觉更干净统一。</li>
+</ul>
+<h3 id="4-加载动画更连贯"><a class="qx-heading-anchor" href="#4-加载动画更连贯">4. 加载动画更连贯</a></h3>
+<p>加载动画改为硬编码且默认显示，等到 DOM 完全就绪后再自动隐藏。这消除了以往可能出现的白屏闪烁或布局跳动，页面从打开到可阅读的过程更加连贯自然。</p>
+<hr>
+<h2 id="现在的-qxblog-是什么样的"><a class="qx-heading-anchor" href="#现在的-qxblog-是什么样的">现在的 QxBlog 是什么样的？</a></h2>
+<p>如果你还不熟悉这个项目，QxBlog 是一个基于 <strong>GitHub Issues</strong> 驱动的静态博客方案。你只需要在仓库里新建 Issue 写文章，GitHub Actions 就会自动构建并生成静态页面，配合 GitHub Pages 即可完成部署。</p>
+<p>目前支持的核心能力包括：</p>
+<ul>
+<li>Issue 驱动发布文章</li>
+<li>自动生成文章详情页与分类索引页</li>
+<li>前端动态分页</li>
+<li>全文搜索（基于本地 Markdown 文件）</li>
+<li>明暗主题切换</li>
+<li>响应式布局（桌面与移动端）</li>
+</ul>
+<p>默认主题 <strong>QxPaper</strong> 的定位是"简洁阅读 + 轻量交互"，主打干净留白与卡片式信息组织，让文章内容本身成为页面的绝对主角。</p>
+<hr>
+<h2 id="如何开始"><a class="qx-heading-anchor" href="#如何开始">如何开始？</a></h2>
+<p>如果你还没有部署，大致只需这几步：</p>
+<ol>
+<li>Fork 或克隆仓库，确保包含 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>.github/workflows/qxblog-build.yml</span></span></code></span></li>
+<li>编辑 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>config/siteConfig.json</span></span></code></span> 填写站点标题、描述、关于页等</li>
+<li>编辑 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>config/buildConfig.json</span></span></code></span> 设置你的 GitHub 用户名（<span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>author</span></span></code></span>）和分页参数</li>
+<li>在仓库 <strong>Settings → Pages</strong> 中启用 GitHub Pages，<strong>Build and deployment</strong> 的 Source 选择 <strong>GitHub Actions</strong></li>
+<li>新建 Issue 写文章，提交后 Actions 会自动构建部署</li>
+</ol>
+<p>更详细的配置说明和部署指南，请参考仓库内的 <a href="https://github.com/qingxuan2000/QxBlog/blob/main/README.md">README.md</a>。</p>
+<hr>
+<h2 id="写在最后"><a class="qx-heading-anchor" href="#写在最后">写在最后</a></h2>
+<p>v0.1.1 之后，QxBlog 的核心结构不会再动。我希望它能成为一个"部署一次，长期稳定使用"的博客方案，而不是一个需要用户持续跟进重构的实验性项目。</p>
+<p>如果你在使用过程中遇到问题，或者有新的功能建议，欢迎随时通过 GitHub Issues 反馈。</p>
+<blockquote>
+<p><strong>项目地址</strong>：<a href="https://github.com/qingxuan2000/QxBlog">github.com/qingxuan2000/QxBlog</a></p>
+</blockquote></div>
+    </article>
+
+</body>
+
+</html>
