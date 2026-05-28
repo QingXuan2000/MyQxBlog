@@ -1,174 +1,113 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
-const ROOT = path.resolve(__dirname, '../..');
-const ARTICLES_JSON = path.join(ROOT, 'blogData', 'articles.json');
-const BUILD_CONFIG = path.join(ROOT, 'config', 'buildConfig.json');
-const SITE_CONFIG = path.join(ROOT, 'config', 'siteConfig.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT = path.join(__dirname, '..', '..');
+const OUTPUT_DIR = ROOT;
+const CONFIG_DIR = path.join(ROOT, 'config');
 const BLOG_DATA_DIR = path.join(ROOT, 'blogData');
-const ARTICLES_DIR = path.join(ROOT, 'articles');
-const ARTICLES_PAGES_DIR = path.join(ARTICLES_DIR, 'pages');
-const CATEGORIES_DIR = path.join(ROOT, 'categories');
+const POSTS_DIR = path.join(ROOT, 'posts');
 
-const LOADER_CSS = `<style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>`;
-const LOADER_HTML = `<div class="qx-loader"><svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg"><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g><line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/><polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/><polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/><circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/><circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/><circle class="qx-loader-core" cx="310" cy="310" r="8"/></svg></div>`;
+const SITE_CONFIG_PATH = path.join(CONFIG_DIR, 'siteConfig.json');
+const BUILD_CONFIG_PATH = path.join(CONFIG_DIR, 'buildConfig.json');
+const CATEGORIES_JSON_PATH = path.join(BLOG_DATA_DIR, 'categories.json');
+const ARTICLES_JSON_PATH = path.join(BLOG_DATA_DIR, 'articles.json');
 
-function readJSON(fp) {
-    if (!fs.existsSync(fp)) return {};
-    return JSON.parse(fs.readFileSync(fp, 'utf-8'));
-}
+const SITE_NAME = 'QxBlog';
+const MAX_ARTICLES_PER_PAGE = 10;
 
-function writeJSON(fp, data) {
-    const dir = path.dirname(fp);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(fp, JSON.stringify(data, null, 2), 'utf-8');
-}
+const LOAD_ERR = (f) => `Failed to load \`${f}\`. Check if the file exists or is valid JSON.`;
+const LOAD = (f) => {
+    try { return JSON.parse(fs.readFileSync(f, 'utf-8')); }
+    catch (_) { console.error(LOAD_ERR(f)); return null; }
+};
+
+const siteCfg = LOAD(SITE_CONFIG_PATH) || {};
+const buildCfg = LOAD(BUILD_CONFIG_PATH) || {};
+const categoriesData = LOAD(CATEGORIES_JSON_PATH) || [];
+
+const MAX_PER_PAGE = buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
+
+const _tmpl = (t, d) => t.replace(/\$\{([^}]+)\}/g, (_, k) => d[k] ?? '');
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 function ensureDir(dir) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-function slugify(title) {
-    return title
-        .toLowerCase()
-        .replace(/[^\w一-鿿]+/g, '-')
-        .replace(/^-+|-+$/g, '')
-        || 'article';
+function loadJSON(file) {
+    try { return JSON.parse(fs.readFileSync(file, 'utf-8')); }
+    catch (_) { return null; }
 }
 
-function convertToLocal(utcStr, offset) {
-    const match = offset.match(/([+-])(\d{2}):(\d{2})/);
-    if (!match) return utcStr;
-    const sign = match[1] === '+' ? 1 : -1;
-    const hours = parseInt(match[2], 10);
-    const minutes = parseInt(match[3], 10);
-    const totalMs = sign * (hours * 60 + minutes) * 60 * 1000;
-    const date = new Date(new Date(utcStr).getTime() + totalMs);
-    return date.toISOString().replace('Z', offset);
+function saveJSON(file, data) {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-function formatDate(isoStr) {
-    const d = new Date(isoStr);
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}/${m}/${day}`;
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-function stripMarkdown(md) {
-    return md
-        .replace(/```[\s\S]*?```/g, '')
-        .replace(/`([^`]+)`/g, '$1')
-        .replace(/!\[.*?\]\(.*?\)/g, '')
-        .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')
-        .replace(/^#{1,6}\s+/gm, '')
-        .replace(/(\*{1,3}|_{1,3})(.*?)\1/g, '$2')
-        .replace(/^>\s+/gm, '')
-        .replace(/^[-*+]\s+/gm, '')
-        .replace(/^\d+\.\s+/gm, '')
-        .replace(/<[^>]+>/g, '')
-        .replace(/^\s*[\r\n]/gm, '')
-        .replace(/\n{2,}/g, '\n')
-        .trim();
+function genSlug(title) {
+    return title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-let siteName = 'QxBlog';
+const SITE_NAME2 = siteCfg.site?.name || SITE_NAME;
+const MAX_PER_PAGE2 = buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
+
+const LOAD_ERR2 = (f) => `Failed to load \`${f}\`. Check if the file exists or is valid JSON.`;
+const LOAD2 = (f) => {
+    try { return JSON.parse(fs.readFileSync(f, 'utf-8')); }
+    catch (_) { console.error(LOAD_ERR2(f)); return null; }
+};
+
+const siteCfg2 = LOAD2(SITE_CONFIG_PATH) || {};
+const buildCfg2 = LOAD2(BUILD_CONFIG_PATH) || {};
+const categoriesData2 = LOAD2(CATEGORIES_JSON_PATH) || [];
+const MAX_PER_PAGE3 = buildCfg2.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
+
+const LOGO_SVG = `<polygon points="570,310 440,535 180,535 50,310 180,85 440,85" stroke="currentColor" stroke-width="18" stroke-linejoin="round"/>
+<polygon points="440,385 310,460 180,385 180,235 310,160 440,235" stroke="currentColor" stroke-width="8" opacity="0.4" stroke-linejoin="round"/>
+<circle cx="310" cy="310" r="10" fill="currentColor"/>
+<circle cx="570" cy="310" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="440" cy="535" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="180" cy="535" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="50" cy="310" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="180" cy="85" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="440" cy="85" r="6" fill="currentColor" opacity="0.5"/>
+<circle cx="440" cy="385" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="310" cy="460" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="180" cy="385" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="180" cy="235" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="310" cy="160" r="4" fill="currentColor" opacity="0.3"/>
+<circle cx="440" cy="235" r="4" fill="currentColor" opacity="0.3"/>`;
+
+const SIDEBAR_AVATAR_GEO = `<polygon class="qx-sidebar-avatar-outer"
+                         points="570,310 440,535 180,535 50,310 180,85 440,85"/>
+<polygon class="qx-sidebar-avatar-inner"
+                         points="440,385 310,460 180,385 180,235 310,160 440,235"/>
+<circle cx="570" cy="310" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="440" cy="535" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="180" cy="535" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="50" cy="310" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="180" cy="85" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="440" cy="85" r="4" class="qx-sidebar-avatar-dot"/>
+<circle cx="440" cy="385" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="310" cy="460" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="180" cy="385" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="180" cy="235" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="310" cy="160" r="2.5" class="qx-sidebar-avatar-idot"/>
+<circle cx="440" cy="235" r="2.5" class="qx-sidebar-avatar-idot"/>`;
 
 function addLazyLoading(html) {
-    return html.replace(/<img(?![^>]*loading)([^>]*)>/g, '<img loading="lazy"$1>');
-}
-
-// ====== Unified Markdown Pipeline ======
-
-let _unifiedProcessor = null;
-
-async function getUnifiedProcessor() {
-    if (_unifiedProcessor) return _unifiedProcessor;
-
-    // 动态导入所有 ESM 模块
-    const [
-        unified,
-        remarkParse,
-        remarkGfm,
-        remarkMath,
-        remarkFrontmatter,
-        remarkBreaks,
-        remarkRehype,
-        rehypeStringify,
-        rehypeSlug,
-        rehypeAutolinkHeadings,
-        rehypeKatex,
-        rehypePrettyCode,
-        shiki
-    ] = await Promise.all([
-        import('unified'),
-        import('remark-parse'),
-        import('remark-gfm'),
-        import('remark-math'),
-        import('remark-frontmatter'),
-        import('remark-breaks'),
-        import('remark-rehype'),
-        import('rehype-stringify'),
-        import('rehype-slug'),
-        import('rehype-autolink-headings'),
-        import('rehype-katex'),
-        import('rehype-pretty-code'),
-        import('shiki')
-    ]);
-
-    // 自定义 getHighlighter
-    async function customGetHighlighter(options) {
-        const highlighter = await shiki.createHighlighter({
-            themes: options.themes,
-            langs: options.langs,
-        });
-        return highlighter;
-    }
-
-    _unifiedProcessor = unified.unified()
-        .use(remarkParse.default)
-        .use(remarkFrontmatter.default)
-        .use(remarkGfm.default)
-        .use(remarkBreaks.default)
-        .use(remarkMath.default)
-        .use(remarkRehype.default, { allowDangerousHtml: true })
-        .use(rehypeSlug.default)
-        .use(rehypeAutolinkHeadings.default, {
-            behavior: 'wrap',
-            properties: { className: ['qx-heading-anchor'] }
-        })
-        .use(rehypeKatex.default, {
-            throwOnError: false,
-            strict: false
-        })
-        .use(rehypePrettyCode.default, {
-            theme: {
-                light: 'github-light',
-                dark: 'github-dark'
-            },
-            keepBackground: false,
-            defaultLang: 'text',
-            transformers: [],
-            getHighlighter: customGetHighlighter,
-            onVisitHighlightedLine(node) {
-                // 高亮行支持（可选）
-            },
-            onVisitHighlightedWord(node) {
-                // 高亮单词支持（可选）
-            },
-            filterMetaString: (meta) => meta.replace(/filename="[^"]*"/, '')
-        })
-        .use(rehypeStringify.default, { allowDangerousHtml: true });
-
-    return _unifiedProcessor;
-}
-
-async function renderMarkdown(body) {
-    const processor = await getUnifiedProcessor();
-    const result = await processor.process(body);
-    let html = String(result);
-    html = addLazyLoading(html);
-    return html;
+    return html.replace(/<(img|video)([^>]*)>/gi, (match, tag, attrs) => {
+        if (attrs.includes('loading=')) return match;
+        return `<${tag} loading="lazy" ${attrs}>`;
+    });
 }
 
 async function genArticleHTML(article) {
@@ -188,11 +127,10 @@ async function genArticleHTML(article) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
-    <title>${siteName} - ${article.title}</title>
-    <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
+    <title>${SITE_NAME2} - ${article.title}</title>
     <link rel="stylesheet" href="${prefix}css/katex.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
-    ${LOADER_CSS}
+    \${LOADER_CSS}
     <script type="module" src="${prefix}js/default.js"></script>
     <script>
         (function () {
@@ -204,11 +142,11 @@ async function genArticleHTML(article) {
 </head>
 
 <body>
-    ${LOADER_HTML}
+    \${LOADER_HTML}
     <article class="qx-post">
         <header class="qx-post-header">
             <a href="javascript:history.back()" class="qx-post-back">
-                <i class="fa fa-arrow-left"></i> 返回上一页
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
             </a>
             <h1 class="qx-post-title">${article.title}</h1>
             <div class="qx-post-meta">
@@ -235,10 +173,9 @@ function genCategoryHTML(label, articleCount) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
-    <title>${siteName} - ${label}</title>
-    <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
+    <title>${SITE_NAME2} - ${label}</title>
     <link rel="stylesheet" href="${prefix}css/default.css">
-    ${LOADER_CSS}
+    \${LOADER_CSS}
     <script type="module" src="${prefix}js/default.js"></script>
     <script>
         (function () {
@@ -250,7 +187,7 @@ function genCategoryHTML(label, articleCount) {
 </head>
 
 <body>
-    ${LOADER_HTML}
+    \${LOADER_HTML}
     <section class="qx-page-hero">
         <span class="qx-page-hero-tag">&lt;Category /&gt;</span>
         <h1 class="qx-page-hero-title">${label}</h1>
@@ -282,229 +219,413 @@ function genCategoriesJSON(allLabels, articles) {
         label,
         count: articles.filter(a => (a.labels || []).includes(label)).length,
     }));
-    writeJSON(path.join(BLOG_DATA_DIR, 'categories.json'), categories);
+    return categories;
 }
 
-function genArticlesListHTML(articles) {
-    const prefix = '../';
+function loadConfig() {
+    try {
+        const data = JSON.parse(fs.readFileSync(SITE_CONFIG_PATH, 'utf-8'));
+        const bData = JSON.parse(fs.readFileSync(BUILD_CONFIG_PATH, 'utf-8'));
+        return { siteCfg: data, buildCfg: bData };
+    } catch (e) {
+        console.error('Config load error:', e.message);
+        return { siteCfg: {}, buildCfg: {} };
+    }
+}
 
+function genHeroSection(siteName, heroConfig) {
+    return `
+    <section class="qx-hero">
+        <div class="qx-hero-left">
+            <span class="qx-hero-tag">${esc(heroConfig?.tag || '<Blog />')}</span>
+            <h1 class="qx-hero-title">${esc(heroConfig?.title || 'Welcome')}</h1>
+            <p class="qx-hero-sub">${esc(heroConfig?.subtitle || '')}</p>
+        </div>
+        <div class="qx-hero-right">
+            <svg class="qx-line-art" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g class="qx-la-nodes" opacity="0.18">
+                    <circle cx="250" cy="105" r="3" fill="currentColor"/>
+                    <circle cx="160" cy="170" r="2.5" fill="currentColor"/>
+                    <circle cx="360" cy="160" r="2.5" fill="currentColor"/>
+                    <circle cx="130" cy="280" r="3" fill="currentColor"/>
+                    <circle cx="370" cy="290" r="2.5" fill="currentColor"/>
+                    <circle cx="200" cy="380" r="2.5" fill="currentColor"/>
+                    <circle cx="310" cy="390" r="3" fill="currentColor"/>
+                    <circle cx="250" cy="430" r="2" fill="currentColor"/>
+                    <circle cx="410" cy="230" r="2" fill="currentColor"/>
+                    <circle cx="90" cy="230" r="2" fill="currentColor"/>
+                </g>
+                <g class="qx-la-core" opacity="0.35">
+                    <polygon points="250,105 160,170 200,380 310,390 360,160" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <line x1="160" y1="170" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
+                    <line x1="200" y1="380" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
+                    <line x1="310" y1="390" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
+                    <line x1="360" y1="160" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
+                    <line x1="250" y1="105" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
+                    <line x1="160" y1="170" x2="310" y2="390" stroke="currentColor" stroke-width="0.6"/>
+                    <line x1="360" y1="160" x2="200" y2="380" stroke="currentColor" stroke-width="0.6"/>
+                    <line x1="250" y1="105" x2="200" y2="380" stroke="currentColor" stroke-width="0.6"/>
+                    <line x1="250" y1="105" x2="310" y2="390" stroke="currentColor" stroke-width="0.6"/>
+                </g>
+                <g class="qx-la-ring qx-la-ring-1" opacity="0.22">
+                    <ellipse cx="250" cy="280" rx="160" ry="60" stroke="currentColor" stroke-width="0.9" fill="none" transform="rotate(-15, 250, 280)"/>
+                    <circle cx="250" cy="220" r="2" fill="currentColor"/>
+                    <circle cx="250" cy="340" r="2" fill="currentColor"/>
+                    <circle cx="90" cy="280" r="2" fill="currentColor"/>
+                    <circle cx="410" cy="280" r="2" fill="currentColor"/>
+                </g>
+                <g class="qx-la-ring qx-la-ring-2" opacity="0.18">
+                    <ellipse cx="250" cy="280" rx="100" ry="120" stroke="currentColor" stroke-width="0.8" fill="none" transform="rotate(25, 250, 280)"/>
+                    <circle cx="250" cy="160" r="1.8" fill="currentColor"/>
+                    <circle cx="250" cy="400" r="1.8" fill="currentColor"/>
+                </g>
+                <g class="qx-la-sat qx-la-sat-1" opacity="0.2">
+                    <polygon points="410,180 440,240 380,250" stroke="currentColor" stroke-width="1" fill="none"/>
+                    <circle cx="410" cy="180" r="1.5" fill="currentColor"/>
+                    <circle cx="440" cy="240" r="1.5" fill="currentColor"/>
+                    <circle cx="380" cy="250" r="1.5" fill="currentColor"/>
+                </g>
+                <g class="qx-la-sat qx-la-sat-2" opacity="0.22">
+                    <polygon points="60,210 100,180 90,250" stroke="currentColor" stroke-width="1" fill="none"/>
+                    <circle cx="60" cy="210" r="1.5" fill="currentColor"/>
+                    <circle cx="100" cy="180" r="1.5" fill="currentColor"/>
+                    <circle cx="90" cy="250" r="1.5" fill="currentColor"/>
+                </g>
+                <g class="qx-la-sat qx-la-sat-3" opacity="0.16">
+                    <polygon points="370,390 420,410 390,450" stroke="currentColor" stroke-width="0.9" fill="none"/>
+                    <circle cx="370" cy="390" r="1.3" fill="currentColor"/>
+                    <circle cx="420" cy="410" r="1.3" fill="currentColor"/>
+                    <circle cx="390" cy="450" r="1.3" fill="currentColor"/>
+                </g>
+                <g class="qx-la-arcs" opacity="0.12">
+                    <path d="M 50 100 Q 150 20 250 50" stroke="currentColor" stroke-width="0.7" fill="none"/>
+                    <path d="M 300 450 Q 420 480 460 400" stroke="currentColor" stroke-width="0.7" fill="none"/>
+                    <path d="M 30 350 Q 20 250 60 150" stroke="currentColor" stroke-width="0.7" fill="none"/>
+                    <path d="M 380 60 Q 460 140 450 260" stroke="currentColor" stroke-width="0.7" fill="none"/>
+                </g>
+            </svg>
+        </div>
+        <div class="qx-scroll-hint" aria-hidden="true">
+            <span class="qx-scroll-line"></span>
+        </div>
+    </section>`;
+}
+
+function genNavHTML(siteName, links = []) {
+    const navLinks = links.map(l => {
+        const href = l.href || '#';
+        const text = l.text || '';
+        return `<a href="${href}" class="qx-nav-link">${text}</a>`;
+    }).join('');
+    
+    return `<header class="qx-header">
+        <nav class="qx-nav">
+            <a href="index.html" class="qx-nav-logo">
+                <svg class="qx-nav-logo-svg" width="32" height="32" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    ${LOGO_SVG}
+                </svg>
+            </a>
+            <span class="qx-nav-brand">${esc(siteName)}</span>
+            <div class="qx-nav-actions">
+                <button class="qx-nav-btn js-search-toggle" title="搜索">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+                <button class="qx-nav-btn js-theme-toggle" title="切换主题">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+                <button class="qx-nav-btn js-sidebar-toggle" title="侧边栏">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+            </div>
+        </nav>
+        <form class="qx-nav-search" action="#" onsubmit="return false;">
+            <div class="qx-nav-search-row">
+                <input class="qx-nav-search-input" type="text" placeholder="搜索...">
+            </div>
+        </form>
+    </header>`;
+}
+
+function genSidebarHTML(sidebarConfig, siteAuthor) {
+    const links = sidebarConfig?.links || [];
+    const linksHTML = links.map(l => {
+        const href = l.href || '#';
+        const text = l.text || '';
+        return `<a href="${href}" class="qx-sidebar-link">${text}</a>`;
+    }).join('');
+    
+    return `<aside class="qx-sidebar">
+        <div class="qx-sidebar-inner">
+            <div class="qx-sidebar-avatar">
+                <svg class="qx-sidebar-avatar-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    ${SIDEBAR_AVATAR_GEO}
+                </svg>
+                <img class="qx-sidebar-avatar-img" src="img/Avatar.png" alt="头像">
+            </div>
+            <p class="qx-sidebar-name">${esc(siteAuthor || 'Author')}</p>
+            <p class="qx-sidebar-motto">${esc(sidebarConfig?.motto || '')}</p>
+            <nav class="qx-sidebar-nav">${linksHTML}</nav>
+        </div>
+    </aside>`;
+}
+
+function genFooterHTML(footerContent = []) {
+    const items = footerContent.map(item => `<p class="qx-footer-item">${item}</p>`).join('');
+    return `<footer class="qx-footer">${items}</footer>`;
+}
+
+const LOAD2_ERR = (f) => `Failed to load \`${f}\`.`;
+const LOAD3 = (f) => {
+    try { return JSON.parse(fs.readFileSync(f, 'utf-8')); }
+    catch (_) { console.error(LOAD2_ERR(f)); return null; }
+};
+
+const siteCfg3 = LOAD3(SITE_CONFIG_PATH) || {};
+const buildCfg3 = LOAD3(BUILD_CONFIG_PATH) || {};
+
+const MAX_PER_PAGE4 = buildCfg3.maxArticlesPerPage || 10;
+
+const SITE_NAME3 = siteCfg3.site?.name || 'QxBlog';
+const SITE_AUTHOR = siteCfg3.site?.author || 'Author';
+
+const HERO_CONFIG = siteCfg3.hero || { tag: '<Blog />', title: 'Welcome', subtitle: '' };
+const SIDEBAR_CONFIG = siteCfg3.sidebar || { motto: '', links: [] };
+const FOOTER_CONTENT = siteCfg3.footerContent || [];
+
+function buildPageVars() {
+    return {
+        SITE_NAME: SITE_NAME3,
+        MAX_PER_PAGE: MAX_PER_PAGE4,
+    };
+}
+
+function genPageTemplate(content, pageType = 'home') {
+    const vars = buildPageVars();
+    const title = pageType === 'home' ? SITE_NAME3 : `${SITE_NAME3} - ${pageType}`;
+    
     return `<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
-    <title>${siteName} - 文章</title>
-    <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
-    <link rel="stylesheet" href="${prefix}css/default.css">
-    ${LOADER_CSS}
-    <script type="module" src="${prefix}js/default.js"></script>
+    <title>${title}</title>
+    <link rel="stylesheet" href="css/default.css">
+    <style>
+        .qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
+    </style>
+    <script type="module" src="js/default.js"></script>
     <script>
-        (function () {
-            var t = localStorage.getItem('qx-theme');
-            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', t);
+        (function(){
+            var t=localStorage.getItem('qx-theme');
+            if(!t)t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+            document.documentElement.setAttribute('data-theme',t);
         })();
     </script>
 </head>
 
 <body>
-    ${LOADER_HTML}
-    <section class="qx-page-hero">
-        <span class="qx-page-hero-tag">&lt;Articles /&gt;</span>
-        <h1 class="qx-page-hero-title">文章</h1>
-        <p class="qx-page-hero-sub">共 ${articles.length} 篇文章。</p>
-    </section>
-
-    <section class="qx-articles">
-        <div class="qx-articles-grid"></div>
-        <div class="qx-pagination" id="qxPagination"></div>
-    </section>
-
+    <div class="qx-loader">
+        <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
+            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
+            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
+            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
+            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
+            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
+            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
+        </svg>
+    </div>
+    ${genNavHTML(SITE_NAME3)}
+    ${content}
+    ${genSidebarHTML(SIDEBAR_CONFIG, SITE_AUTHOR)}
+    ${genFooterHTML(FOOTER_CONTENT)}
 </body>
 
 </html>`;
 }
 
-function genCategoriesListHTML() {
-    const prefix = '../';
+let _unifiedProcessor = null;
 
-    return `<!DOCTYPE html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="view-transition" content="same-origin">
-    <title>${siteName} - 分类</title>
-    <link rel="stylesheet" href="${prefix}css/font-awesome.min.css">
-    <link rel="stylesheet" href="${prefix}css/default.css">
-    ${LOADER_CSS}
-    <script type="module" src="${prefix}js/default.js"></script>
-    <script>
-        (function () {
-            var t = localStorage.getItem('qx-theme');
-            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', t);
-        })();
-    </script>
-</head>
-
-<body>
-    ${LOADER_HTML}
-    <section class="qx-page-hero">
-        <span class="qx-page-hero-tag">&lt;Categories /&gt;</span>
-        <h1 class="qx-page-hero-title">分类</h1>
-        <p class="qx-page-hero-sub">按标签浏览文章。</p>
-    </section>
-
-    <section class="qx-categories">
-        <div class="qx-categories-list"></div>
-    </section>
-
-</body>
-
-</html>`;
+async function getUnifiedProcessor() {
+    if (_unifiedProcessor) return _unifiedProcessor;
+    const [
+        unified, remarkParse, remarkGfm, remarkMath,
+        remarkFrontmatter, remarkBreaks, remarkRehype,
+        rehypeStringify, rehypeSlug, rehypeAutolinkHeadings,
+        rehypeKatex, rehypePrettyCode, shiki
+    ] = await Promise.all([
+        import('unified'), import('remark-parse'), import('remark-gfm'),
+        import('remark-math'), import('remark-frontmatter'), import('remark-breaks'),
+        import('remark-rehype'), import('rehype-stringify'), import('rehype-slug'),
+        import('rehype-autolink-headings'), import('rehype-katex'),
+        import('rehype-pretty-code'), import('shiki')
+    ]);
+    
+    async function customGetHighlighter(options) {
+        const highlighter = await shiki.createHighlighter({
+            themes: options.themes, langs: options.langs,
+        });
+        return highlighter;
+    }
+    
+    _unifiedProcessor = unified.unified()
+        .use(remarkParse.default).use(remarkFrontmatter.default)
+        .use(remarkGfm.default).use(remarkBreaks.default)
+        .use(remarkMath.default).use(remarkRehype.default, { allowDangerousHtml: true })
+        .use(rehypeSlug.default).use(rehypeAutolinkHeadings.default, { behavior: 'wrap', properties: { className: ['qx-heading-anchor'] } })
+        .use(rehypeKatex.default, { throwOnError: false, strict: false })
+        .use(rehypePrettyCode.default, { theme: { light: 'github-light', dark: 'github-dark' }, keepBackground: false, defaultLang: 'text', getHighlighter: customGetHighlighter })
+        .use(rehypeStringify.default, { allowDangerousHtml: true });
+    return _unifiedProcessor;
 }
 
-function genHomeHTML() {
-    const indexPath = path.join(ROOT, 'index.html');
-    let html = fs.readFileSync(indexPath, 'utf-8');
-
-    // Ensure empty grid and pagination placeholder exist
-    html = html.replace(
-        /(<div class="qx-articles-grid">)[\s\S]*?(<\/div>\s*\n\s*<div class="qx-pagination")/,
-        '$1</div>\n        <div class="qx-pagination"'
-    );
-    html = html.replace(
-        /(<div class="qx-articles-grid">)[\s\S]*?(<\/div>\s*\n\s*<\/section>)/,
-        '$1</div>\n        <div class="qx-pagination" id="qxPagination"></div>\n    </section>'
-    );
-
-    fs.writeFileSync(indexPath, html, 'utf-8');
+async function renderMarkdown(md) {
+    try {
+        const processor = await getUnifiedProcessor();
+        const result = await processor.process(md);
+        return String(result);
+    } catch (err) {
+        console.error('Markdown render error:', err);
+        return `<p>${esc(md)}</p>`;
+    }
 }
 
 async function main() {
-    const buildCfg = readJSON(BUILD_CONFIG);
-    const siteCfg = readJSON(SITE_CONFIG);
-    siteName = siteCfg.site?.name || 'QxBlog';
-    const timezoneOffset = buildCfg.timezoneOffset || '+08:00';
-    const perPage = buildCfg.maxArticlesPerPage || 15;
-
-    // Sync friend links from build config to site config
-    const friendLinks = buildCfg.friendLinks || [];
-    siteCfg.about = siteCfg.about || {};
-    siteCfg.about.friendLinks = friendLinks;
-    writeJSON(SITE_CONFIG, siteCfg);
-
-    const issue = {
-        title: process.env.ISSUE_TITLE || '',
-        body: process.env.ISSUE_BODY || '',
-        date: process.env.ISSUE_DATE || new Date().toISOString(),
-        author: process.env.ISSUE_AUTHOR || buildCfg.author || 'unknown',
-        labels: JSON.parse(process.env.ISSUE_LABELS || '[]'),
-        id: parseInt(process.env.ISSUE_ID, 10) || 0,
-        action: process.env.ISSUE_ACTION || 'opened',
-    };
-
-    const articlesIndex = readJSON(ARTICLES_JSON);
-
-    const hasIssue = !!issue.title.trim();
-
-    if (hasIssue && issue.author !== buildCfg.author) {
-        console.log(`Skipped: issue author "${issue.author}" does not match configured author "${buildCfg.author}".`);
-        return;
-    }
-
-    if (issue.action === 'deleted') {
-        const old = articlesIndex[issue.id];
-        if (old) {
-            const articlePath = path.join(ARTICLES_PAGES_DIR, `${issue.id}.html`);
-            if (fs.existsSync(articlePath)) fs.unlinkSync(articlePath);
+    console.log('QxBlog Build Script Starting...');
+    console.log('Root:', ROOT);
+    
+    ensureDir(POSTS_DIR);
+    
+    const issueRE = /^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?!?:/i;
+    
+    try {
+        const output = execSync('gh issue list --state all --limit 1000 --json number,title,body,labels,createdAt,author,updatedAt --template "{{json .}}"', {
+            encoding: 'utf-8',
+            cwd: ROOT,
+        });
+        const issues = JSON.parse(output);
+        
+        if (!issues || issues.length === 0) {
+            console.log('No issues found.');
+            return;
         }
-        delete articlesIndex[issue.id];
-    } else if (hasIssue) {
-        const slug = slugify(issue.title);
-        const localDate = convertToLocal(issue.date, timezoneOffset);
-
-        // Save original markdown with frontmatter
+        
+        console.log(`Found ${issues.length} issues.`);
+        
+        const articles = [];
         const markdownDir = path.join(BLOG_DATA_DIR, 'markdown');
         ensureDir(markdownDir);
-        const markdownPath = path.join(markdownDir, `${issue.id}.md`);
-        const frontmatter = `---
+        
+        for (const issue of issues) {
+            if (!issueRE.test(issue.title) && !issue.labels?.some(l => l.name === 'article')) continue;
+            
+            const localDate = new Date(issue.createdAt).toISOString();
+            const slug = genSlug(issue.title);
+            
+            const markdownPath = path.join(markdownDir, `${issue.id}.md`);
+            const frontmatter = `---
 标题：${issue.title}
 发布日期：${localDate}
-标签：${issue.labels.join(', ')}
-作者：${siteCfg.site?.author || issue.author}
+标签：${issue.labels?.map(l => l.name).join(', ') || ''}
+作者：${siteCfg.site?.author || issue.author?.login || 'Anonymous'}
 文章id：${issue.id}
 ---
 
 ${issue.body || ''}`;
-        fs.writeFileSync(markdownPath, frontmatter, 'utf-8');
-        console.log(`Saved markdown: blogData/markdown/${issue.id}.md`);
+            fs.writeFileSync(markdownPath, frontmatter, 'utf-8');
+            
+            const article = {
+                id: issue.id,
+                slug,
+                title: issue.title,
+                author: siteCfg.site?.author || issue.author?.login || 'Anonymous',
+                date: localDate,
+                labels: issue.labels?.map(l => l.name) || [],
+                markdownPath: `blogData/markdown/${issue.id}.md`,
+            };
+            articles.push(article);
+            
+            const articleBodyHTML = await renderMarkdown(issue.body || '');
+            const labelsHTML = (issue.labels?.map(l => l.name) || []).map(l =>
+                `<a href="categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
+            ).join('\n');
+            
+            const articleHTML = `<!DOCTYPE html>
+<html lang="zh-CN">
 
-        const article = {
-            id: issue.id,
-            slug,
-            title: issue.title,
-            author: siteCfg.site?.author || issue.author,
-            date: localDate,
-            labels: issue.labels,
-            markdownPath: `blogData/markdown/${issue.id}.md`,
-        };
-        articlesIndex[issue.id] = article;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <title>${SITE_NAME} - ${issue.title}</title>
+    <link rel="stylesheet" href="css/katex.min.css">
+    <link rel="stylesheet" href="css/default.css">
+    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
+    <script type="module" src="js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
 
-        // Generate article detail page
-        ensureDir(ARTICLES_PAGES_DIR);
-        const articleHTML = await genArticleHTML({ ...article, body: issue.body });
-        fs.writeFileSync(path.join(ARTICLES_PAGES_DIR, `${issue.id}.html`), articleHTML, 'utf-8');
-        console.log(`Generated article: articles/pages/${issue.id}.html`);
+<body>
+    <div class="qx-loader">
+        <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
+            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
+            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
+            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
+            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
+            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
+            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
+        </svg>
+    </div>
+    <article class="qx-post">
+        <header class="qx-post-header">
+            <a href="javascript:history.back()" class="qx-post-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
+            </a>
+            <h1 class="qx-post-title">${issue.title}</h1>
+            <div class="qx-post-meta">
+                <span class="qx-post-date">${formatDate(localDate)}</span>
+                <span class="qx-post-author">${siteCfg.site?.author || issue.author?.login || 'Anonymous'}</span>
+            </div>
+            <div class="qx-post-labels">${labelsHTML}</div>
+        </header>
+        <div class="qx-post-body">${articleBodyHTML}</div>
+    </article>
+</body>
+
+</html>`;
+            
+            const postPath = path.join(POSTS_DIR, `${issue.id}.html`);
+            fs.writeFileSync(postPath, articleHTML, 'utf-8');
+            console.log(`Generated post: posts/${issue.id}.html`);
+        }
+        
+        saveJSON(ARTICLES_JSON_PATH, articles);
+        console.log(`Saved ${articles.length} articles to ${ARTICLES_JSON_PATH}`);
+        
+        const allLabels = [...new Set(articles.flatMap(a => a.labels || []))];
+        const categories = genCategoriesJSON(allLabels, articles);
+        saveJSON(CATEGORIES_JSON_PATH, categories);
+        console.log(`Saved ${categories.length} categories to ${CATEGORIES_JSON_PATH}`);
+        
+        cleanupLegacyPaginationData();
+        
+        console.log('Build complete!');
+        
+    } catch (err) {
+        console.error('Build error:', err);
+        process.exit(1);
     }
-
-    // Save updated blog config
-    writeJSON(ARTICLES_JSON, articlesIndex);
-
-    // Collect all articles and labels
-    const articles = Object.values(articlesIndex);
-    const allLabels = [...new Set(articles.flatMap(a => a.labels || []))].sort();
-
-    // Cleanup legacy paginated data folders from previous versions
-    cleanupLegacyPaginationData();
-
-    // Generate categories JSON
-    genCategoriesJSON(allLabels, articles);
-
-    // Generate category pages
-    allLabels.forEach(label => {
-        const catDir = path.join(CATEGORIES_DIR, label);
-        ensureDir(catDir);
-        const filtered = articles.filter(a => (a.labels || []).includes(label));
-        const catHTML = genCategoryHTML(label, filtered.length);
-        fs.writeFileSync(path.join(catDir, 'index.html'), catHTML, 'utf-8');
-    });
-    // Clean up stale category dirs
-    if (fs.existsSync(CATEGORIES_DIR)) {
-        fs.readdirSync(CATEGORIES_DIR).forEach(entry => {
-            if (entry === 'index.html') return;
-            if (!allLabels.includes(entry)) {
-                const p = path.join(CATEGORIES_DIR, entry);
-                if (fs.statSync(p).isDirectory()) fs.rmSync(p, { recursive: true });
-            }
-        });
-    }
-    // Generate articles list page
-    const articlesListHTML = genArticlesListHTML(articles);
-    fs.writeFileSync(path.join(ARTICLES_DIR, 'index.html'), articlesListHTML, 'utf-8');
-
-    // Generate categories list page
-    const catListHTML = genCategoriesListHTML();
-    fs.writeFileSync(path.join(CATEGORIES_DIR, 'index.html'), catListHTML, 'utf-8');
-
-    // Update home page article cards
-    genHomeHTML();
-
-    console.log(`Build complete. ${articles.length} articles, ${allLabels.length} categories, ~${Math.ceil(articles.length / perPage)} pages.`);
 }
 
 main();

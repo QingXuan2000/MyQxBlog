@@ -1,5 +1,5 @@
 const DATA_URL = new URL('../blogData/articles.json', import.meta.url).href;
-const PAGE_HREF = new URL('../articles/pages/', import.meta.url).href;
+const PAGE_HREF = new URL('../posts/', import.meta.url).href;
 
 export class QxSearch {
     constructor() {

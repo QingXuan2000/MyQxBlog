@@ -56,7 +56,7 @@ export class QxArticles {
                 const href = new URL(`categories/${encodeURIComponent(l)}/`, ROOT).pathname;
                 return `<a href="${href}" class="qx-article-card-label">${l}</a>`;
             }).join('\n');
-            const href = new URL(`articles/pages/${a.id}.html`, ROOT).pathname;
+            const href = new URL(`posts/${a.id}.html`, ROOT).pathname;
             return `<a href="${href}" class="qx-article-card">
                 <div class="qx-article-card-date">${a.date}</div>
                 <div class="qx-article-card-title">${a.title}</div>
@@ -77,7 +77,7 @@ export class QxArticles {
         const isLast = this.currentPage === this.totalPages;
 
         const prevDisabled = isFirst ? ' disabled' : '';
-        let row = `<button class="qx-pagination-nav${prevDisabled}" data-page="${this.currentPage - 1}"${isFirst ? ' disabled' : ''}><i class="fa fa-chevron-left"></i></button>`;
+        let row = `<button class="qx-pagination-nav${prevDisabled}" data-page="${this.currentPage - 1}"${isFirst ? ' disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>`;
 
         const pages = this._buildPages();
         for (const p of pages) {
@@ -90,7 +90,7 @@ export class QxArticles {
         }
 
         const nextDisabled = isLast ? ' disabled' : '';
-        row += `<button class="qx-pagination-nav${nextDisabled}" data-page="${this.currentPage + 1}"${isLast ? ' disabled' : ''}><i class="fa fa-chevron-right"></i></button>`;
+        row += `<button class="qx-pagination-nav${nextDisabled}" data-page="${this.currentPage + 1}"${isLast ? ' disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>`;
 
         const jump = `<span class="qx-pagination-jump"><input type="number" class="qx-pagination-input" min="1" max="${this.totalPages}" placeholder="${this.currentPage}"><button class="qx-pagination-go">GO</button></span>`;
 

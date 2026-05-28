@@ -45,12 +45,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         await categories.load();
     }
 
-    // Unified/Shiki code blocks
     document.querySelectorAll('.qx-post-body figure[data-rehype-pretty-code-figure]').forEach(figure => {
         const pre = figure.querySelector('pre');
         const code = pre?.querySelector('code');
         
-        // Language label
         const lang = pre?.dataset.language;
         if (lang) {
             const label = document.createElement('figcaption');
@@ -59,17 +57,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             figure.insertBefore(label, pre);
         }
 
-        // Copy button
         const btn = document.createElement('button');
         btn.className = 'qx-code-copy';
-        btn.innerHTML = '<i class="fa fa-clipboard"></i>';
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
         btn.title = '复制代码';
         btn.addEventListener('click', () => {
             const text = code ? code.textContent : pre?.textContent;
             if (text) {
                 navigator.clipboard.writeText(text).then(() => {
-                    btn.innerHTML = '<i class="fa fa-check"></i>';
-                    setTimeout(() => { btn.innerHTML = '<i class="fa fa-clipboard"></i>'; }, 1500);
+                    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    setTimeout(() => { 
+                        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+                    }, 1500);
                 }).catch(() => {});
             }
         });
@@ -89,10 +88,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         loader.addEventListener('transitionend', () => loader.remove());
     }
 
-    // Back to top button
     const btt = document.createElement('button');
     btt.className = 'qx-btt';
-    btt.innerHTML = '<i class="fa fa-arrow-up"></i>';
+    btt.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
     btt.title = '返回顶部';
     btt.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });

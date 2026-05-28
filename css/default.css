@@ -80,7 +80,7 @@
     stroke: var(--text-body);
 }
 
-/* Outer hexagon 闁?dash travels around the perimeter (~1560) */
+/* Outer hexagon */
 .qx-loader-outer {
     fill: none;
     stroke: var(--text-body);
@@ -92,7 +92,7 @@
     animation: loader-dash-travel 3s linear infinite;
 }
 
-/* Inner hexagon 闁?slow counter-rotation */
+/* Inner hexagon */
 .qx-loader-inner {
     fill: none;
     stroke: var(--text-body);
@@ -117,7 +117,7 @@
     animation: loader-dot-pulse 3s ease-in-out infinite;
 }
 
-/* Inner vertex dots 闁?static, faint */
+/* Inner vertex dots */
 .qx-loader-idot {
     fill: var(--text-body);
     opacity: .22;
@@ -904,10 +904,11 @@ body {
 }
 
 .qx-sidebar-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     padding: 12px 16px;
-    text-align: center;
     text-decoration: none;
     font-size: .95rem;
     line-height: var(--leading-ui);
@@ -915,6 +916,7 @@ body {
     opacity: .6;
     border: 1px solid transparent;
     transition: opacity .2s, border-color .2s;
+    gap: 8px;
 }
 
 .qx-sidebar-link:hover,
@@ -1272,39 +1274,39 @@ body {
 }
 
 .qx-categories-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .qx-category-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 20px 16px;
+    gap: 12px;
+    padding: 10px 16px;
     border: 1px solid var(--text-body);
+    border-radius: 2px;
     text-decoration: none;
     color: var(--text-body);
-    opacity: .65;
-    transition: opacity .2s;
+    background: var(--bg-body);
+    transition: all .2s;
 }
 
 .qx-category-item:hover {
+    border-color: var(--text-body);
     opacity: 1;
-    border-radius: 2px;
 }
 
 .qx-category-name {
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: var(--leading-ui);
+    font-size: .95rem;
+    font-weight: 600;
     letter-spacing: 0;
 }
 
 .qx-category-count {
     font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
-    font-size: .8rem;
-    opacity: .4;
+    font-size: .75rem;
+    opacity: .5;
 }
 
 /* ========== About ========== */
@@ -1512,9 +1514,8 @@ body {
     margin: 0;
 }
 
-/* ---- Code Block 闁?Research Terminal (Unified/Shiki) ---- */
+/* ---- Code Block ---- */
 
-/* Code figure wrapper */
 .qx-post-body figure[data-rehype-pretty-code-figure] {
     position: relative;
     margin: 28px 0;
@@ -1526,7 +1527,6 @@ body {
     --qx-code-pad-x: 28px;
 }
 
-/* Language title bar */
 .qx-post-body figcaption[data-rehype-pretty-code-title] {
     font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
     font-size: .65rem;
@@ -1538,7 +1538,6 @@ body {
     user-select: none;
 }
 
-/* Code pre container */
 .qx-post-body figure[data-rehype-pretty-code-figure] pre {
     position: relative;
     margin: 0;
@@ -1550,7 +1549,6 @@ body {
     transition: none;
 }
 
-/* Copy button */
 .qx-code-copy {
     position: absolute;
     top: 8px;
@@ -1570,7 +1568,6 @@ body {
     border-radius: 2px;
 }
 
-/* Code lines (with line numbers) */
 .qx-post-body figure[data-rehype-pretty-code-figure] code {
     font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
     font-size: 15px;
@@ -1586,14 +1583,12 @@ body {
     counter-reset: line;
 }
 
-/* Each line is a flex row: line number + code content */
 .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] {
     display: flex;
     align-items: baseline;
     padding: 0 0 0 0;
 }
 
-/* Line number */
 .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line]::before {
     content: counter(line);
     counter-increment: line;
@@ -1609,7 +1604,6 @@ body {
     flex-shrink: 0;
 }
 
-/* Shiki color variables */
 [data-theme="light"] figure[data-rehype-pretty-code-figure] code span {
     color: var(--shiki-light);
 }
@@ -1618,7 +1612,6 @@ body {
     color: var(--shiki-dark);
 }
 
-/* Inline code */
 .qx-post-body span[data-rehype-pretty-code-figure] {
     display: inline;
 }
@@ -1792,7 +1785,7 @@ body {
     color: var(--bg-body);
 }
 
-/* ============== KaTeX 闁轰焦婢橀鐔煎礂椤掆偓缁憋繝寮藉畡鎵 ============== */
+/* ============== KaTeX ============== */
 
 .katex {
     font-size: 1em;
@@ -1804,7 +1797,6 @@ body {
     overflow-y: hidden;
 }
 
-/* 闁哄棙顨婄划锕€螣閳ュ磭纭€濡増绮忔竟?*/
 [data-theme="dark"] .katex {
     color: rgba(230, 237, 243, 0.92);
 }
@@ -1821,10 +1813,6 @@ body {
     color: inherit;
 }
 
-/* 婵炴潙鎳撴竟濠偽熼垾宕囩濡増绮忔竟?- 濞ｅ洦绻冪€?GitHub Primer 濡炲瀛╅悧?*/
 [data-theme="light"] .katex {
     color: inherit;
 }
-
-
-
