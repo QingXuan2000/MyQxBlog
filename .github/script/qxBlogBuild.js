@@ -686,15 +686,18 @@ async function buildFromGitHubIssues() {
         for (const issue of issues) {
             const isConventionalCommit = issueRE.test(issue.title);
             const hasArticleLabel = issue.labels?.some(l => l.name === 'article');
+            const hasNoArticleLabel = issue.labels?.some(l => l.name === 'no-article');
             
             log('Filter', `Checking issue #${issue.number}: "${issue.title}"`, {
                 isConventionalCommit,
                 hasArticleLabel,
+                hasNoArticleLabel,
                 labels: issue.labels?.map(l => l.name) || []
             });
             
-            if (!isConventionalCommit && !hasArticleLabel) {
-                log('Skip', `Issue #${issue.number} skipped (not an article)`, { reason: 'No article label and not conventional commit format' });
+            // Skip only if explicitly marked as no-article
+            if (hasNoArticleLabel) {
+                log('Skip', `Issue #${issue.number} skipped (marked as no-article)`, { reason: 'Has no-article label' });
                 skippedCount++;
                 continue;
             }
@@ -869,6 +872,157 @@ async function buildFromLocalMarkdown(fileId) {
     });
 }
 
+async function buildAllLocalArticles() {
+    log('Start', 'QxBlog Local Build - All Articles Mode');
+    log('Info', 'Root directory', { root: ROOT });
+    
+    ensureDir(POSTS_DIR);
+    ensureDir(MARKDOWN_DIR);
+    
+    const files = fs.readdirSync(MARKDOWN_DIR).filter(f => f.endsWith('.md'));
+    
+    if (files.length === 0) {
+        log('Warning', 'No markdown files found');
+        return;
+    }
+    
+    log('Info', `Found ${files.length} markdown files`, {
+        files: files.sort()
+    });
+    
+    const articles = [];
+    
+    for (const file of files) {
+        const fileId = file.replace('.md', '');
+        log('Read', `Reading file: ${file}`);
+        
+        const content = fs.readFileSync(path.join(MARKDOWN_DIR, file), 'utf-8');
+        const parsed = parseFrontmatter(content);
+        
+        if (!parsed) {
+            log('Error', `Failed to parse frontmatter in ${file}`);
+            continue;
+        }
+        
+        const { data, body } = parsed;
+        
+        const id = data.id || fileId;
+        const title = data.title || 'Untitled';
+        const author = data.author || 'Anonymous';
+        const date = data.date || new Date().toISOString();
+        const tags = Array.isArray(data.tags) ? data.tags : [];
+        
+        const slug = genSlug(title);
+        
+        const article = {
+            id: Number(id),
+            slug,
+            title,
+            author,
+            date,
+            labels: tags,
+            markdownPath: `blogData/markdown/${file}`,
+        };
+        
+        log('Data', `Article object created for #${id}`, article);
+        
+        const articleBodyHTML = await renderMarkdown(body);
+        const labelsHTML = tags.map(l =>
+            `<a href="categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
+        ).join('\n');
+        
+        const articleHTML = `<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <title>${SITE_NAME} - ${title}</title>
+    <link rel="stylesheet" href="css/katex.min.css">
+    <link rel="stylesheet" href="css/default.css">
+    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
+    <script type="module" src="js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="qx-loader">
+        <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
+            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
+            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
+            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
+            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
+            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
+            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
+        </svg>
+    </div>
+    <article class="qx-post">
+        <header class="qx-post-header">
+            <h1 class="qx-post-title">${esc(title)}</h1>
+            <div class="qx-post-meta">
+                <span class="qx-post-author">${esc(author)}</span>
+                <span class="qx-post-date">${esc(formatDate(date))}</span>
+                <span class="qx-post-labels">${labelsHTML}</span>
+            </div>
+        </header>
+        <div class="qx-post-body">${articleBodyHTML}</div>
+    </article>
+</body>
+
+</html>`;
+        
+        const postPath = path.join(POSTS_DIR, `${id}.html`);
+        fs.writeFileSync(postPath, articleHTML, 'utf-8');
+        log('File', `Generated HTML post: ${postPath}`);
+        
+        articles.push(article);
+    }
+    
+    const updatedArticles = updateArticlesJSONFromArray(articles);
+    const categories = updateCategoriesJSON(updatedArticles);
+    
+    log('Complete', 'Build complete!', {
+        totalArticles: updatedArticles.length,
+        totalCategories: categories.length,
+        outputFiles: {
+            posts: POSTS_DIR,
+            articles: ARTICLES_JSON_PATH,
+            categories: CATEGORIES_JSON_PATH,
+        }
+    });
+}
+
+function updateArticlesJSONFromArray(newArticles) {
+    let articles = [];
+    if (fs.existsSync(ARTICLES_JSON_PATH)) {
+        articles = loadJSON(ARTICLES_JSON_PATH) || [];
+    }
+    
+    for (const newArticle of newArticles) {
+        const existingIndex = articles.findIndex(a => a.id === newArticle.id);
+        if (existingIndex >= 0) {
+            articles[existingIndex] = newArticle;
+            log('JSON', `Updated existing article #${newArticle.id} in articles.json`);
+        } else {
+            articles.push(newArticle);
+            log('JSON', `Added new article #${newArticle.id} to articles.json`);
+        }
+    }
+    
+    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+    saveJSON(ARTICLES_JSON_PATH, articles);
+    return articles;
+}
+
 const program = new Command();
 
 program
@@ -877,10 +1031,14 @@ program
   .version('1.0.0');
 
 program
-  .command('local <id>')
-  .description('从本地 Markdown 文件构建单篇文章')
+  .command('local [id]')
+  .description('从本地 Markdown 文件构建文章（不提供 ID 则构建所有）')
   .action(async (id) => {
-    await buildFromLocalMarkdown(id);
+    if (id) {
+        await buildFromLocalMarkdown(id);
+    } else {
+        await buildAllLocalArticles();
+    }
   });
 
 program
