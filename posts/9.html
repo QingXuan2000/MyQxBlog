@@ -82,10 +82,10 @@
 <h2 id="首次使用"><a class="qx-heading-anchor" href="#首次使用">首次使用</a></h2>
 <ol>
 <li>通过 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>http://你的服务器IP:8080</span></span></code></span> 访问网页端（初始未配置 HTTPS，仅用于注册。我其实不太推荐在公网直接用 HTTP 注册，但如果只是临时操作且内网环境，问题不大）。</li>
-<li>点击“创建账户”，输入姓名、邮箱地址、主密码（务必牢记且足够复杂。这里说句题外话：主密码一旦忘记，没有任何办法恢复，因为服务端根本没有存储）。</li>
+<li>点击“创建账户”，输入姓名、邮箱地址、主密码（务必牢记且足够复杂。主密码一旦忘记，没有任何办法恢复，因为服务端根本没有存储）。</li>
 <li>注册成功后，立即关闭公开注册：编辑 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>docker-compose.yml</span></span></code></span>，将 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>SIGNUPS_ALLOWED</span></span></code></span> 改为 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>"false"</span></span></code></span>，然后重启服务：
 <figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">docker</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> compose</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> up</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -d</span></span></code></pre></figure>
-（Docker Compose 会自动检测配置变更并重建容器，无需先执行 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>down</span></span></code></span>。这一点我最初也搞错过，总喜欢先 down 再 up，其实没必要。）</li>
+（Docker Compose 会自动检测配置变更并重建容器，无需先执行 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>down</span></span></code></span>。）</li>
 </ol>
 <h2 id="配置反向代理与-https强烈推荐"><a class="qx-heading-anchor" href="#配置反向代理与-https强烈推荐">配置反向代理与 HTTPS（强烈推荐）</a></h2>
 <p>使用 Nginx + Let's Encrypt 提供加密访问。说实话，这一步是大多数问题的来源，需要仔细检查。</p>
@@ -130,7 +130,7 @@
 <p>启用站点并获取证书：</p>
 <figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> ln</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> /etc/nginx/sites-available/vault</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> /etc/nginx/sites-enabled/</span></span>
 <span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> certbot</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> --nginx</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF"> -d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> vault.example.com</span></span></code></pre></figure>
-<p>Certbot 会自动修改 Nginx 配置并重载。如果出现错误，请检查域名 DNS 是否正确解析到服务器 IP —— 这个低级错误我犯过不止一次。</p>
+<p>Certbot 会自动修改 Nginx 配置并重载。如果出现错误，请检查域名 DNS 是否正确解析到服务器 IP</p>
 <h2 id="基本安全设置"><a class="qx-heading-anchor" href="#基本安全设置">基本安全设置</a></h2>
 <ul>
 <li><strong>禁用公开注册</strong>：如上所述设置 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>SIGNUPS_ALLOWED=false</span></span></code></span></li>
