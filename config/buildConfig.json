@@ -1,4 +1,5 @@
 {
     "author": "QingXuan2000",
-    "timezoneOffset": "+08:00"
+    "timezoneOffset": "+08:00",
+    "maxArticlesPerPage": 20
 }

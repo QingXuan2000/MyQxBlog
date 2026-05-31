@@ -10,6 +10,7 @@ const OUTPUT_DIR = ROOT;
 const CONFIG_DIR = path.join(ROOT, 'config');
 const BLOG_DATA_DIR = path.join(ROOT, 'blogData');
 const POSTS_DIR = path.join(ROOT, 'posts');
+const MARKDOWN_DIR = path.join(BLOG_DATA_DIR, 'markdown');
 
 const SITE_CONFIG_PATH = path.join(CONFIG_DIR, 'siteConfig.json');
 const BUILD_CONFIG_PATH = path.join(CONFIG_DIR, 'buildConfig.json');
@@ -19,15 +20,39 @@ const ARTICLES_JSON_PATH = path.join(BLOG_DATA_DIR, 'articles.json');
 const SITE_NAME = 'QxBlog';
 const MAX_ARTICLES_PER_PAGE = 10;
 
+function log(status, message, data) {
+    const prefix = `[${status}]`;
+    if (data !== undefined) {
+        console.info(`${prefix} ${message}`);
+        console.dir(data, { depth: null, colors: false });
+    } else {
+        console.info(`${prefix} ${message}`);
+    }
+}
+
 const LOAD_ERR = (f) => `Failed to load \`${f}\`. Check if the file exists or is valid JSON.`;
 const LOAD = (f) => {
     try { return JSON.parse(fs.readFileSync(f, 'utf-8')); }
-    catch (_) { console.error(LOAD_ERR(f)); return null; }
+    catch (e) { log('Error', LOAD_ERR(f), { error: e.message }); return null; }
 };
 
+log('Init', 'Loading configuration files...');
 const siteCfg = LOAD(SITE_CONFIG_PATH) || {};
 const buildCfg = LOAD(BUILD_CONFIG_PATH) || {};
 const categoriesData = LOAD(CATEGORIES_JSON_PATH) || [];
+
+if (!siteCfg.site) {
+    log('Warning', 'siteConfig.json is empty or invalid, using defaults');
+}
+if (!buildCfg.author) {
+    log('Warning', 'buildConfig.json is empty or invalid, using defaults');
+}
+
+log('Config', 'Configuration loaded', {
+    siteName: siteCfg.site?.name || SITE_NAME,
+    author: siteCfg.site?.author || buildCfg.author || 'Anonymous',
+    maxArticlesPerPage: buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE,
+});
 
 const MAX_PER_PAGE = buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
 
@@ -35,7 +60,10 @@ const _tmpl = (t, d) => t.replace(/\$\{([^}]+)\}/g, (_, k) => d[k] ?? '');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 function ensureDir(dir) {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+        log('Dir', `Created directory: ${dir}`);
+    }
 }
 
 function loadJSON(file) {
@@ -45,6 +73,7 @@ function loadJSON(file) {
 
 function saveJSON(file, data) {
     fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf-8');
+    log('JSON', `Saved JSON to ${file}`, { recordCount: Array.isArray(data) ? data.length : 1 });
 }
 
 function formatDate(dateStr) {
@@ -62,7 +91,7 @@ const MAX_PER_PAGE2 = buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
 const LOAD_ERR2 = (f) => `Failed to load \`${f}\`. Check if the file exists or is valid JSON.`;
 const LOAD2 = (f) => {
     try { return JSON.parse(fs.readFileSync(f, 'utf-8')); }
-    catch (_) { console.error(LOAD_ERR2(f)); return null; }
+    catch (e) { log('Error', LOAD_ERR2(f), { error: e.message }); return null; }
 };
 
 const siteCfg2 = LOAD2(SITE_CONFIG_PATH) || {};
@@ -210,7 +239,10 @@ function cleanupLegacyPaginationData() {
         path.join(BLOG_DATA_DIR, 'categories'),
     ];
     legacyDirs.forEach(dir => {
-        if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
+        if (fs.existsSync(dir)) {
+            fs.rmSync(dir, { recursive: true, force: true });
+            log('Cleanup', `Removed legacy directory: ${dir}`);
+        }
     });
 }
 
@@ -226,9 +258,10 @@ function loadConfig() {
     try {
         const data = JSON.parse(fs.readFileSync(SITE_CONFIG_PATH, 'utf-8'));
         const bData = JSON.parse(fs.readFileSync(BUILD_CONFIG_PATH, 'utf-8'));
+        log('Config', 'loadConfig() loaded successfully');
         return { siteCfg: data, buildCfg: bData };
     } catch (e) {
-        console.error('Config load error:', e.message);
+        log('Error', 'Config load error', { message: e.message });
         return { siteCfg: {}, buildCfg: {} };
     }
 }
@@ -325,7 +358,7 @@ function genFooterHTML(footerContent = []) {
 const LOAD2_ERR = (f) => `Failed to load \`${f}\`.`;
 const LOAD3 = (f) => {
     try { return JSON.parse(fs.readFileSync(f, 'utf-8')); }
-    catch (_) { console.error(LOAD2_ERR(f)); return null; }
+    catch (e) { log('Error', LOAD2_ERR(f), { error: e.message }); return null; }
 };
 
 const siteCfg3 = LOAD3(SITE_CONFIG_PATH) || {};
@@ -399,6 +432,7 @@ let _unifiedProcessor = null;
 
 async function getUnifiedProcessor() {
     if (_unifiedProcessor) return _unifiedProcessor;
+    log('Markdown', 'Initializing unified processor...');
     const [
         unified, remarkParse, remarkGfm, remarkMath,
         remarkFrontmatter, remarkBreaks, remarkRehype,
@@ -427,6 +461,7 @@ async function getUnifiedProcessor() {
         .use(rehypeKatex.default, { throwOnError: false, strict: false })
         .use(rehypePrettyCode.default, { theme: { light: 'github-light', dark: 'github-dark' }, keepBackground: false, defaultLang: 'text', getHighlighter: customGetHighlighter })
         .use(rehypeStringify.default, { allowDangerousHtml: true });
+    log('Markdown', 'Unified processor initialized');
     return _unifiedProcessor;
 }
 
@@ -436,20 +471,194 @@ async function renderMarkdown(md) {
         const result = await processor.process(md);
         return String(result);
     } catch (err) {
-        console.error('Markdown render error:', err);
+        log('Error', 'Markdown render error', { error: err.message });
         return `<p>${esc(md)}</p>`;
     }
 }
 
-async function main() {
-    console.log('QxBlog Build Script Starting...');
-    console.log('Root:', ROOT);
+function parseFrontmatter(content) {
+    const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+    if (!match) return null;
+
+    const frontmatterText = match[1];
+    const body = match[2].trim();
+
+    const data = {};
+    const lines = frontmatterText.split('\n');
+    for (const line of lines) {
+        const colonIndex = line.indexOf(':');
+        if (colonIndex === -1) continue;
+        const key = line.slice(0, colonIndex).trim();
+        const value = line.slice(colonIndex + 1).trim();
+        
+        // Handle array format: ["tag1", "tag2"]
+        if (value.startsWith('[') && value.endsWith(']')) {
+            try {
+                data[key] = JSON.parse(value.replace(/'/g, '"'));
+            } catch {
+                data[key] = value;
+            }
+        } else if (value.startsWith('"') && value.endsWith('"')) {
+            // Handle quoted string
+            data[key] = value.slice(1, -1);
+        } else {
+            data[key] = value;
+        }
+    }
+
+    return { data, body };
+}
+
+async function buildSingleArticle(fileId) {
+    const filename = `${fileId}.md`;
+    const filePath = path.join(MARKDOWN_DIR, filename);
+
+    if (!fs.existsSync(filePath)) {
+        log('Error', `File not found: ${filePath}`);
+        return false;
+    }
+
+    log('Read', `Reading file: ${filename}`);
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const parsed = parseFrontmatter(content);
+
+    if (!parsed) {
+        log('Error', `Failed to parse frontmatter in ${filename}`);
+        return false;
+    }
+
+    const { data, body } = parsed;
+    log('Parse', `Frontmatter parsed for ${filename}`, {
+        title: data['title'],
+        date: data['date'],
+        tags: data['tags'],
+        author: data['author'],
+        id: data['id']
+    });
+
+    const id = parseInt(data['id']) || parseInt(fileId) || 0;
+    const title = data['title'] || 'Untitled';
+    const date = data['date'] || new Date().toISOString();
+    const author = data['author'] || siteCfg.site?.author || 'Anonymous';
+    const labels = Array.isArray(data['tags']) ? data['tags'] : (data['tags'] ? data['tags'].split(',').map(l => l.trim()).filter(Boolean) : []);
+    const slug = genSlug(title);
+
+    const article = {
+        id,
+        slug,
+        title,
+        author,
+        date,
+        labels,
+        markdownPath: `blogData/markdown/${filename}`,
+    };
+
+    log('Data', `Article object created for #${id}`, article);
+
+    const articleBodyHTML = await renderMarkdown(body);
+    const labelsHTML = labels.map(l =>
+        `<a href="../categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
+    ).join('\n');
+
+    const articleHTML = `<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <title>${SITE_NAME} - ${title}</title>
+    <link rel="stylesheet" href="../css/katex.min.css">
+    <link rel="stylesheet" href="../css/default.css">
+    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
+    <script type="module" src="../js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="qx-loader">
+        <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
+            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
+            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
+            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
+            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
+            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
+            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
+        </svg>
+    </div>
+    <article class="qx-post">
+        <header class="qx-post-header">
+            <a href="javascript:history.back()" class="qx-post-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
+            </a>
+            <h1 class="qx-post-title">${title}</h1>
+            <div class="qx-post-meta">
+                <span class="qx-post-date">${formatDate(date)}</span>
+                <span class="qx-post-author">${author}</span>
+            </div>
+            <div class="qx-post-labels">${labelsHTML}</div>
+        </header>
+        <div class="qx-post-body">${articleBodyHTML}</div>
+    </article>
+</body>
+
+</html>`;
+
+    const postPath = path.join(POSTS_DIR, `${id}.html`);
+    fs.writeFileSync(postPath, articleHTML, 'utf-8');
+    log('File', `Generated HTML post: ${postPath}`);
+
+    return article;
+}
+
+function updateArticlesJSON(newArticle) {
+    let articles = [];
+    if (fs.existsSync(ARTICLES_JSON_PATH)) {
+        articles = loadJSON(ARTICLES_JSON_PATH) || [];
+    }
+
+    const existingIndex = articles.findIndex(a => a.id === newArticle.id);
+    if (existingIndex >= 0) {
+        articles[existingIndex] = newArticle;
+        log('JSON', `Updated existing article #${newArticle.id} in articles.json`);
+    } else {
+        articles.push(newArticle);
+        log('JSON', `Added new article #${newArticle.id} to articles.json`);
+    }
+
+    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+    saveJSON(ARTICLES_JSON_PATH, articles);
+    return articles;
+}
+
+function updateCategoriesJSON(articles) {
+    const allLabels = [...new Set(articles.flatMap(a => a.labels || []))];
+    const categories = allLabels.map(label => ({
+        label,
+        count: articles.filter(a => (a.labels || []).includes(label)).length,
+    }));
+    saveJSON(CATEGORIES_JSON_PATH, categories);
+    return categories;
+}
+
+async function buildFromGitHubIssues() {
+    log('Start', 'QxBlog Build Script Starting...');
+    log('Info', 'Root directory', { root: ROOT });
     
     ensureDir(POSTS_DIR);
     
     const issueRE = /^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?!?:/i;
     
     try {
+        log('GitHub', 'Fetching issues from GitHub...');
         const output = execSync('gh issue list --state all --limit 1000 --json number,title,body,labels,createdAt,author,updatedAt', {
             encoding: 'utf-8',
             cwd: ROOT,
@@ -457,33 +666,63 @@ async function main() {
         const issues = JSON.parse(output);
         
         if (!issues || issues.length === 0) {
-            console.log('No issues found.');
+            log('Warning', 'No issues found in repository');
             return;
         }
         
-        console.log(`Found ${issues.length} issues.`);
+        log('GitHub', `Found ${issues.length} total issues`, { 
+            issueNumbers: issues.map(i => i.number),
+            issueTitles: issues.map(i => i.title)
+        });
         
         const articles = [];
         const markdownDir = path.join(BLOG_DATA_DIR, 'markdown');
         ensureDir(markdownDir);
         
+        let skippedCount = 0;
+        let processedCount = 0;
+        
         for (const issue of issues) {
-            if (!issueRE.test(issue.title) && !issue.labels?.some(l => l.name === 'article')) continue;
+            const isConventionalCommit = issueRE.test(issue.title);
+            const hasArticleLabel = issue.labels?.some(l => l.name === 'article');
+            
+            log('Filter', `Checking issue #${issue.number}: "${issue.title}"`, {
+                isConventionalCommit,
+                hasArticleLabel,
+                labels: issue.labels?.map(l => l.name) || []
+            });
+            
+            if (!isConventionalCommit && !hasArticleLabel) {
+                log('Skip', `Issue #${issue.number} skipped (not an article)`, { reason: 'No article label and not conventional commit format' });
+                skippedCount++;
+                continue;
+            }
+            
+            processedCount++;
             
             const localDate = new Date(issue.createdAt).toISOString();
             const slug = genSlug(issue.title);
             
+            log('Process', `Processing issue #${issue.number}`, {
+                title: issue.title,
+                slug,
+                date: localDate,
+                labels: issue.labels?.map(l => l.name) || []
+            });
+            
             const markdownPath = path.join(markdownDir, `${issue.number}.md`);
+            const labelsArray = issue.labels?.map(l => l.name) || [];
             const frontmatter = `---
-标题：${issue.title}
-发布日期：${localDate}
-标签：${issue.labels?.map(l => l.name).join(', ') || ''}
-作者：${siteCfg.site?.author || issue.author?.login || 'Anonymous'}
-文章id：${issue.number}
+title: "${issue.title}"
+date: "${localDate}"
+tags: [${labelsArray.map(l => `"${l}"`).join(', ')}]
+author: "${siteCfg.site?.author || issue.author?.login || 'Anonymous'}"
+id: ${issue.number}
 ---
 
 ${issue.body || ''}`;
             fs.writeFileSync(markdownPath, frontmatter, 'utf-8');
+            log('File', `Generated markdown: ${markdownPath}`);
             
             const article = {
                 id: issue.number,
@@ -491,13 +730,14 @@ ${issue.body || ''}`;
                 title: issue.title,
                 author: siteCfg.site?.author || issue.author?.login || 'Anonymous',
                 date: localDate,
-                labels: issue.labels?.map(l => l.name) || [],
+                labels: labelsArray,
                 markdownPath: `blogData/markdown/${issue.number}.md`,
             };
             articles.push(article);
+            log('Data', `Article object created for #${issue.number}`, article);
             
             const articleBodyHTML = await renderMarkdown(issue.body || '');
-            const labelsHTML = (issue.labels?.map(l => l.name) || []).map(l =>
+            const labelsHTML = labelsArray.map(l =>
                 `<a href="categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
             ).join('\n');
             
@@ -555,25 +795,92 @@ ${issue.body || ''}`;
             
             const postPath = path.join(POSTS_DIR, `${issue.number}.html`);
             fs.writeFileSync(postPath, articleHTML, 'utf-8');
-            console.log(`Generated post: posts/${issue.number}.html`);
+            log('File', `Generated HTML post: ${postPath}`);
         }
         
+        log('Summary', 'Issue processing complete', {
+            totalIssues: issues.length,
+            processed: processedCount,
+            skipped: skippedCount,
+            articlesGenerated: articles.length
+        });
+        
         saveJSON(ARTICLES_JSON_PATH, articles);
-        console.log(`Saved ${articles.length} articles to ${ARTICLES_JSON_PATH}`);
         
         const allLabels = [...new Set(articles.flatMap(a => a.labels || []))];
         const categories = genCategoriesJSON(allLabels, articles);
         saveJSON(CATEGORIES_JSON_PATH, categories);
-        console.log(`Saved ${categories.length} categories to ${CATEGORIES_JSON_PATH}`);
+        
+        log('Data', 'Categories generated', { categories });
         
         cleanupLegacyPaginationData();
         
-        console.log('Build complete!');
+        log('Complete', 'Build complete!', {
+            totalArticles: articles.length,
+            totalCategories: categories.length,
+            outputFiles: {
+                articles: ARTICLES_JSON_PATH,
+                categories: CATEGORIES_JSON_PATH,
+                posts: POSTS_DIR,
+                markdown: path.join(BLOG_DATA_DIR, 'markdown')
+            }
+        });
         
     } catch (err) {
-        console.error('Build error:', err);
+        log('Error', 'Build failed', { error: err.message, stack: err.stack });
         process.exit(1);
     }
 }
 
-main();
+async function buildFromLocalMarkdown(fileId) {
+    log('Start', 'QxBlog Local Build - Single Article Mode');
+    log('Info', 'Root directory', { root: ROOT });
+
+    ensureDir(POSTS_DIR);
+
+    if (!fs.existsSync(MARKDOWN_DIR)) {
+        log('Error', `Markdown directory not found: ${MARKDOWN_DIR}`);
+        process.exit(1);
+    }
+
+    log('Input', `Building article with ID: ${fileId}`);
+
+    const article = await buildSingleArticle(fileId);
+
+    if (!article) {
+        log('Error', `Failed to build article #${fileId}`);
+        process.exit(1);
+    }
+
+    const articles = updateArticlesJSON(article);
+    const categories = updateCategoriesJSON(articles);
+
+    log('Complete', 'Build complete!', {
+        articleId: article.id,
+        articleTitle: article.title,
+        totalArticles: articles.length,
+        totalCategories: categories.length,
+        outputFiles: {
+            post: path.join(POSTS_DIR, `${article.id}.html`),
+            articles: ARTICLES_JSON_PATH,
+            categories: CATEGORIES_JSON_PATH,
+        }
+    });
+}
+
+async function main() {
+    const args = process.argv.slice(2);
+    const mode = args[0];
+    const fileId = args[1];
+
+    if (mode === 'local' && fileId) {
+        await buildFromLocalMarkdown(fileId);
+    } else {
+        await buildFromGitHubIssues();
+    }
+}
+
+main().catch(err => {
+    log('Error', 'Build failed', { error: err.message, stack: err.stack });
+    process.exit(1);
+});
