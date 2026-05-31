@@ -38,6 +38,7 @@ jobs:
 
       - name: "[Build] 启动构建脚本"
         env:
+          GH_TOKEN: ${{ github.token }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_DATE: ${{ github.event.issue.updated_at }}

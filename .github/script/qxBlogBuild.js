@@ -243,18 +243,6 @@ function genHeroSection(siteName, heroConfig) {
         </div>
         <div class="qx-hero-right">
             <svg class="qx-line-art" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g class="qx-la-nodes" opacity="0.18">
-                    <circle cx="250" cy="105" r="3" fill="currentColor"/>
-                    <circle cx="160" cy="170" r="2.5" fill="currentColor"/>
-                    <circle cx="360" cy="160" r="2.5" fill="currentColor"/>
-                    <circle cx="130" cy="280" r="3" fill="currentColor"/>
-                    <circle cx="370" cy="290" r="2.5" fill="currentColor"/>
-                    <circle cx="200" cy="380" r="2.5" fill="currentColor"/>
-                    <circle cx="310" cy="390" r="3" fill="currentColor"/>
-                    <circle cx="250" cy="430" r="2" fill="currentColor"/>
-                    <circle cx="410" cy="230" r="2" fill="currentColor"/>
-                    <circle cx="90" cy="230" r="2" fill="currentColor"/>
-                </g>
                 <g class="qx-la-core" opacity="0.35">
                     <polygon points="250,105 160,170 200,380 310,390 360,160" stroke="currentColor" stroke-width="1.2" fill="none"/>
                     <line x1="160" y1="170" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
@@ -262,46 +250,6 @@ function genHeroSection(siteName, heroConfig) {
                     <line x1="310" y1="390" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
                     <line x1="360" y1="160" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
                     <line x1="250" y1="105" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
-                    <line x1="160" y1="170" x2="310" y2="390" stroke="currentColor" stroke-width="0.6"/>
-                    <line x1="360" y1="160" x2="200" y2="380" stroke="currentColor" stroke-width="0.6"/>
-                    <line x1="250" y1="105" x2="200" y2="380" stroke="currentColor" stroke-width="0.6"/>
-                    <line x1="250" y1="105" x2="310" y2="390" stroke="currentColor" stroke-width="0.6"/>
-                </g>
-                <g class="qx-la-ring qx-la-ring-1" opacity="0.22">
-                    <ellipse cx="250" cy="280" rx="160" ry="60" stroke="currentColor" stroke-width="0.9" fill="none" transform="rotate(-15, 250, 280)"/>
-                    <circle cx="250" cy="220" r="2" fill="currentColor"/>
-                    <circle cx="250" cy="340" r="2" fill="currentColor"/>
-                    <circle cx="90" cy="280" r="2" fill="currentColor"/>
-                    <circle cx="410" cy="280" r="2" fill="currentColor"/>
-                </g>
-                <g class="qx-la-ring qx-la-ring-2" opacity="0.18">
-                    <ellipse cx="250" cy="280" rx="100" ry="120" stroke="currentColor" stroke-width="0.8" fill="none" transform="rotate(25, 250, 280)"/>
-                    <circle cx="250" cy="160" r="1.8" fill="currentColor"/>
-                    <circle cx="250" cy="400" r="1.8" fill="currentColor"/>
-                </g>
-                <g class="qx-la-sat qx-la-sat-1" opacity="0.2">
-                    <polygon points="410,180 440,240 380,250" stroke="currentColor" stroke-width="1" fill="none"/>
-                    <circle cx="410" cy="180" r="1.5" fill="currentColor"/>
-                    <circle cx="440" cy="240" r="1.5" fill="currentColor"/>
-                    <circle cx="380" cy="250" r="1.5" fill="currentColor"/>
-                </g>
-                <g class="qx-la-sat qx-la-sat-2" opacity="0.22">
-                    <polygon points="60,210 100,180 90,250" stroke="currentColor" stroke-width="1" fill="none"/>
-                    <circle cx="60" cy="210" r="1.5" fill="currentColor"/>
-                    <circle cx="100" cy="180" r="1.5" fill="currentColor"/>
-                    <circle cx="90" cy="250" r="1.5" fill="currentColor"/>
-                </g>
-                <g class="qx-la-sat qx-la-sat-3" opacity="0.16">
-                    <polygon points="370,390 420,410 390,450" stroke="currentColor" stroke-width="0.9" fill="none"/>
-                    <circle cx="370" cy="390" r="1.3" fill="currentColor"/>
-                    <circle cx="420" cy="410" r="1.3" fill="currentColor"/>
-                    <circle cx="390" cy="450" r="1.3" fill="currentColor"/>
-                </g>
-                <g class="qx-la-arcs" opacity="0.12">
-                    <path d="M 50 100 Q 150 20 250 50" stroke="currentColor" stroke-width="0.7" fill="none"/>
-                    <path d="M 300 450 Q 420 480 460 400" stroke="currentColor" stroke-width="0.7" fill="none"/>
-                    <path d="M 30 350 Q 20 250 60 150" stroke="currentColor" stroke-width="0.7" fill="none"/>
-                    <path d="M 380 60 Q 460 140 450 260" stroke="currentColor" stroke-width="0.7" fill="none"/>
                 </g>
             </svg>
         </div>
@@ -502,7 +450,7 @@ async function main() {
     const issueRE = /^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?!?:/i;
     
     try {
-        const output = execSync('gh issue list --state all --limit 1000 --json number,title,body,labels,createdAt,author,updatedAt --template "{{json .}}"', {
+        const output = execSync('gh issue list --state all --limit 1000 --json number,title,body,labels,createdAt,author,updatedAt', {
             encoding: 'utf-8',
             cwd: ROOT,
         });
@@ -525,26 +473,26 @@ async function main() {
             const localDate = new Date(issue.createdAt).toISOString();
             const slug = genSlug(issue.title);
             
-            const markdownPath = path.join(markdownDir, `${issue.id}.md`);
+            const markdownPath = path.join(markdownDir, `${issue.number}.md`);
             const frontmatter = `---
 标题：${issue.title}
 发布日期：${localDate}
 标签：${issue.labels?.map(l => l.name).join(', ') || ''}
 作者：${siteCfg.site?.author || issue.author?.login || 'Anonymous'}
-文章id：${issue.id}
+文章id：${issue.number}
 ---
 
 ${issue.body || ''}`;
             fs.writeFileSync(markdownPath, frontmatter, 'utf-8');
             
             const article = {
-                id: issue.id,
+                id: issue.number,
                 slug,
                 title: issue.title,
                 author: siteCfg.site?.author || issue.author?.login || 'Anonymous',
                 date: localDate,
                 labels: issue.labels?.map(l => l.name) || [],
-                markdownPath: `blogData/markdown/${issue.id}.md`,
+                markdownPath: `blogData/markdown/${issue.number}.md`,
             };
             articles.push(article);
             
@@ -605,9 +553,9 @@ ${issue.body || ''}`;
 
 </html>`;
             
-            const postPath = path.join(POSTS_DIR, `${issue.id}.html`);
+            const postPath = path.join(POSTS_DIR, `${issue.number}.html`);
             fs.writeFileSync(postPath, articleHTML, 'utf-8');
-            console.log(`Generated post: posts/${issue.id}.html`);
+            console.log(`Generated post: posts/${issue.number}.html`);
         }
         
         saveJSON(ARTICLES_JSON_PATH, articles);
