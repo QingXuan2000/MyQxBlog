@@ -24,14 +24,17 @@
     ],
     "friendLinks": [
       {
-        "name": "小原Blog",
-        "url": "https://blog.meowhead.cn/"
+        "name": "Example Friend 1",
+        "url": "https://example1.com"
+      },
+      {
+        "name": "Example Friend 2",
+        "url": "https://example2.com"
       }
     ]
   },
   "footerContent": [
-    "Copyright © 2025-2026 QingXuanJun. All rights reserved.",
-    "<a style=\"color: inherit; text-decoration: none;\" href=\"https://icp.gov.moe/?keyword=20266099\" target=\"_blank\">萌ICP备20266099号</a>"
+    "Copyright © 2025-2026 QingXuanJun. All rights reserved."
   ],
   "sidebar": {
     "motto": "用代码，写世界。",

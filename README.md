@@ -111,6 +111,70 @@ QxBlog/
 3. 在 GitHub Issues 发布文章（标题 + Markdown + 标签）
 4. 等待 GitHub Actions 自动构建部署
 
+## 部署指南
+
+QxBlog 推荐部署到 GitHub Pages，配合仓库内置工作流实现自动构建。
+
+### 1) 准备仓库
+
+1. 将项目推送到 GitHub 仓库（建议仓库名：`QxBlog`）
+2. 确保仓库已包含 `.github/workflows/qxblog-build.yml`
+3. 在 `config/buildConfig.json` 中设置正确的 `author`（你的 GitHub 用户名）
+
+### 2) 配置站点信息
+
+1. 编辑 `config/siteConfig.json`，填写站点标题、描述、导航、关于页内容等
+2. 编辑 `config/buildConfig.json`，按需调整：
+   - `timezoneOffset`：文章时间显示时区（中国大陆通常为 `+08:00`）
+   - `maxArticlesPerPage`：文章列表每页条数
+   - `friendLinks`：友情链接
+
+### 3) 启用 GitHub Pages
+
+1. 打开 GitHub 仓库设置：`Settings -> Pages`
+2. `Build and deployment` 选择 `Deploy from a branch`
+3. Branch 选择 `main`（或你的默认分支），目录选择 `/ (root)`
+4. 保存后等待首次部署完成
+
+### 4) 通过 Issue 发布文章
+
+1. 在仓库 `Issues` 新建 Issue
+2. `Title` 作为文章标题，`Body` 使用 Markdown 正文
+3. 使用 `Labels` 标记分类（例如：`前端`、`学习`）
+4. 提交后，Actions 会自动更新：
+   - `blogData/articles.json`
+   - `blogData/categories.json`
+   - `articles/pages/{id}.html`
+   - `categories/{label}/index.html`
+
+### 5) 访问站点
+
+- 默认地址：`https://<你的用户名>.github.io/<仓库名>/`
+- 用户/组织主页仓库（如 `<用户名>.github.io`）可直接使用根域名访问
+
+### 6) 可选：绑定自定义域名
+
+1. 在 `Settings -> Pages` 的 `Custom domain` 中填写你的域名
+2. 在 DNS 平台配置 `CNAME` 或 `A` 记录到 GitHub Pages
+3. 等待证书签发完成后启用 HTTPS
+
+## 默认主题：QxPaper
+
+`QxPaper` 是 QxBlog 的默认主题，定位为“简洁阅读 + 轻量交互”。
+
+- 视觉风格：干净留白、卡片式信息组织，突出文章内容本身
+- 阅读体验：支持目录、代码块、数学公式（KaTeX）、文章分类浏览
+- 交互能力：全文搜索、前端分页、明暗主题切换
+- 响应式布局：桌面与移动端均可用
+
+主题相关资源主要位于：
+
+- `css/default.css`：全局样式与主题变量
+- `js/default.js`：全局交互逻辑
+- `js/nav.js` / `js/search.js` / `js/toc.js`：导航、搜索、目录功能
+
+如果你想在 `QxPaper` 基础上做定制，建议优先修改 `config/siteConfig.json`（内容配置），再按需调整 CSS 与 JS（表现与交互）。
+
 ## 内容清空
 
 重置站点文章与标签可执行：
