@@ -885,12 +885,7 @@ program
 
 program
   .command('github')
-  .description('从 GitHub Issues 构建（默认行为）')
-  .action(async () => {
-    await buildFromGitHubIssues();
-  });
-
-program
+  .description('从 GitHub Issues 构建')
   .action(async () => {
     await buildFromGitHubIssues();
   });

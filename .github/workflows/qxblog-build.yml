@@ -46,7 +46,7 @@ jobs:
           ISSUE_LABELS: ${{ toJson(github.event.issue.labels.*.name) }}
           ISSUE_ID: ${{ github.event.issue.number }}
           ISSUE_ACTION: ${{ github.event.action }}
-        run: bun .github/script/qxBlogBuild.js
+        run: bun .github/script/qxBlogBuild.js github
 
       - name: "[Push] 提交并推送更改"
         uses: stefanzweifel/git-auto-commit-action@v5
