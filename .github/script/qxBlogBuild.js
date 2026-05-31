@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
+import { Command } from 'commander';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -868,19 +869,33 @@ async function buildFromLocalMarkdown(fileId) {
     });
 }
 
-async function main() {
-    const args = process.argv.slice(2);
-    const mode = args[0];
-    const fileId = args[1];
+const program = new Command();
 
-    if (mode === 'local' && fileId) {
-        await buildFromLocalMarkdown(fileId);
-    } else {
-        await buildFromGitHubIssues();
-    }
-}
+program
+  .name('qxblog-build')
+  .description('QxBlog 构建工具')
+  .version('1.0.0');
 
-main().catch(err => {
+program
+  .command('local <id>')
+  .description('从本地 Markdown 文件构建单篇文章')
+  .action(async (id) => {
+    await buildFromLocalMarkdown(id);
+  });
+
+program
+  .command('github')
+  .description('从 GitHub Issues 构建（默认行为）')
+  .action(async () => {
+    await buildFromGitHubIssues();
+  });
+
+program
+  .action(async () => {
+    await buildFromGitHubIssues();
+  });
+
+program.parseAsync().catch(err => {
     log('Error', 'Build failed', { error: err.message, stack: err.stack });
     process.exit(1);
 });
