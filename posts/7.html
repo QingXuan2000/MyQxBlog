@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
     <title>QxBlog - QxBlog博客框架部署指南</title>
-    <link rel="stylesheet" href="css/katex.min.css">
-    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="../css/katex.min.css">
+    <link rel="stylesheet" href="../css/default.css">
     <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
-    <script type="module" src="js/default.js"></script>
+    <script type="module" src="../js/default.js"></script>
     <script>
         (function () {
             var t = localStorage.getItem('qx-theme');
@@ -34,18 +34,15 @@
     </div>
     <article class="qx-post">
         <header class="qx-post-header">
-            <a href="javascript:history.back()" class="qx-post-back">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
-            </a>
             <h1 class="qx-post-title">QxBlog博客框架部署指南</h1>
             <div class="qx-post-meta">
-                <span class="qx-post-date">2026-05-26</span>
                 <span class="qx-post-author">QingXuanJun</span>
-            </div>
-            <div class="qx-post-labels"><a href="categories/%E5%89%8D%E7%AB%AF/" class="qx-article-card-label">前端</a>
+                <span class="qx-post-date">2026-05-26</span>
+                <span class="qx-post-labels"><a href="categories/%E5%89%8D%E7%AB%AF/" class="qx-article-card-label">前端</a>
 <a href="categories/%E7%BC%96%E7%A8%8B/" class="qx-article-card-label">编程</a>
 <a href="categories/%E5%AD%A6%E4%B9%A0/" class="qx-article-card-label">学习</a>
-<a href="categories/%E6%95%99%E7%A8%8B/" class="qx-article-card-label">教程</a></div>
+<a href="categories/%E6%95%99%E7%A8%8B/" class="qx-article-card-label">教程</a></span>
+            </div>
         </header>
         <div class="qx-post-body"><blockquote>
 <p>这篇文章记录如何把 QxBlog 从本地仓库部署到 GitHub Pages，并通过 Issue 驱动持续发布内容。</p>

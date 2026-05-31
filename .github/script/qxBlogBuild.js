@@ -753,10 +753,10 @@ ${issue.body || ''}`;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
     <title>${SITE_NAME} - ${issue.title}</title>
-    <link rel="stylesheet" href="css/katex.min.css">
-    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="../css/katex.min.css">
+    <link rel="stylesheet" href="../css/default.css">
     <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
-    <script type="module" src="js/default.js"></script>
+    <script type="module" src="../js/default.js"></script>
     <script>
         (function () {
             var t = localStorage.getItem('qx-theme');
@@ -939,10 +939,10 @@ async function buildAllLocalArticles() {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
     <title>${SITE_NAME} - ${title}</title>
-    <link rel="stylesheet" href="css/katex.min.css">
-    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="../css/katex.min.css">
+    <link rel="stylesheet" href="../css/default.css">
     <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
-    <script type="module" src="js/default.js"></script>
+    <script type="module" src="../js/default.js"></script>
     <script>
         (function () {
             var t = localStorage.getItem('qx-theme');
