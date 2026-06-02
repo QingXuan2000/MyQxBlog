@@ -1624,7 +1624,7 @@ body {
 }
 
 .qx-post-body figure[data-rehype-pretty-code-figure] code {
-    font-family: "JetBrains Mono", "MiSans", Consolas, "Courier New", monospace;
+    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
     font-size: 14px;
     font-weight: 400;
     font-variant-ligatures: none;
@@ -1639,6 +1639,7 @@ body {
 }
 
 .qx-post-body figure[data-rehype-pretty-code-figure] code span {
+    font-family: inherit;
     font-size: inherit;
 }
 
@@ -1646,6 +1647,7 @@ body {
     display: block;
     min-height: 1.75em;
     white-space: pre;
+    font-family: inherit;
     font-size: inherit;
 }
 
@@ -1671,48 +1673,20 @@ body {
         --qx-code-pad-left: 0px;
     }
     
-    .qx-post-body figure[data-rehype-pretty-code-figure] pre {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body figure[data-rehype-pretty-code-figure] code {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body figure[data-rehype-pretty-code-figure] code span {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body figure[data-rehype-pretty-code-figure] code span span {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] span {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body span[data-rehype-pretty-code-figure] code {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body span[data-rehype-pretty-code-figure] code span {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body span[data-rehype-pretty-code-figure] code span span {
-        font-size: 13px !important;
-    }
-    
-    .qx-post-body span[data-rehype-pretty-code-figure] code [data-line] {
-        font-size: 13px !important;
-    }
-    
+    .qx-post-body figure[data-rehype-pretty-code-figure] pre,
+    .qx-post-body figure[data-rehype-pretty-code-figure] code,
+    .qx-post-body figure[data-rehype-pretty-code-figure] code span,
+    .qx-post-body figure[data-rehype-pretty-code-figure] code span span,
+    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line],
+    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] span,
+    .qx-post-body span[data-rehype-pretty-code-figure] code,
+    .qx-post-body span[data-rehype-pretty-code-figure] code span,
+    .qx-post-body span[data-rehype-pretty-code-figure] code span span,
+    .qx-post-body span[data-rehype-pretty-code-figure] code [data-line],
     .qx-post-body span[data-rehype-pretty-code-figure] code [data-line] span {
-        font-size: 13px !important;
+        font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
+        font-size: 13px;
+        line-height: 1.5;
     }
 }
 
@@ -1730,7 +1704,7 @@ body {
 
 .qx-post-body span[data-rehype-pretty-code-figure] code {
     display: inline;
-    font-family: "JetBrains Mono", "MiSans", Consolas, "Courier New", monospace;
+    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
     font-size: 14px;
     font-weight: 400;
     font-variant-ligatures: none;
@@ -1743,6 +1717,7 @@ body {
 }
 
 .qx-post-body span[data-rehype-pretty-code-figure] code span {
+    font-family: inherit;
     font-size: inherit;
 }
 
