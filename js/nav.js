@@ -7,6 +7,8 @@ export class QxNav {
         this.searchForm = document.querySelector('.qx-nav-search');
         this.searchInput = document.querySelector('.qx-nav-search-input');
         this.html = document.documentElement;
+        this._sidebarCloseTimer = null;
+        this._searchCloseTimer = null;
 
         this._detectTheme();
         this._initSidebarToggle();
@@ -69,8 +71,20 @@ export class QxNav {
 
     toggleSidebar() {
         if (!this.sidebar || !this.sidebarBtn) return;
-        
-        const isOpen = this.sidebar.classList.toggle('is-open');
+
+        const isOpen = !this.sidebar.classList.contains('is-open');
+        if (isOpen) {
+            clearTimeout(this._sidebarCloseTimer);
+            this.sidebar.classList.remove('is-opening');
+            this.sidebar.classList.remove('is-closing');
+            this.sidebar.classList.add('is-opening');
+            requestAnimationFrame(() => {
+                this.sidebar.classList.add('is-open');
+                this.sidebar.classList.remove('is-opening');
+            });
+        } else {
+            this.closeSidebar();
+        }
         const svg = this.sidebarBtn.querySelector('svg');
         if (svg) {
             svg.outerHTML = isOpen 
@@ -81,8 +95,15 @@ export class QxNav {
 
     closeSidebar() {
         if (!this.sidebar || !this.sidebarBtn) return;
-        
+
+        if (!this.sidebar.classList.contains('is-open')) return;
         this.sidebar.classList.remove('is-open');
+        this.sidebar.classList.add('is-closing');
+        clearTimeout(this._sidebarCloseTimer);
+        this._sidebarCloseTimer = setTimeout(() => {
+            this.sidebar.classList.remove('is-closing');
+        }, 320);
+
         const svg = this.sidebarBtn.querySelector('svg');
         if (svg) {
             svg.outerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
@@ -91,8 +112,20 @@ export class QxNav {
 
     toggleSearch() {
         if (!this.searchForm || !this.searchBtn) return;
-        
-        const isOpen = this.searchForm.classList.toggle('is-open');
+
+        const isOpen = !this.searchForm.classList.contains('is-open');
+        if (isOpen) {
+            clearTimeout(this._searchCloseTimer);
+            this.searchForm.classList.remove('is-opening');
+            this.searchForm.classList.remove('is-closing');
+            this.searchForm.classList.add('is-opening');
+            requestAnimationFrame(() => {
+                this.searchForm.classList.add('is-open');
+                this.searchForm.classList.remove('is-opening');
+            });
+        } else {
+            this.closeSearch();
+        }
         const svg = this.searchBtn.querySelector('svg');
         if (svg) {
             svg.outerHTML = isOpen 
@@ -104,8 +137,15 @@ export class QxNav {
 
     closeSearch() {
         if (!this.searchForm || !this.searchBtn) return;
-        
+
+        if (!this.searchForm.classList.contains('is-open')) return;
         this.searchForm.classList.remove('is-open');
+        this.searchForm.classList.add('is-closing');
+        clearTimeout(this._searchCloseTimer);
+        this._searchCloseTimer = setTimeout(() => {
+            this.searchForm.classList.remove('is-closing');
+        }, 320);
+
         const svg = this.searchBtn.querySelector('svg');
         if (svg) {
             svg.outerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';

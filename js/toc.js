@@ -7,6 +7,7 @@ export class QxToc {
         this.activeLink = null;
         this.scrollRaf = 0;
         this.headingOffset = 72;
+        this._closeTimer = null;
         this._build();
         this._initToggle();
         this._initScrollSpy();
@@ -116,7 +117,19 @@ export class QxToc {
 
     toggle() {
         if (!this.sidebar) return;
-        const isOpen = this.sidebar.classList.toggle('is-open');
+        const isOpen = !this.sidebar.classList.contains('is-open');
+        if (isOpen) {
+            clearTimeout(this._closeTimer);
+            this.sidebar.classList.remove('is-opening');
+            this.sidebar.classList.remove('is-closing');
+            this.sidebar.classList.add('is-opening');
+            requestAnimationFrame(() => {
+                this.sidebar.classList.add('is-open');
+                this.sidebar.classList.remove('is-opening');
+            });
+        } else {
+            this.close();
+        }
         const icon = this.toggleBtn.querySelector('i');
         icon.classList.toggle('fa-list-ul', !isOpen);
         icon.classList.toggle('fa-times', isOpen);
@@ -124,7 +137,13 @@ export class QxToc {
 
     close() {
         if (!this.sidebar) return;
+        if (!this.sidebar.classList.contains('is-open')) return;
         this.sidebar.classList.remove('is-open');
+        this.sidebar.classList.add('is-closing');
+        clearTimeout(this._closeTimer);
+        this._closeTimer = setTimeout(() => {
+            this.sidebar.classList.remove('is-closing');
+        }, 320);
         const icon = this.toggleBtn.querySelector('i');
         icon.classList.add('fa-list-ul');
         icon.classList.remove('fa-times');

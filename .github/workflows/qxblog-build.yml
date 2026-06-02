@@ -46,7 +46,7 @@ jobs:
           ISSUE_LABELS: ${{ toJson(github.event.issue.labels.*.name) }}
           ISSUE_ID: ${{ github.event.issue.number }}
           ISSUE_ACTION: ${{ github.event.action }}
-        run: bun .github/script/qxBlogBuild.js github
+        run: bun .github/script/qxBlogBuild.js ci build
 
       - name: "[Push] 提交并推送更改"
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -58,7 +58,7 @@ jobs:
       - name: "[Prepare] 准备部署文件"
         run: |
           mkdir -p _site
-          cp -r index.html 404.html favicon.svg _site/ 2>/dev/null || true
+          cp -r index.html 404.html favicon.svg sitemap.xml robots.txt _site/ 2>/dev/null || true
           cp -r css js fonts img posts categories about articles blogData config _site/
 
       - name: "[Upload] 上传 Pages 产物"

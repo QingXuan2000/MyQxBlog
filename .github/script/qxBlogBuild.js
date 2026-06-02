@@ -21,15 +21,105 @@ const ARTICLES_JSON_PATH = path.join(BLOG_DATA_DIR, 'articles.json');
 const SITE_NAME = 'QxBlog';
 const MAX_ARTICLES_PER_PAGE = 10;
 
+// 日志级别颜色配置
+const LOG_COLORS = {
+    DEBUG: '\x1b[36m',  // 青色
+    INFO: '\x1b[32m',   // 绿色
+    SUCCESS: '\x1b[32m',// 绿色
+    WARN: '\x1b[33m',   // 黄色
+    WARNING: '\x1b[33m',// 黄色
+    ERROR: '\x1b[31m',  // 红色
+    RESET: '\x1b[0m',   // 重置
+    BOLD: '\x1b[1m',    // 加粗
+    DIM: '\x1b[2m',     // 暗淡
+};
+
+// 日志图标配置（使用英文单词）
+const LOG_ICONS = {
+    DEBUG: '[DEBUG]',
+    INFO: '[INFO]',
+    SUCCESS: '[ OK ]',
+    WARN: '[WARN]',
+    WARNING: '[ WARN]',
+    ERROR: '[FAIL]',
+    INIT: '[ INIT]',
+    CONFIG: '[CONF]',
+    LOAD: '[LOAD]',
+    SAVE: '[SAVE]',
+    PARSE: '[PARSE]',
+    RENDER: '[REND]',
+    GENERATE: '[HTML]',
+    DELETE: '[DEL]',
+    UPDATE: '[UPDT]',
+    DIR: '[DIR ]',
+    START: '[RUN ]',
+    COMPLETE: '[DONE]',
+    CANCEL: '[STOP]',
+    GITHUB: '[ GH ]',
+    CI: '[ CI ]',
+};
+
+// 获取当前时间字符串
+function getTimestamp() {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+}
+
+// 格式化日志状态
+function formatStatus(status) {
+    const normalizedStatus = status.toUpperCase();
+    const icon = LOG_ICONS[normalizedStatus] || LOG_ICONS.INFO;
+    const color = LOG_COLORS[normalizedStatus] || LOG_COLORS.INFO;
+    return { icon, color };
+}
+
+// 主日志函数
 function log(status, message, data) {
-    const prefix = `[${status}]`;
+    const { icon, color } = formatStatus(status);
+    const timestamp = getTimestamp();
+    
+    // 格式化日志头部
+    const logHeader = `${LOG_COLORS.DIM}[${timestamp}]${LOG_COLORS.RESET} ${color}${icon} ${LOG_COLORS.BOLD}${status.padEnd(8)}${LOG_COLORS.RESET} `;
+    
+    console.log(`${logHeader}${message}`);
+    
+    // 如果有数据，格式化输出
     if (data !== undefined) {
-        console.info(`${prefix} ${message}`);
-        console.dir(data, { depth: null, colors: false });
-    } else {
-        console.info(`${prefix} ${message}`);
+        const indent = ' '.repeat(28);
+        const dataStr = typeof data === 'object' 
+            ? JSON.stringify(data, null, 2)
+                .split('\n')
+                .map((line, idx) => idx === 0 ? indent + line : indent + '  ' + line)
+                .join('\n')
+            : `${indent}${data}`;
+        console.log(`${LOG_COLORS.DIM}${dataStr}${LOG_COLORS.RESET}`);
     }
 }
+
+// 便捷日志方法
+const logger = {
+    debug: (msg, data) => log('DEBUG', msg, data),
+    info: (msg, data) => log('INFO', msg, data),
+    success: (msg, data) => log('SUCCESS', msg, data),
+    warn: (msg, data) => log('WARN', msg, data),
+    warning: (msg, data) => log('WARNING', msg, data),
+    error: (msg, data) => log('ERROR', msg, data),
+    init: (msg, data) => log('INIT', msg, data),
+    config: (msg, data) => log('CONFIG', msg, data),
+    load: (msg, data) => log('LOAD', msg, data),
+    save: (msg, data) => log('SAVE', msg, data),
+    parse: (msg, data) => log('PARSE', msg, data),
+    render: (msg, data) => log('RENDER', msg, data),
+    generate: (msg, data) => log('GENERATE', msg, data),
+    delete: (msg, data) => log('DELETE', msg, data),
+    update: (msg, data) => log('UPDATE', msg, data),
+    dir: (msg, data) => log('DIR', msg, data),
+    start: (msg, data) => log('START', msg, data),
+    complete: (msg, data) => log('COMPLETE', msg, data),
+    cancel: (msg, data) => log('CANCEL', msg, data),
+    github: (msg, data) => log('GITHUB', msg, data),
+    ci: (msg, data) => log('CI', msg, data),
+};
 
 const LOAD_ERR = (f) => `Failed to load \`${f}\`. Check if the file exists or is valid JSON.`;
 const LOAD = (f) => {
@@ -56,6 +146,12 @@ log('Config', 'Configuration loaded', {
 });
 
 const MAX_PER_PAGE = buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
+
+const SITE_URL = siteCfg.site?.url || 'https://example.com';
+const SITE_DESCRIPTION = siteCfg.site?.description || '基于 Issues 驱动的静态博客，分享代码、设计与思考。';
+const SITE_KEYWORDS = siteCfg.site?.keywords || '博客,技术,前端,代码,设计';
+const SITE_AUTHOR = siteCfg.site?.author || 'Anonymous';
+const SITE_CREATED_AT = siteCfg.site?.siteCreatedAt || new Date().toISOString();
 
 const _tmpl = (t, d) => t.replace(/\$\{([^}]+)\}/g, (_, k) => d[k] ?? '');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -84,6 +180,139 @@ function formatDate(dateStr) {
 
 function genSlug(title) {
     return title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+async function confirm(message) {
+    // 检查是否设置了 AUTO_CONFIRM 环境变量
+    if (process.env.AUTO_CONFIRM) {
+        console.log(`${message} (AUTO_CONFIRM: ${process.env.AUTO_CONFIRM})`);
+        return process.env.AUTO_CONFIRM.toLowerCase() === 'y' || 
+               process.env.AUTO_CONFIRM.toLowerCase() === 'yes' || 
+               process.env.AUTO_CONFIRM === '1';
+    }
+    
+    const readline = await import('readline');
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    return new Promise((resolve) => {
+        rl.question(`${message} (y/n): `, (answer) => {
+            rl.close();
+            resolve(answer.toLowerCase() === 'y');
+        });
+    });
+}
+
+function stripHtml(html) {
+    return html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function genMetaTags({ title, description, keywords, author, url, type = 'website', image, date, modifiedDate, tags = [] }) {
+    const metaTags = [];
+    
+    metaTags.push(`<meta name="description" content="${esc(description || SITE_DESCRIPTION)}">`);
+    metaTags.push(`<meta name="keywords" content="${esc(keywords || SITE_KEYWORDS)}">`);
+    metaTags.push(`<meta name="author" content="${esc(author || SITE_AUTHOR)}">`);
+    metaTags.push(`<meta name="robots" content="index, follow">`);
+    metaTags.push(`<meta name="googlebot" content="index, follow">`);
+    
+    metaTags.push(`<meta property="og:title" content="${esc(title)}">`);
+    metaTags.push(`<meta property="og:description" content="${esc(description || SITE_DESCRIPTION)}">`);
+    metaTags.push(`<meta property="og:type" content="${type}">`);
+    metaTags.push(`<meta property="og:url" content="${esc(url)}">`);
+    metaTags.push(`<meta property="og:site_name" content="${esc(SITE_NAME)}">`);
+    if (image) {
+        metaTags.push(`<meta property="og:image" content="${esc(image)}">`);
+    }
+    
+    metaTags.push(`<meta name="twitter:card" content="summary_large_image">`);
+    metaTags.push(`<meta name="twitter:title" content="${esc(title)}">`);
+    metaTags.push(`<meta name="twitter:description" content="${esc(description || SITE_DESCRIPTION)}">`);
+    if (image) {
+        metaTags.push(`<meta name="twitter:image" content="${esc(image)}">`);
+    }
+    
+    if (date) {
+        metaTags.push(`<meta property="article:published_time" content="${esc(new Date(date).toISOString())}">`);
+    }
+    if (modifiedDate) {
+        metaTags.push(`<meta property="article:modified_time" content="${esc(new Date(modifiedDate).toISOString())}">`);
+    }
+    tags.forEach(tag => {
+        metaTags.push(`<meta property="article:tag" content="${esc(tag)}">`);
+    });
+    
+    metaTags.push(`<link rel="canonical" href="${esc(url)}">`);
+    
+    return metaTags.join('\n    ');
+}
+
+function genStructuredDataArticle(article, url) {
+    const data = {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: article.title,
+        description: article.description || SITE_DESCRIPTION,
+        url: url,
+        datePublished: new Date(article.date).toISOString(),
+        dateModified: new Date(article.date).toISOString(),
+        author: {
+            '@type': 'Person',
+            name: article.author || SITE_AUTHOR
+        },
+        publisher: {
+            '@type': 'Organization',
+            name: SITE_NAME,
+            logo: {
+                '@type': 'ImageObject',
+                url: `${SITE_URL}/favicon.svg`
+            }
+        },
+        mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': url
+        }
+    };
+    if (article.labels && article.labels.length > 0) {
+        data.keywords = article.labels.join(', ');
+    }
+    return `<script type="application/ld+json">${JSON.stringify(data, null, 2)}</script>`;
+}
+
+function genStructuredDataWebsite() {
+    const data = {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+        description: SITE_DESCRIPTION,
+        author: {
+            '@type': 'Person',
+            name: SITE_AUTHOR
+        },
+        potentialAction: {
+            '@type': 'SearchAction',
+            target: `${SITE_URL}/?search={search_term_string}`,
+            'query-input': 'required name=search_term_string'
+        }
+    };
+    return `<script type="application/ld+json">${JSON.stringify(data, null, 2)}</script>`;
+}
+
+function genStructuredDataBreadcrumb(items) {
+    const data = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: items.map((item, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: item.name,
+            item: item.url
+        }))
+    };
+    return `<script type="application/ld+json">${JSON.stringify(data, null, 2)}</script>`;
 }
 
 const SITE_NAME2 = siteCfg.site?.name || SITE_NAME;
@@ -145,10 +374,29 @@ async function genArticleHTML(article) {
     let body = article.body || '';
 
     const bodyHTML = await renderMarkdown(body);
+    const plainText = stripHtml(bodyHTML).substring(0, 160);
+    const articleUrl = `${SITE_URL}/posts/${article.id}.html`;
 
     const labelsHTML = (article.labels || []).map(l =>
         `<a href="${prefix}categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
     ).join('\n');
+
+    const metaTags = genMetaTags({
+        title: `${SITE_NAME2} - ${article.title}`,
+        description: plainText || SITE_DESCRIPTION,
+        keywords: article.labels?.join(', ') || SITE_KEYWORDS,
+        author: article.author,
+        url: articleUrl,
+        type: 'article',
+        date: article.date,
+        tags: article.labels || []
+    });
+
+    const structuredData = genStructuredDataArticle(article, articleUrl);
+    const breadcrumbData = genStructuredDataBreadcrumb([
+        { name: SITE_NAME, url: SITE_URL },
+        { name: article.title, url: articleUrl }
+    ]);
 
     return `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -157,6 +405,9 @@ async function genArticleHTML(article) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
+    ${metaTags}
+    ${structuredData}
+    ${breadcrumbData}
     <title>${SITE_NAME2} - ${article.title}</title>
     <link rel="stylesheet" href="${prefix}css/katex.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
@@ -195,6 +446,21 @@ async function genArticleHTML(article) {
 
 function genCategoryHTML(label, articleCount) {
     const prefix = '../../';
+    const categoryUrl = `${SITE_URL}/categories/${encodeURIComponent(label)}/`;
+    const description = `${label} 分类下的所有文章，共 ${articleCount} 篇。`;
+
+    const metaTags = genMetaTags({
+        title: `${SITE_NAME2} - ${label}`,
+        description,
+        keywords: `${label}, ${SITE_KEYWORDS}`,
+        url: categoryUrl
+    });
+
+    const breadcrumbData = genStructuredDataBreadcrumb([
+        { name: SITE_NAME, url: SITE_URL },
+        { name: '分类', url: `${SITE_URL}/categories/` },
+        { name: label, url: categoryUrl }
+    ]);
 
     return `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -203,6 +469,8 @@ function genCategoryHTML(label, articleCount) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
+    ${metaTags}
+    ${breadcrumbData}
     <title>${SITE_NAME2} - ${label}</title>
     <link rel="stylesheet" href="${prefix}css/default.css">
     \${LOADER_CSS}
@@ -368,7 +636,7 @@ const buildCfg3 = LOAD3(BUILD_CONFIG_PATH) || {};
 const MAX_PER_PAGE4 = buildCfg3.maxArticlesPerPage || 10;
 
 const SITE_NAME3 = siteCfg3.site?.name || 'QxBlog';
-const SITE_AUTHOR = siteCfg3.site?.author || 'Author';
+const SITE_AUTHOR2 = siteCfg3.site?.author || 'Author';
 
 const HERO_CONFIG = siteCfg3.hero || { tag: '<Blog />', title: 'Welcome', subtitle: '' };
 const SIDEBAR_CONFIG = siteCfg3.sidebar || { motto: '', links: [] };
@@ -384,7 +652,17 @@ function buildPageVars() {
 function genPageTemplate(content, pageType = 'home') {
     const vars = buildPageVars();
     const title = pageType === 'home' ? SITE_NAME3 : `${SITE_NAME3} - ${pageType}`;
-    
+    const pageUrl = pageType === 'home' ? SITE_URL : `${SITE_URL}/${pageType.toLowerCase()}/`;
+    const description = pageType === 'home' ? SITE_DESCRIPTION : `${pageType} 页面 - ${SITE_DESCRIPTION}`;
+
+    const metaTags = genMetaTags({
+        title,
+        description,
+        url: pageUrl
+    });
+
+    const structuredData = pageType === 'home' ? genStructuredDataWebsite() : '';
+
     return `<!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 
@@ -392,6 +670,8 @@ function genPageTemplate(content, pageType = 'home') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
+    ${metaTags}
+    ${structuredData}
     <title>${title}</title>
     <link rel="stylesheet" href="css/default.css">
     <style>
@@ -422,7 +702,7 @@ function genPageTemplate(content, pageType = 'home') {
     </div>
     ${genNavHTML(SITE_NAME3)}
     ${content}
-    ${genSidebarHTML(SIDEBAR_CONFIG, SITE_AUTHOR)}
+    ${genSidebarHTML(SIDEBAR_CONFIG, SITE_AUTHOR2)}
     ${genFooterHTML(FOOTER_CONTENT)}
 </body>
 
@@ -510,38 +790,59 @@ function parseFrontmatter(content) {
     return { data, body };
 }
 
-async function buildSingleArticle(fileId) {
-    const filename = `${fileId}.md`;
-    const filePath = path.join(MARKDOWN_DIR, filename);
+async function buildSingleArticle(options) {
+    let id, title, author, date, labels, body, markdownPath;
+    
+    if (typeof options === 'number' || typeof options === 'string') {
+        // 从文件构建
+        const fileId = options;
+        const filename = `${fileId}.md`;
+        const filePath = path.join(MARKDOWN_DIR, filename);
 
-    if (!fs.existsSync(filePath)) {
-        log('Error', `File not found: ${filePath}`);
+        if (!fs.existsSync(filePath)) {
+            log('Error', `File not found: ${filePath}`);
+            return false;
+        }
+
+        log('Read', `Reading file: ${filename}`);
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const parsed = parseFrontmatter(content);
+
+        if (!parsed) {
+            log('Error', `Failed to parse frontmatter in ${filename}`);
+            return false;
+        }
+
+        const { data, body: parsedBody } = parsed;
+        log('Parse', `Frontmatter parsed for ${filename}`, {
+            title: data['title'],
+            date: data['date'],
+            tags: data['tags'],
+            author: data['author'],
+            id: data['id']
+        });
+
+        id = parseInt(data['id']) || parseInt(fileId) || 0;
+        title = data['title'] || 'Untitled';
+        date = data['date'] || new Date().toISOString();
+        author = data['author'] || siteCfg.site?.author || 'Anonymous';
+        labels = Array.isArray(data['tags']) ? data['tags'] : (data['tags'] ? data['tags'].split(',').map(l => l.trim()).filter(Boolean) : []);
+        body = parsedBody;
+        markdownPath = `blogData/markdown/${filename}`;
+    } else if (typeof options === 'object') {
+        // 从数据对象构建
+        id = options.id;
+        title = options.title || 'Untitled';
+        author = options.author || siteCfg.site?.author || 'Anonymous';
+        date = options.date || new Date().toISOString();
+        labels = options.labels || [];
+        body = options.body || '';
+        markdownPath = options.markdownPath || `blogData/markdown/${id}.md`;
+    } else {
+        log('Error', 'Invalid options for buildSingleArticle');
         return false;
     }
 
-    log('Read', `Reading file: ${filename}`);
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const parsed = parseFrontmatter(content);
-
-    if (!parsed) {
-        log('Error', `Failed to parse frontmatter in ${filename}`);
-        return false;
-    }
-
-    const { data, body } = parsed;
-    log('Parse', `Frontmatter parsed for ${filename}`, {
-        title: data['title'],
-        date: data['date'],
-        tags: data['tags'],
-        author: data['author'],
-        id: data['id']
-    });
-
-    const id = parseInt(data['id']) || parseInt(fileId) || 0;
-    const title = data['title'] || 'Untitled';
-    const date = data['date'] || new Date().toISOString();
-    const author = data['author'] || siteCfg.site?.author || 'Anonymous';
-    const labels = Array.isArray(data['tags']) ? data['tags'] : (data['tags'] ? data['tags'].split(',').map(l => l.trim()).filter(Boolean) : []);
     const slug = genSlug(title);
 
     const article = {
@@ -551,15 +852,34 @@ async function buildSingleArticle(fileId) {
         author,
         date,
         labels,
-        markdownPath: `blogData/markdown/${filename}`,
+        markdownPath,
     };
 
     log('Data', `Article object created for #${id}`, article);
 
     const articleBodyHTML = await renderMarkdown(body);
+    const plainText = stripHtml(articleBodyHTML).substring(0, 160);
+    const articleUrl = `${SITE_URL}/posts/${id}.html`;
     const labelsHTML = labels.map(l =>
         `<a href="../categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
     ).join('\n');
+
+    const metaTags = genMetaTags({
+        title: `${SITE_NAME} - ${title}`,
+        description: plainText || SITE_DESCRIPTION,
+        keywords: labels.join(', ') || SITE_KEYWORDS,
+        author,
+        url: articleUrl,
+        type: 'article',
+        date,
+        tags: labels
+    });
+
+    const structuredData = genStructuredDataArticle({ id, title, author, date, labels }, articleUrl);
+    const breadcrumbData = genStructuredDataBreadcrumb([
+        { name: SITE_NAME, url: SITE_URL },
+        { name: title, url: articleUrl }
+    ]);
 
     const articleHTML = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -568,6 +888,9 @@ async function buildSingleArticle(fileId) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
+    ${metaTags}
+    ${structuredData}
+    ${breadcrumbData}
     <title>${SITE_NAME} - ${title}</title>
     <link rel="stylesheet" href="../css/katex.min.css">
     <link rel="stylesheet" href="../css/default.css">
@@ -650,7 +973,64 @@ function updateCategoriesJSON(articles) {
     return categories;
 }
 
+async function deleteArticle(issueId) {
+    log('Start', `Deleting article #${issueId}...`);
+    
+    // 删除 markdown 文件
+    const markdownPath = path.join(BLOG_DATA_DIR, 'markdown', `${issueId}.md`);
+    if (fs.existsSync(markdownPath)) {
+        fs.unlinkSync(markdownPath);
+        log('File', `Deleted markdown file: ${markdownPath}`);
+    } else {
+        log('Warning', `Markdown file not found: ${markdownPath}`);
+    }
+    
+    // 删除 HTML 文件
+    const htmlPath = path.join(POSTS_DIR, `${issueId}.html`);
+    if (fs.existsSync(htmlPath)) {
+        fs.unlinkSync(htmlPath);
+        log('File', `Deleted HTML file: ${htmlPath}`);
+    } else {
+        log('Warning', `HTML file not found: ${htmlPath}`);
+    }
+    
+    // 更新 articles.json
+    let articles = [];
+    if (fs.existsSync(ARTICLES_JSON_PATH)) {
+        articles = loadJSON(ARTICLES_JSON_PATH) || [];
+    }
+    const originalLength = articles.length;
+    articles = articles.filter(a => a.id !== issueId);
+    if (articles.length < originalLength) {
+        saveJSON(ARTICLES_JSON_PATH, articles);
+        log('JSON', `Removed article #${issueId} from articles.json`);
+    } else {
+        log('Warning', `Article #${issueId} not found in articles.json`);
+    }
+    
+    // 更新 categories.json
+    const categories = updateCategoriesJSON(articles);
+    
+    // 重新生成 sitemap 和 robots.txt
+    generateSitemap(articles, categories);
+    generateRobotsTxt();
+    
+    log('Complete', `Article #${issueId} deleted successfully`, {
+        totalArticles: articles.length,
+        totalCategories: categories.length
+    });
+}
+
 async function buildFromGitHubIssues() {
+    const issueAction = process.env.ISSUE_ACTION || '';
+    const issueId = process.env.ISSUE_ID ? parseInt(process.env.ISSUE_ID) : null;
+    
+    // 如果是删除事件，执行删除逻辑
+    if (issueAction === 'deleted' && issueId) {
+        await deleteArticle(issueId);
+        return;
+    }
+    
     log('Start', 'QxBlog Build Script Starting...');
     log('Info', 'Root directory', { root: ROOT });
     
@@ -705,22 +1085,22 @@ async function buildFromGitHubIssues() {
             processedCount++;
             
             const localDate = new Date(issue.createdAt).toISOString();
-            const slug = genSlug(issue.title);
+            const labelsArray = issue.labels?.map(l => l.name) || [];
+            const author = siteCfg.site?.author || issue.author?.login || 'Anonymous';
             
             log('Process', `Processing issue #${issue.number}`, {
                 title: issue.title,
-                slug,
                 date: localDate,
-                labels: issue.labels?.map(l => l.name) || []
+                labels: labelsArray
             });
             
+            // 生成 markdown 文件
             const markdownPath = path.join(markdownDir, `${issue.number}.md`);
-            const labelsArray = issue.labels?.map(l => l.name) || [];
             const frontmatter = `---
 title: "${issue.title}"
 date: "${localDate}"
 tags: [${labelsArray.map(l => `"${l}"`).join(', ')}]
-author: "${siteCfg.site?.author || issue.author?.login || 'Anonymous'}"
+author: "${author}"
 id: ${issue.number}
 ---
 
@@ -728,78 +1108,20 @@ ${issue.body || ''}`;
             fs.writeFileSync(markdownPath, frontmatter, 'utf-8');
             log('File', `Generated markdown: ${markdownPath}`);
             
-            const article = {
+            // 使用通用的 buildSingleArticle 函数（通过数据对象方式）
+            const article = await buildSingleArticle({
                 id: issue.number,
-                slug,
                 title: issue.title,
-                author: siteCfg.site?.author || issue.author?.login || 'Anonymous',
+                author,
                 date: localDate,
                 labels: labelsArray,
-                markdownPath: `blogData/markdown/${issue.number}.md`,
-            };
-            articles.push(article);
-            log('Data', `Article object created for #${issue.number}`, article);
+                body: issue.body || '',
+                markdownPath: `blogData/markdown/${issue.number}.md`
+            });
             
-            const articleBodyHTML = await renderMarkdown(issue.body || '');
-            const labelsHTML = labelsArray.map(l =>
-                `<a href="categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
-            ).join('\n');
-            
-            const articleHTML = `<!DOCTYPE html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="view-transition" content="same-origin">
-    <title>${SITE_NAME} - ${issue.title}</title>
-    <link rel="stylesheet" href="../css/katex.min.css">
-    <link rel="stylesheet" href="../css/default.css">
-    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
-    <script type="module" src="../js/default.js"></script>
-    <script>
-        (function () {
-            var t = localStorage.getItem('qx-theme');
-            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', t);
-        })();
-    </script>
-</head>
-
-<body>
-    <div class="qx-loader">
-        <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
-            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
-            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
-            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
-            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
-            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
-            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
-            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
-        </svg>
-    </div>
-    <article class="qx-post">
-        <header class="qx-post-header">
-            <a href="javascript:history.back()" class="qx-post-back">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
-            </a>
-            <h1 class="qx-post-title">${issue.title}</h1>
-            <div class="qx-post-meta">
-                <span class="qx-post-date">${formatDate(localDate)}</span>
-                <span class="qx-post-author">${siteCfg.site?.author || issue.author?.login || 'Anonymous'}</span>
-            </div>
-            <div class="qx-post-labels">${labelsHTML}</div>
-        </header>
-        <div class="qx-post-body">${articleBodyHTML}</div>
-    </article>
-</body>
-
-</html>`;
-            
-            const postPath = path.join(POSTS_DIR, `${issue.number}.html`);
-            fs.writeFileSync(postPath, articleHTML, 'utf-8');
-            log('File', `Generated HTML post: ${postPath}`);
+            if (article) {
+                articles.push(article);
+            }
         }
         
         log('Summary', 'Issue processing complete', {
@@ -818,6 +1140,9 @@ ${issue.body || ''}`;
         log('Data', 'Categories generated', { categories });
         
         cleanupLegacyPaginationData();
+        
+        generateSitemap(articles, categories);
+        generateRobotsTxt();
         
         log('Complete', 'Build complete!', {
             totalArticles: articles.length,
@@ -859,6 +1184,9 @@ async function buildFromLocalMarkdown(fileId) {
     const articles = updateArticlesJSON(article);
     const categories = updateCategoriesJSON(articles);
 
+    generateSitemap(articles, categories);
+    generateRobotsTxt();
+
     log('Complete', 'Build complete!', {
         articleId: article.id,
         articleTitle: article.title,
@@ -894,101 +1222,19 @@ async function buildAllLocalArticles() {
     
     for (const file of files) {
         const fileId = file.replace('.md', '');
-        log('Read', `Reading file: ${file}`);
         
-        const content = fs.readFileSync(path.join(MARKDOWN_DIR, file), 'utf-8');
-        const parsed = parseFrontmatter(content);
+        const article = await buildSingleArticle(fileId);
         
-        if (!parsed) {
-            log('Error', `Failed to parse frontmatter in ${file}`);
-            continue;
+        if (article) {
+            articles.push(article);
         }
-        
-        const { data, body } = parsed;
-        
-        const id = data.id || fileId;
-        const title = data.title || 'Untitled';
-        const author = data.author || 'Anonymous';
-        const date = data.date || new Date().toISOString();
-        const tags = Array.isArray(data.tags) ? data.tags : [];
-        
-        const slug = genSlug(title);
-        
-        const article = {
-            id: Number(id),
-            slug,
-            title,
-            author,
-            date,
-            labels: tags,
-            markdownPath: `blogData/markdown/${file}`,
-        };
-        
-        log('Data', `Article object created for #${id}`, article);
-        
-        const articleBodyHTML = await renderMarkdown(body);
-        const labelsHTML = tags.map(l =>
-            `<a href="categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
-        ).join('\n');
-        
-        const articleHTML = `<!DOCTYPE html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="view-transition" content="same-origin">
-    <title>${SITE_NAME} - ${title}</title>
-    <link rel="stylesheet" href="../css/katex.min.css">
-    <link rel="stylesheet" href="../css/default.css">
-    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
-    <script type="module" src="../js/default.js"></script>
-    <script>
-        (function () {
-            var t = localStorage.getItem('qx-theme');
-            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', t);
-        })();
-    </script>
-</head>
-
-<body>
-    <div class="qx-loader">
-        <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
-            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
-            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
-            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
-            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
-            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
-            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
-            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
-        </svg>
-    </div>
-    <article class="qx-post">
-        <header class="qx-post-header">
-            <h1 class="qx-post-title">${esc(title)}</h1>
-            <div class="qx-post-meta">
-                <span class="qx-post-author">${esc(author)}</span>
-                <span class="qx-post-date">${esc(formatDate(date))}</span>
-                <span class="qx-post-labels">${labelsHTML}</span>
-            </div>
-        </header>
-        <div class="qx-post-body">${articleBodyHTML}</div>
-    </article>
-</body>
-
-</html>`;
-        
-        const postPath = path.join(POSTS_DIR, `${id}.html`);
-        fs.writeFileSync(postPath, articleHTML, 'utf-8');
-        log('File', `Generated HTML post: ${postPath}`);
-        
-        articles.push(article);
     }
     
     const updatedArticles = updateArticlesJSONFromArray(articles);
     const categories = updateCategoriesJSON(updatedArticles);
+    
+    generateSitemap(updatedArticles, categories);
+    generateRobotsTxt();
     
     log('Complete', 'Build complete!', {
         totalArticles: updatedArticles.length,
@@ -1023,6 +1269,109 @@ function updateArticlesJSONFromArray(newArticles) {
     return articles;
 }
 
+function generateSitemap(articles, categories) {
+    const sitemapPath = path.join(ROOT, 'sitemap.xml');
+    const now = new Date().toISOString();
+    
+    let urls = [];
+    
+    urls.push({
+        loc: SITE_URL,
+        lastmod: now,
+        changefreq: 'daily',
+        priority: '1.0'
+    });
+    
+    urls.push({
+        loc: `${SITE_URL}/articles/`,
+        lastmod: now,
+        changefreq: 'daily',
+        priority: '0.9'
+    });
+    
+    urls.push({
+        loc: `${SITE_URL}/categories/`,
+        lastmod: now,
+        changefreq: 'weekly',
+        priority: '0.8'
+    });
+    
+    urls.push({
+        loc: `${SITE_URL}/about/`,
+        lastmod: now,
+        changefreq: 'monthly',
+        priority: '0.5'
+    });
+    
+    if (Array.isArray(articles)) {
+        for (const article of articles) {
+            urls.push({
+                loc: `${SITE_URL}/posts/${article.id}.html`,
+                lastmod: new Date(article.date).toISOString(),
+                changefreq: 'weekly',
+                priority: '0.8'
+            });
+        }
+    }
+    
+    if (Array.isArray(categories)) {
+        for (const category of categories) {
+            urls.push({
+                loc: `${SITE_URL}/categories/${encodeURIComponent(category.label)}/`,
+                lastmod: now,
+                changefreq: 'weekly',
+                priority: '0.6'
+            });
+        }
+    }
+    
+    const urlEntries = urls.map(u => `  <url>
+    <loc>${esc(u.loc)}</loc>
+    <lastmod>${u.lastmod}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n');
+    
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlEntries}
+</urlset>`;
+    
+    fs.writeFileSync(sitemapPath, sitemap, 'utf-8');
+    log('Sitemap', `Generated sitemap.xml with ${urls.length} URLs`, { path: sitemapPath });
+    return sitemapPath;
+}
+
+function generateRobotsTxt() {
+    const robotsPath = path.join(ROOT, 'robots.txt');
+    const robotsConfig = buildCfg.robots || {};
+    
+    const userAgent = robotsConfig.userAgent || '*';
+    const allow = robotsConfig.allow || '/';
+    const disallow = robotsConfig.disallow || [];
+    const additionalRules = robotsConfig.additionalRules || [];
+    
+    const lines = [];
+    lines.push(`User-agent: ${userAgent}`);
+    lines.push(`Allow: ${allow}`);
+    
+    disallow.forEach(path => {
+        lines.push(`Disallow: ${path}`);
+    });
+    
+    additionalRules.forEach(rule => {
+        lines.push(rule);
+    });
+    
+    lines.push('');
+    lines.push(`Sitemap: ${SITE_URL}/sitemap.xml`);
+    
+    const content = lines.join('\n');
+    fs.writeFileSync(robotsPath, content, 'utf-8');
+    log('Robots', `Generated robots.txt`, { path: robotsPath });
+    return robotsPath;
+}
+
 const program = new Command();
 
 program
@@ -1030,20 +1379,53 @@ program
   .description('QxBlog 构建工具')
   .version('1.0.0');
 
-program
-  .command('local [id]')
-  .description('从本地 Markdown 文件构建文章（不提供 ID 则构建所有）')
+const localCommand = program
+  .command('local')
+  .description('本地文章操作');
+
+localCommand
+  .command('build <id>')
+  .description('从本地 Markdown 文件构建文章（ID 为文章 ID 或 all 构建所有）')
   .action(async (id) => {
-    if (id) {
-        await buildFromLocalMarkdown(id);
-    } else {
+    if (id.toLowerCase() === 'all') {
         await buildAllLocalArticles();
+    } else {
+        await buildFromLocalMarkdown(id);
     }
   });
 
-program
-  .command('github')
-  .description('从 GitHub Issues 构建')
+localCommand
+  .command('delete <id>')
+  .description('删除指定 ID 的文章（ID 为文章 ID 或 all 删除所有）')
+  .action(async (id) => {
+    if (id.toLowerCase() === 'all') {
+        let articles = [];
+        if (fs.existsSync(ARTICLES_JSON_PATH)) {
+            articles = loadJSON(ARTICLES_JSON_PATH) || [];
+        }
+        
+        for (const article of articles) {
+            await deleteArticle(article.id);
+        }
+        
+        log('Complete', '所有文章已删除');
+    } else {
+        const issueId = parseInt(id);
+        if (isNaN(issueId)) {
+            log('Error', `Invalid article ID: ${id}`);
+            process.exit(1);
+        }
+        await deleteArticle(issueId);
+    }
+  });
+
+const ciCommand = program
+  .command('ci')
+  .description('CI Issues 操作');
+
+ciCommand
+  .command('build')
+  .description('从 GitHub Issues 构建文章')
   .action(async () => {
     await buildFromGitHubIssues();
   });

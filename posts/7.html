@@ -5,6 +5,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
+    <meta name="description" content="这篇文章记录如何把 QxBlog 从本地仓库部署到 GitHub Pages，并通过 Issue 驱动持续发布内容。 一、部署前准备 在开始前，确认以下条件已经满足： 已有 GitHub 账号 已创建并推送 QxBlog 仓库 仓库中包含 .github/workflows/qxblog-build.yml 已配置 c">
+    <meta name="keywords" content="前端, 编程, 学习, 教程">
+    <meta name="author" content="QingXuanJun">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta property="og:title" content="QxBlog - QxBlog博客框架部署指南">
+    <meta property="og:description" content="这篇文章记录如何把 QxBlog 从本地仓库部署到 GitHub Pages，并通过 Issue 驱动持续发布内容。 一、部署前准备 在开始前，确认以下条件已经满足： 已有 GitHub 账号 已创建并推送 QxBlog 仓库 仓库中包含 .github/workflows/qxblog-build.yml 已配置 c">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blog.qxbit.me/posts/7.html">
+    <meta property="og:site_name" content="QxBlog">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="QxBlog - QxBlog博客框架部署指南">
+    <meta name="twitter:description" content="这篇文章记录如何把 QxBlog 从本地仓库部署到 GitHub Pages，并通过 Issue 驱动持续发布内容。 一、部署前准备 在开始前，确认以下条件已经满足： 已有 GitHub 账号 已创建并推送 QxBlog 仓库 仓库中包含 .github/workflows/qxblog-build.yml 已配置 c">
+    <meta property="article:published_time" content="2026-05-26T14:09:31.000Z">
+    <meta property="article:tag" content="前端">
+    <meta property="article:tag" content="编程">
+    <meta property="article:tag" content="学习">
+    <meta property="article:tag" content="教程">
+    <link rel="canonical" href="https://blog.qxbit.me/posts/7.html">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "QxBlog博客框架部署指南",
+  "description": "基于 Issues 驱动的静态博客，分享代码、设计与思考。",
+  "url": "https://blog.qxbit.me/posts/7.html",
+  "datePublished": "2026-05-26T14:09:31.000Z",
+  "dateModified": "2026-05-26T14:09:31.000Z",
+  "author": {
+    "@type": "Person",
+    "name": "QingXuanJun"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "QxBlog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://blog.qxbit.me/favicon.svg"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.qxbit.me/posts/7.html"
+  },
+  "keywords": "前端, 编程, 学习, 教程"
+}</script>
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "QxBlog",
+      "item": "https://blog.qxbit.me"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "QxBlog博客框架部署指南",
+      "item": "https://blog.qxbit.me/posts/7.html"
+    }
+  ]
+}</script>
     <title>QxBlog - QxBlog博客框架部署指南</title>
     <link rel="stylesheet" href="../css/katex.min.css">
     <link rel="stylesheet" href="../css/default.css">
@@ -42,10 +105,10 @@
                 <span class="qx-post-date">2026-05-26</span>
                 <span class="qx-post-author">QingXuanJun</span>
             </div>
-            <div class="qx-post-labels"><a href="categories/%E5%89%8D%E7%AB%AF/" class="qx-article-card-label">前端</a>
-<a href="categories/%E7%BC%96%E7%A8%8B/" class="qx-article-card-label">编程</a>
-<a href="categories/%E5%AD%A6%E4%B9%A0/" class="qx-article-card-label">学习</a>
-<a href="categories/%E6%95%99%E7%A8%8B/" class="qx-article-card-label">教程</a></div>
+            <div class="qx-post-labels"><a href="../categories/%E5%89%8D%E7%AB%AF/" class="qx-article-card-label">前端</a>
+<a href="../categories/%E7%BC%96%E7%A8%8B/" class="qx-article-card-label">编程</a>
+<a href="../categories/%E5%AD%A6%E4%B9%A0/" class="qx-article-card-label">学习</a>
+<a href="../categories/%E6%95%99%E7%A8%8B/" class="qx-article-card-label">教程</a></div>
         </header>
         <div class="qx-post-body"><blockquote>
 <p>这篇文章记录如何把 QxBlog 从本地仓库部署到 GitHub Pages，并通过 Issue 驱动持续发布内容。</p>
