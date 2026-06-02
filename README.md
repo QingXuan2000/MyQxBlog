@@ -1,190 +1,278 @@
-﻿# QxBlog
+<div align="center">
+  <img src="img/logo.svg" alt="QxBlog Logo" width="120" height="120">
+  <h1>QxBlog</h1>
+  <p>基于 Issues 驱动的静态博客系统</p>
+  <p>
+    <img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License">
+    <img src="https://img.shields.io/badge/build-GitHub%20Actions-green.svg" alt="Build">
+    <img src="https://img.shields.io/badge/deploy-GitHub%20Pages-orange.svg" alt="Deploy">
+    <img src="https://img.shields.io/badge/runtime-Bun-black.svg" alt="Bun">
+  </p>
+</div>
 
-QxBlog 是一个基于 GitHub Issues 的静态博客项目。
+---
 
-通过 Issue 发布文章后，构建脚本会自动更新数据并生成静态页面，适合部署到 GitHub Pages。
+## 简介
 
-## 功能概览
+QxBlog 是一个基于 **Issues 驱动**的静态博客系统。通过 GitHub Issues 管理文章，利用 GitHub Actions 自动构建并部署到 GitHub Pages。无需数据库，无需服务器，只需一个 GitHub 仓库即可拥有完整的博客站点。
 
-- Issue 驱动发布文章
-- 自动生成文章详情页与分类页
-- 前端动态分页
-- 全文搜索
-- 明暗主题切换
+> 「用代码，写世界。」
 
-## 项目结构
+![首页预览](img/home-page-img.png)
 
-```text
-QxBlog/
-├─ index.html
-├─ 404.html
-├─ about/
-│  └─ index.html
-├─ articles/
-│  ├─ index.html
-│  └─ pages/{id}.html
-├─ categories/
-│  ├─ index.html
-│  └─ {label}/index.html
-├─ blogData/
-│  ├─ articles.json
-│  └─ categories.json
-├─ config/
-│  ├─ buildConfig.json
-│  └─ siteConfig.json
-├─ js/
-├─ css/
-├─ fonts/
-├─ img/
-└─ .github/
-   ├─ workflows/qxblog-build.yml
-   └─ script/qxBlogBuild.js
+## 功能特性
+
+### 核心功能
+
+- **Issues 驱动写作** — 通过 GitHub Issues 创建、编辑和管理文章，写作体验与 GitHub 原生一致
+- **自动化构建部署** — 利用 GitHub Actions 实现文章的自动构建与部署，Issue 的创建、编辑、删除、关闭都会触发重新构建
+- **响应式设计** — 适配桌面端和移动端设备，提供一致的阅读体验
+- **深色/浅色主题** — 支持自动跟随系统主题或手动切换
+
+### 文章功能
+
+- **Markdown 支持** — 完整支持 GitHub Flavored Markdown（GFM）语法
+- **代码高亮** — 基于 Shiki 的代码高亮，支持多种编程语言，带语言标签和一键复制功能
+- **数学公式** — 支持 KaTeX 渲染数学公式，兼容行内公式和块级公式
+- **文章分类** — 通过 GitHub Labels 实现文章分类，支持按分类浏览
+- **文章搜索** — 支持按标题、标签、正文内容实时搜索
+- **目录导航** — 文章页自动生成目录（TOC），便于快速跳转
+- **分页浏览** — 文章列表支持分页，可配置每页显示数量
+
+### SEO 与性能
+
+- **SEO 优化** — 自动生成 Open Graph、Twitter Card、结构化数据（Schema.org）等元数据
+- **懒加载** — 图片和视频默认启用懒加载
+- **View Transition** — 支持页面切换动画
+- **自定义加载动画** — 基于 SVG 的几何图形加载动画
+
+## 技术栈
+
+### 构建系统
+
+| 类别 | 技术 |
+|------|------|
+| 运行时 | Bun / Node.js |
+| 构建脚本 | 原生 JavaScript (ES Module) |
+| CLI 工具 | Commander.js |
+
+### 文章处理
+
+| 类别 | 技术 |
+|------|------|
+| Markdown 解析 | Unified / Remark |
+| Markdown 扩展 | remark-gfm (GFM 支持) |
+| 数学公式 | remark-math + rehype-katex |
+| 代码高亮 | rehype-pretty-code + Shiki |
+| 元数据解析 | remark-frontmatter + vfile-matter |
+| HTML 生成 | rehype-stringify |
+| 标题链接 | rehype-slug + rehype-autolink-headings |
+
+### 前端
+
+| 类别 | 技术 |
+|------|------|
+| 样式 | 原生 CSS (CSS Variables 主题系统) |
+| 字体 | Inter (西文) / MiSans (中文) / JetBrains Mono (代码) |
+| 交互 | 原生 JavaScript (ES Module) |
+| 图标 | 内联 SVG |
+
+### 部署
+
+| 类别 | 技术 |
+|------|------|
+| CI/CD | GitHub Actions |
+| 托管 | GitHub Pages |
+
+## 部署方式
+
+### 前置要求
+
+- GitHub 账号
+- 开启仓库的 GitHub Pages 功能
+
+### 快速开始
+
+1. **Fork 本仓库** 到自己的 GitHub 账号下
+
+2. **配置仓库设置**
+   - 进入仓库 `Settings` → `Pages`
+   - Source 选择 `GitHub Actions`
+
+3. **开始写作**
+   - 在仓库的 Issues 中新建一个 Issue
+   - 添加标题和正文（支持 Markdown 语法）
+   - 为 Issue 添加标签（Label）作为文章分类
+   - 保存后，GitHub Actions 将自动构建并部署
+
+4. **访问博客**
+   - 构建完成后，访问 `https://<你的用户名>.github.io/<仓库名>`
+
+### 本地开发
+
+```bash
+# 克隆仓库
+git clone https://github.com/<用户名>/QxBlog.git
+cd QxBlog
+
+# 安装依赖（进入构建脚本目录）
+cd .github/script
+bun install
+
+# 从本地 Markdown 文件构建所有文章（前提是已有 blogData/markdown/*.md 文件）
+bun qxBlogBuild.js local build all
+
+# 或者启动本地服务器预览
+# 使用任意静态服务器工具，例如：
+# cd ../..
+# python -m http.server 8000
+# 或 npx serve .
 ```
 
-## 数据文件
+### 构建脚本命令
 
-### `blogData/articles.json`
+```bash
+# 从本地 Markdown 文件构建所有文章
+bun qxBlogBuild.js local build all
 
-保存全量文章索引（文章 id、标题、日期、标签、作者等）。
+# 从本地 Markdown 文件构建指定 ID 的文章
+bun qxBlogBuild.js local build <id>
 
-### `blogData/categories.json`
+# CI 模式（从 GitHub Issues 构建，用于 GitHub Actions）
+bun qxBlogBuild.js ci build
 
-保存分类统计信息。
+# 删除所有文章
+bun qxBlogBuild.js local delete all
 
-```json
-[
-  { "label": "前端", "count": 10 },
-  { "label": "学习", "count": 6 }
-]
+# 删除指定 ID 的文章
+bun qxBlogBuild.js local delete <id>
+
+# 查看帮助
+bun qxBlogBuild.js --help
 ```
 
 ## 配置说明
 
-### `config/buildConfig.json`
+### 站点配置 (`config/siteConfig.json`)
 
-构建行为配置。
+| 配置项 | 类型 | 说明 |
+|--------|------|------|
+| `site.name` | string | 站点名称 |
+| `site.title` | string | 页面标题后缀 |
+| `site.author` | string | 作者名称 |
+| `site.url` | string | 站点完整 URL |
+| `site.description` | string | 站点描述（用于 SEO） |
+| `site.keywords` | string | 站点关键词 |
+| `site.siteCreatedAt` | string | 站点创建时间（ISO 8601） |
+| `hero.tag` | string | 首页标签文字 |
+| `hero.title` | string | 首页主标题 |
+| `hero.subtitle` | string | 首页副标题 |
+| `about.sections` | array | 关于页面内容区块 |
+| `about.friendLinks` | array | 友链列表 |
+| `footerContent` | array | 页脚内容 |
+| `sidebar.motto` | string | 侧边栏座右铭 |
+| `sidebar.links` | array | 侧边栏导航链接 |
 
-```json
-{
-  "author": "QingXuan2000",
-  "timezoneOffset": "+08:00",
-  "maxArticlesPerPage": 20,
-  "friendLinks": []
-}
+### 构建配置 (`config/buildConfig.json`)
+
+| 配置项 | 类型 | 说明 |
+|--------|------|------|
+| `author` | string | 构建作者标识 |
+| `timezoneOffset` | string | 时区偏移（如 `+08:00`） |
+| `githubStartId` | number | GitHub Issue 起始编号偏移 |
+| `maxArticlesPerPage` | number | 每页显示文章数量 |
+| `robots` | object | robots.txt 配置 |
+
+## 项目结构
+
+```
+QxBlog/
+├── .github/
+│   ├── script/              # 构建脚本
+│   │   ├── package.json     # 构建依赖
+│   │   └── qxBlogBuild.js   # 主构建脚本
+│   └── workflows/
+│       └── qxblog-build.yml # GitHub Actions 工作流
+├── about/                   # 关于页面
+├── articles/                # 文章列表页
+├── blogData/                # 博客数据
+│   ├── articles.json        # 文章索引
+│   ├── categories.json      # 分类数据
+│   └── markdown/            # Markdown 源文件
+├── categories/              # 分类页面
+├── config/                  # 配置文件
+│   ├── siteConfig.json      # 站点配置
+│   └── buildConfig.json     # 构建配置
+├── css/                     # 样式文件
+│   ├── default.css          # 主样式
+│   └── katex.min.css        # KaTeX 样式
+├── fonts/                   # 字体文件
+│   ├── Inter/               # Inter 可变字体
+│   ├── JetBrainsMono/       # JetBrains Mono 字体
+│   └── MiSans/              # MiSans 可变字体
+├── img/                     # 图片资源
+│   ├── logo.svg             # 站点 Logo
+│   ├── Avatar.png           # 头像
+│   └── home-page-img.png    # 首页预览图
+├── js/                      # JavaScript 模块
+│   ├── default.js           # 主入口（模块加载、代码复制、表格包装等）
+│   ├── articles.js          # 文章列表与分页
+│   ├── categories.js        # 分类管理
+│   ├── config.js            # 配置加载与导航渲染
+│   ├── nav.js               # 导航栏交互
+│   ├── search.js            # 搜索功能
+│   └── toc.js               # 目录生成
+├── posts/                   # 生成的文章 HTML（构建时生成）
+├── index.html               # 首页
+├── 404.html                 # 404 页面
+├── favicon.svg              # 站点图标
+├── sitemap.xml              # 站点地图（构建时生成）
+├── robots.txt               # 爬虫规则（构建时生成）
+└── LICENSE                  # GPL-3.0 许可证
 ```
 
-字段说明：
+## 前端模块说明
 
-- `author`: 允许触发构建的 Issue 作者
-- `timezoneOffset`: 文章发布时间时区偏移
-- `maxArticlesPerPage`: 每页文章数量（必填，必须为正数）
-- `friendLinks`: 友情链接，构建时同步到前端配置
+| 模块 | 文件 | 功能 |
+|------|------|------|
+| QxConfig | `js/config.js` | 加载配置、渲染导航栏和侧边栏 |
+| QxNav | `js/nav.js` | 移动端菜单、主题切换、当前页面高亮 |
+| QxSearch | `js/search.js` | 实时搜索（标题/标签/正文），键盘导航 |
+| QxArticles | `js/articles.js` | 文章列表渲染、分页逻辑、分类筛选 |
+| QxCategories | `js/categories.js` | 分类列表加载与渲染 |
+| QxToc | `js/toc.js` | 文章目录生成、滚动高亮、点击跳转 |
 
-### `config/siteConfig.json`
+## 写作指南
 
-前端展示配置，包含站点信息、首页文案、关于页、侧边栏、Footer 等。
+### Issue 格式
 
-## 分页机制
+GitHub Issue 的标题即为文章标题，正文即为文章内容。支持所有 GitHub Flavored Markdown 语法：
 
-分页由前端运行时完成：
+- 标题、段落、列表
+- 代码块（支持语法高亮）
+- 表格
+- 任务列表
+- 数学公式（`$...$` 行内，`$$...$$` 块级）
+- 图片与链接
 
-1. 读取 `blogData/articles.json`
-2. 分类页按标签过滤
-3. 按 `maxArticlesPerPage` 切片
-4. 渲染分页控件与文章列表
+### 使用 Labels 分类
 
-## 构建流程
+为 Issue 添加 Labels 即可为文章设置分类。例如：
+- `技术`
+- `设计`
+- `随笔`
 
-当 Issue 发生 `opened` / `edited` / `reopened` / `deleted` 时：
+### 关闭/删除 Issue
 
-1. 读取并校验作者
-2. 更新 `blogData/articles.json`
-3. 更新 `blogData/categories.json`
-4. 生成或删除 `articles/pages/{id}.html`
-5. 生成分类页 `categories/{label}/index.html`
-6. 刷新首页、文章列表页、分类列表页
+- **关闭 Issue**：文章将保留，但标记为关闭状态
+- **删除 Issue**：文章将从博客中移除
 
-## 使用方式
+## 许可证
 
-1. 修改 `config/siteConfig.json`（站点内容）
-2. 修改 `config/buildConfig.json`（作者、分页配置等）
-3. 在 GitHub Issues 发布文章（标题 + Markdown + 标签）
-4. 等待 GitHub Actions 自动构建部署
+本项目采用 [GNU General Public License v3.0](LICENSE) 开源许可证。
 
-## 部署指南
+---
 
-QxBlog 推荐部署到 GitHub Pages，配合仓库内置工作流实现自动构建。
-
-### 1) 准备仓库
-
-1. 将项目推送到 GitHub 仓库（建议仓库名：`QxBlog`）
-2. 确保仓库已包含 `.github/workflows/qxblog-build.yml`
-3. 在 `config/buildConfig.json` 中设置正确的 `author`（你的 GitHub 用户名）
-
-### 2) 配置站点信息
-
-1. 编辑 `config/siteConfig.json`，填写站点标题、描述、导航、关于页内容等
-2. 编辑 `config/buildConfig.json`，按需调整：
-   - `timezoneOffset`：文章时间显示时区（中国大陆通常为 `+08:00`）
-   - `maxArticlesPerPage`：文章列表每页条数
-   - `friendLinks`：友情链接
-
-### 3) 启用 GitHub Pages
-
-1. 打开 GitHub 仓库设置：`Settings -> Pages`
-2. `Build and deployment` 选择 `Deploy from a branch`
-3. Branch 选择 `main`（或你的默认分支），目录选择 `/ (root)`
-4. 保存后等待首次部署完成
-
-### 4) 通过 Issue 发布文章
-
-1. 在仓库 `Issues` 新建 Issue
-2. `Title` 作为文章标题，`Body` 使用 Markdown 正文
-3. 使用 `Labels` 标记分类（例如：`前端`、`学习`）
-4. 提交后，Actions 会自动更新：
-   - `blogData/articles.json`
-   - `blogData/categories.json`
-   - `articles/pages/{id}.html`
-   - `categories/{label}/index.html`
-
-### 5) 访问站点
-
-- 默认地址：`https://<你的用户名>.github.io/<仓库名>/`
-- 用户/组织主页仓库（如 `<用户名>.github.io`）可直接使用根域名访问
-
-### 6) 可选：绑定自定义域名
-
-1. 在 `Settings -> Pages` 的 `Custom domain` 中填写你的域名
-2. 在 DNS 平台配置 `CNAME` 或 `A` 记录到 GitHub Pages
-3. 等待证书签发完成后启用 HTTPS
-
-## 默认主题：QxPaper
-
-`QxPaper` 是 QxBlog 的默认主题，定位为“简洁阅读 + 轻量交互”。
-
-- 视觉风格：干净留白、卡片式信息组织，突出文章内容本身
-- 阅读体验：支持目录、代码块、数学公式（KaTeX）、文章分类浏览
-- 交互能力：全文搜索、前端分页、明暗主题切换
-- 响应式布局：桌面与移动端均可用
-
-主题相关资源主要位于：
-
-- `css/default.css`：全局样式与主题变量
-- `js/default.js`：全局交互逻辑
-- `js/nav.js` / `js/search.js` / `js/toc.js`：导航、搜索、目录功能
-
-如果你想在 `QxPaper` 基础上做定制，建议优先修改 `config/siteConfig.json`（内容配置），再按需调整 CSS 与 JS（表现与交互）。
-
-## 内容清空
-
-重置站点文章与标签可执行：
-
-- `blogData/articles.json` 设为 `{}`
-- `blogData/categories.json` 设为 `[]`
-- 清空 `articles/pages/`
-- 清空 `categories/` 下分类目录（保留 `categories/index.html`）
-
-## 编码建议
-
-- 所有配置与文档统一使用 UTF-8 编码
-- `README.md`、`buildConfig.json`、`siteConfig.json` 建议保持 UTF-8（无 BOM）
+<div align="center">
+  <sub>Built with ❤️ by <a href="https://github.com/QingXuan2000">QingXuanJun</a></sub>
+</div>

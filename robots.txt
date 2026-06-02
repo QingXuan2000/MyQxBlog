@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /blogData/
+Disallow: /config/
 
 Sitemap: https://blog.qxbit.me/sitemap.xml
