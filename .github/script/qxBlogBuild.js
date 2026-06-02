@@ -1077,7 +1077,15 @@ async function buildFromGitHubIssues() {
             });
         }
         
-        const articles = [];
+        // 加载已有的文章列表（如果是单文章模式）
+        let articles = [];
+        if (buildMode === 'single') {
+            if (fs.existsSync(ARTICLES_JSON_PATH)) {
+                articles = loadJSON(ARTICLES_JSON_PATH) || [];
+                log('Info', `Loaded ${articles.length} existing articles from articles.json`);
+            }
+        }
+        
         const markdownDir = path.join(BLOG_DATA_DIR, 'markdown');
         ensureDir(markdownDir);
         
@@ -1141,7 +1149,15 @@ ${issue.body || ''}`;
             });
             
             if (article) {
-                articles.push(article);
+                // 更新或添加到文章列表
+                const existingIndex = articles.findIndex(a => a.id === article.id);
+                if (existingIndex >= 0) {
+                    articles[existingIndex] = article;
+                    log('JSON', `Updated existing article #${article.id} in articles list`);
+                } else {
+                    articles.push(article);
+                    log('JSON', `Added new article #${article.id} to articles list`);
+                }
             }
         }
         
@@ -1153,6 +1169,8 @@ ${issue.body || ''}`;
             articlesGenerated: articles.length
         });
         
+        // 对所有文章按时间排序
+        articles.sort((a, b) => new Date(b.date) - new Date(a.date));
         saveJSON(ARTICLES_JSON_PATH, articles);
         
         const allLabels = [...new Set(articles.flatMap(a => a.labels || []))];
