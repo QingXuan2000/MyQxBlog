@@ -140,9 +140,16 @@ if (!buildCfg.author) {
 }
 
 const GITHUB_START_ID = Number(buildCfg.githubStartId ?? buildCfg.githubStartPageNumber ?? 1) || 1;
+const ALLOWED_BUILD_AUTHOR = (buildCfg.author || '').trim();
 
 function issueNumberToArticleId(issueNumber) {
     return issueNumber + (GITHUB_START_ID - 1);
+}
+
+function isBuildAuthorAllowed(authorLogin) {
+    if (!ALLOWED_BUILD_AUTHOR) return true;
+    if (!authorLogin) return true;
+    return authorLogin.toLowerCase() === ALLOWED_BUILD_AUTHOR.toLowerCase();
 }
 
 log('Config', 'Configuration loaded', {
@@ -150,6 +157,7 @@ log('Config', 'Configuration loaded', {
     author: siteCfg.site?.author || buildCfg.author || 'Anonymous',
     maxArticlesPerPage: buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE,
     githubStartId: GITHUB_START_ID,
+    allowedBuildAuthor: ALLOWED_BUILD_AUTHOR || '(not set)',
 });
 
 const MAX_PER_PAGE = buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
@@ -1066,9 +1074,28 @@ async function closeArticle(articleId) {
     return removeArticle(articleId, { keepMarkdown: true });
 }
 
+function isIssueClosed(issueId) {
+    const viewOutput = execSync(`gh issue view ${issueId} --json state`, {
+        encoding: 'utf-8',
+        cwd: ROOT,
+    });
+    const { state } = JSON.parse(viewOutput);
+    return state === 'CLOSED';
+}
+
 async function buildFromGitHubIssues() {
     const issueAction = process.env.ISSUE_ACTION || '';
     const issueId = process.env.ISSUE_ID ? parseInt(process.env.ISSUE_ID) : null;
+
+    const issueAuthor = process.env.ISSUE_AUTHOR || '';
+    if (!isBuildAuthorAllowed(issueAuthor)) {
+        log('Cancel', 'Build cancelled: issue author is not allowed to trigger CI', {
+            reason: 'AUTHOR_MISMATCH',
+            issueAuthor: issueAuthor || '(empty)',
+            allowedAuthor: ALLOWED_BUILD_AUTHOR,
+        });
+        return;
+    }
     
     // 删除事件：移除 HTML、元数据及 md 文件
     if (issueAction === 'deleted' && issueId) {
@@ -1085,7 +1112,23 @@ async function buildFromGitHubIssues() {
         await closeArticle(articleId);
         return;
     }
-    
+
+    // 编辑已关闭的 Issue 时不构建（与作者不匹配时同样直接跳过）
+    if (issueAction === 'edited' && issueId) {
+        try {
+            if (isIssueClosed(issueId)) {
+                log('Cancel', 'Build cancelled: cannot process edits on a closed issue', {
+                    reason: 'ISSUE_CLOSED',
+                    issueId,
+                    action: issueAction,
+                });
+                return;
+            }
+        } catch (err) {
+            log('Warning', 'Failed to check issue state', { error: err.message });
+        }
+    }
+
     log('Start', 'QxBlog CI Build Script Starting...');
     log('Info', 'Root directory', { root: ROOT });
     
@@ -1102,7 +1145,7 @@ async function buildFromGitHubIssues() {
     
     try {
         log('GitHub', 'Fetching issues from GitHub...');
-        const output = execSync('gh issue list --state all --limit 1000 --json number,title,body,labels,createdAt,author,updatedAt', {
+        const output = execSync('gh issue list --state all --limit 1000 --json number,title,body,labels,createdAt,author,updatedAt,state', {
             encoding: 'utf-8',
             cwd: ROOT,
         });
@@ -1162,6 +1205,22 @@ async function buildFromGitHubIssues() {
             // Skip only if explicitly marked as no-article
             if (hasNoArticleLabel) {
                 log('Skip', `Issue #${issue.number} skipped (marked as no-article)`, { reason: 'Has no-article label' });
+                skippedCount++;
+                continue;
+            }
+
+            if (issueAction === 'edited' && issue.state === 'CLOSED') {
+                log('Skip', `Issue #${issue.number} skipped (issue is closed)`, { reason: 'Edits to closed issues are ignored' });
+                skippedCount++;
+                continue;
+            }
+
+            const issueCreator = issue.author?.login || '';
+            if (!isBuildAuthorAllowed(issueCreator)) {
+                log('Skip', `Issue #${issue.number} skipped (author mismatch)`, {
+                    issueAuthor: issueCreator,
+                    allowedAuthor: ALLOWED_BUILD_AUTHOR,
+                });
                 skippedCount++;
                 continue;
             }
