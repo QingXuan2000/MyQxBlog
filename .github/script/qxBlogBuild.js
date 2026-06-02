@@ -139,10 +139,17 @@ if (!buildCfg.author) {
     log('Warning', 'buildConfig.json is empty or invalid, using defaults');
 }
 
+const GITHUB_START_ID = Number(buildCfg.githubStartId ?? buildCfg.githubStartPageNumber ?? 1) || 1;
+
+function issueNumberToArticleId(issueNumber) {
+    return issueNumber + (GITHUB_START_ID - 1);
+}
+
 log('Config', 'Configuration loaded', {
     siteName: siteCfg.site?.name || SITE_NAME,
     author: siteCfg.site?.author || buildCfg.author || 'Anonymous',
     maxArticlesPerPage: buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE,
+    githubStartId: GITHUB_START_ID,
 });
 
 const MAX_PER_PAGE = buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
@@ -973,61 +980,81 @@ function updateCategoriesJSON(articles) {
     return categories;
 }
 
-async function deleteArticle(issueId) {
-    log('Start', `Deleting article #${issueId}...`);
-    
-    // 删除 markdown 文件
-    const markdownPath = path.join(BLOG_DATA_DIR, 'markdown', `${issueId}.md`);
-    if (fs.existsSync(markdownPath)) {
+async function removeArticle(articleId, { keepMarkdown = false } = {}) {
+    const actionLabel = keepMarkdown ? 'Closing' : 'Deleting';
+    log('Start', `${actionLabel} article #${articleId}...`);
+
+    const markdownPath = path.join(BLOG_DATA_DIR, 'markdown', `${articleId}.md`);
+    if (keepMarkdown) {
+        if (fs.existsSync(markdownPath)) {
+            log('File', `Keeping markdown file: ${markdownPath}`);
+        } else {
+            log('Warning', `Markdown file not found: ${markdownPath}`);
+        }
+    } else if (fs.existsSync(markdownPath)) {
         fs.unlinkSync(markdownPath);
         log('File', `Deleted markdown file: ${markdownPath}`);
     } else {
         log('Warning', `Markdown file not found: ${markdownPath}`);
     }
-    
-    // 删除 HTML 文件
-    const htmlPath = path.join(POSTS_DIR, `${issueId}.html`);
+
+    const htmlPath = path.join(POSTS_DIR, `${articleId}.html`);
     if (fs.existsSync(htmlPath)) {
         fs.unlinkSync(htmlPath);
         log('File', `Deleted HTML file: ${htmlPath}`);
     } else {
         log('Warning', `HTML file not found: ${htmlPath}`);
     }
-    
-    // 更新 articles.json
+
     let articles = [];
     if (fs.existsSync(ARTICLES_JSON_PATH)) {
         articles = loadJSON(ARTICLES_JSON_PATH) || [];
     }
     const originalLength = articles.length;
-    articles = articles.filter(a => a.id !== issueId);
+    articles = articles.filter(a => a.id !== articleId);
     if (articles.length < originalLength) {
         saveJSON(ARTICLES_JSON_PATH, articles);
-        log('JSON', `Removed article #${issueId} from articles.json`);
+        log('JSON', `Removed article #${articleId} from articles.json`);
     } else {
-        log('Warning', `Article #${issueId} not found in articles.json`);
+        log('Warning', `Article #${articleId} not found in articles.json`);
     }
-    
-    // 更新 categories.json
+
     const categories = updateCategoriesJSON(articles);
-    
-    // 重新生成 sitemap 和 robots.txt
     generateSitemap(articles, categories);
     generateRobotsTxt();
-    
-    log('Complete', `Article #${issueId} deleted successfully`, {
+
+    const doneLabel = keepMarkdown ? 'closed' : 'deleted';
+    log('Complete', `Article #${articleId} ${doneLabel} successfully`, {
         totalArticles: articles.length,
-        totalCategories: categories.length
+        totalCategories: categories.length,
     });
+}
+
+async function deleteArticle(articleId) {
+    return removeArticle(articleId, { keepMarkdown: false });
+}
+
+async function closeArticle(articleId) {
+    return removeArticle(articleId, { keepMarkdown: true });
 }
 
 async function buildFromGitHubIssues() {
     const issueAction = process.env.ISSUE_ACTION || '';
     const issueId = process.env.ISSUE_ID ? parseInt(process.env.ISSUE_ID) : null;
     
-    // 如果是删除事件，执行删除逻辑
+    // 删除事件：移除 HTML、元数据及 md 文件
     if (issueAction === 'deleted' && issueId) {
-        await deleteArticle(issueId);
+        const articleId = issueNumberToArticleId(issueId);
+        log('Config', `Deleting article mapped from issue #${issueId} → #${articleId}`);
+        await deleteArticle(articleId);
+        return;
+    }
+
+    // 关闭事件：与删除相同，但保留 md 文件
+    if (issueAction === 'closed' && issueId) {
+        const articleId = issueNumberToArticleId(issueId);
+        log('Config', `Closing article mapped from issue #${issueId} → #${articleId}`);
+        await closeArticle(articleId);
         return;
     }
     
@@ -1113,24 +1140,25 @@ async function buildFromGitHubIssues() {
             
             processedCount++;
             
+            const articleId = issueNumberToArticleId(issue.number);
             const localDate = new Date(issue.createdAt).toISOString();
             const labelsArray = issue.labels?.map(l => l.name) || [];
             const author = siteCfg.site?.author || issue.author?.login || 'Anonymous';
             
-            log('Process', `Processing issue #${issue.number}`, {
+            log('Process', `Processing issue #${issue.number} → article #${articleId}`, {
                 title: issue.title,
                 date: localDate,
                 labels: labelsArray
             });
             
             // 生成 markdown 文件
-            const markdownPath = path.join(markdownDir, `${issue.number}.md`);
+            const markdownPath = path.join(markdownDir, `${articleId}.md`);
             const frontmatter = `---
 title: "${issue.title}"
 date: "${localDate}"
 tags: [${labelsArray.map(l => `"${l}"`).join(', ')}]
 author: "${author}"
-id: ${issue.number}
+id: ${articleId}
 ---
 
 ${issue.body || ''}`;
@@ -1139,13 +1167,13 @@ ${issue.body || ''}`;
             
             // 使用通用的 buildSingleArticle 函数（通过数据对象方式）
             const article = await buildSingleArticle({
-                id: issue.number,
+                id: articleId,
                 title: issue.title,
                 author,
                 date: localDate,
                 labels: labelsArray,
                 body: issue.body || '',
-                markdownPath: `blogData/markdown/${issue.number}.md`
+                markdownPath: `blogData/markdown/${articleId}.md`
             });
             
             if (article) {

@@ -2,7 +2,7 @@ name: "[CI] QingBlog 构建与部署"
 
 on:
   issues:
-    types: [opened, edited, deleted, reopened]
+    types: [opened, edited, deleted, reopened, closed]
 
 jobs:
   build-and-deploy:
@@ -57,7 +57,7 @@ jobs:
       - name: "[Push] 提交并推送更改"
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[Update] ${{ github.event.action == 'deleted' && '删除文章' || '更新文章' }}: ${{ github.event.issue.title }}"
+          commit_message: "[Update] ${{ github.event.action == 'deleted' && '删除文章' || (github.event.action == 'closed' && '关闭文章' || '更新文章') }}: ${{ github.event.issue.title }}"
           file_pattern: '*'
           push_options: '--force-with-lease'
 

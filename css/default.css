@@ -1592,8 +1592,7 @@ body {
 .qx-post-body figure[data-rehype-pretty-code-figure] pre {
     position: relative;
     margin: 0;
-    padding: 22px 20px;
-    padding-right: calc(20px + 1rem);
+    padding: 22px 48px 22px 20px;
     background: transparent;
     border: none;
     border-radius: 2px;
@@ -1676,7 +1675,7 @@ body {
     }
 
     .qx-post-body figure[data-rehype-pretty-code-figure] pre {
-        padding: 16px 14px;
+        padding: 16px 48px 16px 14px;
     }
 
     .qx-post-body figure[data-rehype-pretty-code-figure] code {
