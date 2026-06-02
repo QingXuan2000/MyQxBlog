@@ -1255,8 +1255,9 @@ async function buildFromGitHubIssues() {
 
         if (issueId) {
             log('GitHub', `Fetching latest issue #${issueId}...`);
+            let issue;
             try {
-                let issue = fetchGitHubIssue(issueId);
+                issue = fetchGitHubIssue(issueId);
                 issue = applyCiIssueEventPayload(issue);
                 targetIssues = [issue];
             } catch (err) {
