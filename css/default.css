@@ -1593,6 +1593,7 @@ body {
     position: relative;
     margin: 0;
     padding: 22px 20px;
+    padding-right: calc(20px + 1rem);
     background: transparent;
     border: none;
     border-radius: 2px;
@@ -1603,6 +1604,7 @@ body {
     -moz-text-size-adjust: none;
     -ms-text-size-adjust: none;
     text-size-adjust: none;
+    scroll-padding-right: 1rem;
 }
 
 .qx-code-copy {
@@ -1718,6 +1720,12 @@ body {
 
 [data-theme="dark"] figure[data-rehype-pretty-code-figure] code span {
     color: var(--shiki-dark);
+}
+
+[data-theme="dark"] .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line]::before {
+    color: #8b949e;
+    opacity: 0.7;
+    border-right-color: rgba(255, 255, 255, 0.15);
 }
 
 .qx-post-body span[data-rehype-pretty-code-figure] {
