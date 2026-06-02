@@ -163,6 +163,31 @@ const SITE_CREATED_AT = siteCfg.site?.siteCreatedAt || new Date().toISOString();
 const _tmpl = (t, d) => t.replace(/\$\{([^}]+)\}/g, (_, k) => d[k] ?? '');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+function yamlEscapeDoubleQuoted(str) {
+    return String(str)
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t');
+}
+
+function yamlUnescapeDoubleQuoted(str) {
+    let out = '';
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] === '\\' && i + 1 < str.length) {
+            const next = str[++i];
+            if (next === 'n') out += '\n';
+            else if (next === 'r') out += '\r';
+            else if (next === 't') out += '\t';
+            else out += next;
+        } else {
+            out += str[i];
+        }
+    }
+    return out;
+}
+
 function ensureDir(dir) {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -782,13 +807,16 @@ function parseFrontmatter(content) {
         // Handle array format: ["tag1", "tag2"]
         if (value.startsWith('[') && value.endsWith(']')) {
             try {
-                data[key] = JSON.parse(value.replace(/'/g, '"'));
+                data[key] = JSON.parse(value);
             } catch {
-                data[key] = value;
+                try {
+                    data[key] = JSON.parse(value.replace(/'/g, '"'));
+                } catch {
+                    data[key] = value;
+                }
             }
         } else if (value.startsWith('"') && value.endsWith('"')) {
-            // Handle quoted string
-            data[key] = value.slice(1, -1);
+            data[key] = yamlUnescapeDoubleQuoted(value.slice(1, -1));
         } else {
             data[key] = value;
         }
@@ -1154,10 +1182,10 @@ async function buildFromGitHubIssues() {
             // 生成 markdown 文件
             const markdownPath = path.join(markdownDir, `${articleId}.md`);
             const frontmatter = `---
-title: "${issue.title}"
-date: "${localDate}"
-tags: [${labelsArray.map(l => `"${l}"`).join(', ')}]
-author: "${author}"
+title: "${yamlEscapeDoubleQuoted(issue.title)}"
+date: "${yamlEscapeDoubleQuoted(localDate)}"
+tags: ${JSON.stringify(labelsArray)}
+author: "${yamlEscapeDoubleQuoted(author)}"
 id: ${articleId}
 ---
 
