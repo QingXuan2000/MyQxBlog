@@ -1445,20 +1445,36 @@ body {
     color: var(--text-body);
 }
 
-.qx-post-meta {
-    display: flex;
-    gap: 16px;
-    margin-top: 16px;
+.qx-post-meta,
+.qx-post-footer {
     font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
     font-size: .82rem;
     line-height: 1.45;
     opacity: .5;
+    color: var(--text-body);
+}
+
+.qx-post-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
 }
 
 .qx-post-labels {
     display: flex;
     gap: 8px;
     margin-top: 12px;
+}
+
+.qx-post-footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid color-mix(in srgb, var(--text-body) 14%, transparent);
+    text-align: right;
+}
+
+.qx-post-updated {
+    margin: 0;
 }
 
 .qx-post-body {

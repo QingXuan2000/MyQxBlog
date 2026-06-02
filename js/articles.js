@@ -22,8 +22,17 @@ export class QxArticles {
         if (!res.ok) return [];
         const data = await res.json();
         const list = Array.isArray(data) ? data : Object.values(data || {});
-        this.allArticles = list.sort((a, b) => new Date(b.date) - new Date(a.date));
+        this.allArticles = list.sort((a, b) => new Date(b.updated || b.date) - new Date(a.updated || a.date));
         return this.allArticles;
+    }
+
+    _formatDisplayDate(iso) {
+        if (!iso) return '';
+        const d = new Date(iso);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
     }
 
     _filterByLabel(articles) {
@@ -57,8 +66,9 @@ export class QxArticles {
                 return `<a href="${href}" class="qx-article-card-label">${l}</a>`;
             }).join('\n');
             const href = new URL(`posts/${a.id}.html`, ROOT).pathname;
+            const displayDate = this._formatDisplayDate(a.updated || a.date);
             return `<a href="${href}" class="qx-article-card">
-                <div class="qx-article-card-date">${a.date}</div>
+                <div class="qx-article-card-date">${displayDate}</div>
                 <div class="qx-article-card-title">${a.title}</div>
                 <div class="qx-article-card-labels">${labelsHTML}</div>
             </a>`;

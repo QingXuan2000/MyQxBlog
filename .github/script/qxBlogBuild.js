@@ -218,6 +218,14 @@ function formatDate(dateStr) {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+function getArticleUpdated(article) {
+    return article.updated || article.date;
+}
+
+function sortArticlesByUpdated(articles) {
+    return articles.sort((a, b) => new Date(getArticleUpdated(b)) - new Date(getArticleUpdated(a)));
+}
+
 function genSlug(title) {
     return title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-+|-+$/g, '');
 }
@@ -297,7 +305,7 @@ function genStructuredDataArticle(article, url) {
         description: article.description || SITE_DESCRIPTION,
         url: url,
         datePublished: new Date(article.date).toISOString(),
-        dateModified: new Date(article.date).toISOString(),
+        dateModified: new Date(getArticleUpdated(article)).toISOString(),
         author: {
             '@type': 'Person',
             name: article.author || SITE_AUTHOR
@@ -429,6 +437,7 @@ async function genArticleHTML(article) {
         url: articleUrl,
         type: 'article',
         date: article.date,
+        modifiedDate: getArticleUpdated(article),
         tags: article.labels || []
     });
 
@@ -471,12 +480,15 @@ async function genArticleHTML(article) {
             </a>
             <h1 class="qx-post-title">${article.title}</h1>
             <div class="qx-post-meta">
-                <span class="qx-post-date">${formatDate(article.date)}</span>
+                <span class="qx-post-date">发布日期：${formatDate(article.date)}</span>
                 <span class="qx-post-author">${article.author}</span>
             </div>
             <div class="qx-post-labels">${labelsHTML}</div>
         </header>
         <div class="qx-post-body">${bodyHTML}</div>
+        <footer class="qx-post-footer">
+            <p class="qx-post-updated">最后更新：${formatDate(getArticleUpdated(article))}</p>
+        </footer>
     </article>
 
 </body>
@@ -834,7 +846,7 @@ function parseFrontmatter(content) {
 }
 
 async function buildSingleArticle(options) {
-    let id, title, author, date, labels, body, markdownPath;
+    let id, title, author, date, updated, labels, body, markdownPath;
     
     if (typeof options === 'number' || typeof options === 'string') {
         // 从文件构建
@@ -868,6 +880,7 @@ async function buildSingleArticle(options) {
         id = parseInt(data['id']) || parseInt(fileId) || 0;
         title = data['title'] || 'Untitled';
         date = data['date'] || new Date().toISOString();
+        updated = data['updated'] || date;
         author = data['author'] || siteCfg.site?.author || 'Anonymous';
         labels = Array.isArray(data['tags']) ? data['tags'] : (data['tags'] ? data['tags'].split(',').map(l => l.trim()).filter(Boolean) : []);
         body = parsedBody;
@@ -878,6 +891,7 @@ async function buildSingleArticle(options) {
         title = options.title || 'Untitled';
         author = options.author || siteCfg.site?.author || 'Anonymous';
         date = options.date || new Date().toISOString();
+        updated = options.updated || date;
         labels = options.labels || [];
         body = options.body || '';
         markdownPath = options.markdownPath || `blogData/markdown/${id}.md`;
@@ -894,6 +908,7 @@ async function buildSingleArticle(options) {
         title,
         author,
         date,
+        updated,
         labels,
         markdownPath,
     };
@@ -915,10 +930,11 @@ async function buildSingleArticle(options) {
         url: articleUrl,
         type: 'article',
         date,
+        modifiedDate: updated,
         tags: labels
     });
 
-    const structuredData = genStructuredDataArticle({ id, title, author, date, labels }, articleUrl);
+    const structuredData = genStructuredDataArticle({ id, title, author, date, updated, labels }, articleUrl);
     const breadcrumbData = genStructuredDataBreadcrumb([
         { name: SITE_NAME, url: SITE_URL },
         { name: title, url: articleUrl }
@@ -968,12 +984,15 @@ async function buildSingleArticle(options) {
             </a>
             <h1 class="qx-post-title">${title}</h1>
             <div class="qx-post-meta">
-                <span class="qx-post-date">${formatDate(date)}</span>
+                <span class="qx-post-date">发布日期：${formatDate(date)}</span>
                 <span class="qx-post-author">${author}</span>
             </div>
             <div class="qx-post-labels">${labelsHTML}</div>
         </header>
         <div class="qx-post-body">${articleBodyHTML}</div>
+        <footer class="qx-post-footer">
+            <p class="qx-post-updated">最后更新：${formatDate(updated)}</p>
+        </footer>
     </article>
 </body>
 
@@ -1001,7 +1020,7 @@ function updateArticlesJSON(newArticle) {
         log('JSON', `Added new article #${newArticle.id} to articles.json`);
     }
 
-    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+    sortArticlesByUpdated(articles);
     saveJSON(ARTICLES_JSON_PATH, articles);
     return articles;
 }
@@ -1083,6 +1102,94 @@ function isIssueClosed(issueId) {
     return state === 'CLOSED';
 }
 
+const GITHUB_ISSUE_JSON_FIELDS = 'number,title,body,labels,createdAt,author,updatedAt,state';
+
+function fetchGitHubIssue(issueNumber) {
+    const output = execSync(`gh issue view ${issueNumber} --json ${GITHUB_ISSUE_JSON_FIELDS}`, {
+        encoding: 'utf-8',
+        cwd: ROOT,
+    });
+    return JSON.parse(output);
+}
+
+/** 用 workflow 事件中的最新标题/正文/标签覆盖（edited 时避免 issue list 数据滞后） */
+function applyCiIssueEventPayload(issue) {
+    const next = { ...issue };
+    if (process.env.ISSUE_TITLE != null && process.env.ISSUE_TITLE !== '') {
+        next.title = process.env.ISSUE_TITLE;
+    }
+    if (process.env.ISSUE_BODY != null) {
+        next.body = process.env.ISSUE_BODY;
+    }
+    if (process.env.ISSUE_DATE) {
+        next.updatedAt = process.env.ISSUE_DATE;
+    }
+    if (process.env.ISSUE_LABELS) {
+        try {
+            const names = JSON.parse(process.env.ISSUE_LABELS);
+            if (Array.isArray(names)) {
+                next.labels = names.map((name) => ({ name: String(name) }));
+            }
+        } catch (err) {
+            log('Warning', 'Failed to parse ISSUE_LABELS', { error: err.message });
+        }
+    }
+    return next;
+}
+
+async function processGitHubIssueToArticle(issue, articles, markdownDir) {
+    const articleId = issueNumberToArticleId(issue.number);
+    const localDate = new Date(issue.createdAt).toISOString();
+    const updatedAt = issue.updatedAt ? new Date(issue.updatedAt).toISOString() : localDate;
+    const labelsArray = issue.labels?.map(l => l.name) || [];
+    const author = siteCfg.site?.author || issue.author?.login || 'Anonymous';
+
+    log('Process', `Processing issue #${issue.number} → article #${articleId}`, {
+        title: issue.title,
+        date: localDate,
+        updatedAt,
+        labels: labelsArray,
+    });
+
+    const markdownPath = path.join(markdownDir, `${articleId}.md`);
+    const frontmatter = `---
+title: "${yamlEscapeDoubleQuoted(issue.title)}"
+date: "${yamlEscapeDoubleQuoted(localDate)}"
+updated: "${yamlEscapeDoubleQuoted(updatedAt)}"
+tags: ${JSON.stringify(labelsArray)}
+author: "${yamlEscapeDoubleQuoted(author)}"
+id: ${articleId}
+---
+
+${issue.body || ''}`;
+    fs.writeFileSync(markdownPath, frontmatter, 'utf-8');
+    log('File', `Regenerated markdown (frontmatter + body): ${markdownPath}`);
+
+    const article = await buildSingleArticle({
+        id: articleId,
+        title: issue.title,
+        author,
+        date: localDate,
+        updated: updatedAt,
+        labels: labelsArray,
+        body: issue.body || '',
+        markdownPath: `blogData/markdown/${articleId}.md`,
+    });
+
+    if (article) {
+        const existingIndex = articles.findIndex(a => a.id === article.id);
+        if (existingIndex >= 0) {
+            articles[existingIndex] = article;
+            log('JSON', `Updated article #${article.id} metadata in articles.json`);
+        } else {
+            articles.push(article);
+            log('JSON', `Added article #${article.id} metadata to articles.json`);
+        }
+    }
+
+    return article;
+}
+
 async function buildFromGitHubIssues() {
     const issueAction = process.env.ISSUE_ACTION || '';
     const issueId = process.env.ISSUE_ID ? parseInt(process.env.ISSUE_ID) : null;
@@ -1144,35 +1251,48 @@ async function buildFromGitHubIssues() {
     const issueRE = /^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?!?:/i;
     
     try {
-        log('GitHub', 'Fetching issues from GitHub...');
-        const output = execSync('gh issue list --state all --limit 1000 --json number,title,body,labels,createdAt,author,updatedAt,state', {
-            encoding: 'utf-8',
-            cwd: ROOT,
-        });
-        const issues = JSON.parse(output);
-        
-        if (!issues || issues.length === 0) {
-            log('Warning', 'No issues found in repository');
-            return;
-        }
-        
-        // 根据 ISSUE_ID 过滤：如果设置了 ISSUE_ID，只处理这一个 issue
-        let targetIssues = issues;
+        let targetIssues;
+
         if (issueId) {
-            targetIssues = issues.filter(issue => issue.number === issueId);
-            if (targetIssues.length === 0) {
-                log('Error', `Issue #${issueId} not found in repository`);
+            log('GitHub', `Fetching latest issue #${issueId}...`);
+            try {
+                let issue = fetchGitHubIssue(issueId);
+                issue = applyCiIssueEventPayload(issue);
+                targetIssues = [issue];
+            } catch (err) {
+                log('Error', `Issue #${issueId} not found or failed to fetch`, { error: err.message });
                 process.exit(1);
             }
-            log('GitHub', `Single issue mode - Building issue #${issueId}`, { 
+            log('GitHub', `Single issue mode - Building issue #${issueId}`, {
                 issueNumber: issueId,
-                issueTitle: targetIssues[0].title
+                issueTitle: issue.title,
+                action: issueAction,
             });
+            if (issueAction === 'edited') {
+                log('Info', 'Edit event: updating articles.json, markdown frontmatter, and body');
+            }
         } else {
-            log('GitHub', `All issues mode - Found ${issues.length} total issues`, { 
-                issueNumbers: issues.map(i => i.number),
-                issueTitles: issues.map(i => i.title)
+            log('GitHub', 'Fetching issues from GitHub...');
+            const output = execSync(`gh issue list --state all --limit 1000 --json ${GITHUB_ISSUE_JSON_FIELDS}`, {
+                encoding: 'utf-8',
+                cwd: ROOT,
             });
+            const issues = JSON.parse(output);
+
+            if (!issues || issues.length === 0) {
+                log('Warning', 'No issues found in repository');
+                return;
+            }
+
+            targetIssues = issues;
+            log('GitHub', `All issues mode - Found ${issues.length} total issues`, {
+                issueNumbers: issues.map(i => i.number),
+            });
+        }
+
+        if (!targetIssues || targetIssues.length === 0) {
+            log('Warning', 'No issues to process');
+            return;
         }
         
         // 加载已有的文章列表（如果是单文章模式）
@@ -1226,54 +1346,8 @@ async function buildFromGitHubIssues() {
             }
             
             processedCount++;
-            
-            const articleId = issueNumberToArticleId(issue.number);
-            const localDate = new Date(issue.createdAt).toISOString();
-            const labelsArray = issue.labels?.map(l => l.name) || [];
-            const author = siteCfg.site?.author || issue.author?.login || 'Anonymous';
-            
-            log('Process', `Processing issue #${issue.number} → article #${articleId}`, {
-                title: issue.title,
-                date: localDate,
-                labels: labelsArray
-            });
-            
-            // 生成 markdown 文件
-            const markdownPath = path.join(markdownDir, `${articleId}.md`);
-            const frontmatter = `---
-title: "${yamlEscapeDoubleQuoted(issue.title)}"
-date: "${yamlEscapeDoubleQuoted(localDate)}"
-tags: ${JSON.stringify(labelsArray)}
-author: "${yamlEscapeDoubleQuoted(author)}"
-id: ${articleId}
----
 
-${issue.body || ''}`;
-            fs.writeFileSync(markdownPath, frontmatter, 'utf-8');
-            log('File', `Generated markdown: ${markdownPath}`);
-            
-            // 使用通用的 buildSingleArticle 函数（通过数据对象方式）
-            const article = await buildSingleArticle({
-                id: articleId,
-                title: issue.title,
-                author,
-                date: localDate,
-                labels: labelsArray,
-                body: issue.body || '',
-                markdownPath: `blogData/markdown/${articleId}.md`
-            });
-            
-            if (article) {
-                // 更新或添加到文章列表
-                const existingIndex = articles.findIndex(a => a.id === article.id);
-                if (existingIndex >= 0) {
-                    articles[existingIndex] = article;
-                    log('JSON', `Updated existing article #${article.id} in articles list`);
-                } else {
-                    articles.push(article);
-                    log('JSON', `Added new article #${article.id} to articles list`);
-                }
-            }
+            await processGitHubIssueToArticle(issue, articles, markdownDir);
         }
         
         log('Summary', `Issue processing complete (${buildMode} mode)`, {
@@ -1285,7 +1359,7 @@ ${issue.body || ''}`;
         });
         
         // 对所有文章按时间排序
-        articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+        sortArticlesByUpdated(articles);
         saveJSON(ARTICLES_JSON_PATH, articles);
         
         const allLabels = [...new Set(articles.flatMap(a => a.labels || []))];
@@ -1420,7 +1494,7 @@ function updateArticlesJSONFromArray(newArticles) {
         }
     }
     
-    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+    sortArticlesByUpdated(articles);
     saveJSON(ARTICLES_JSON_PATH, articles);
     return articles;
 }
@@ -1463,7 +1537,7 @@ function generateSitemap(articles, categories) {
         for (const article of articles) {
             urls.push({
                 loc: `${SITE_URL}/posts/${article.id}.html`,
-                lastmod: new Date(article.date).toISOString(),
+                lastmod: new Date(getArticleUpdated(article)).toISOString(),
                 changefreq: 'weekly',
                 priority: '0.8'
             });

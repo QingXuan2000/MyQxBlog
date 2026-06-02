@@ -93,7 +93,7 @@ export class QxSearch {
             const q = this.input.value.trim();
             this.dropdown.innerHTML = results.map((a, i) => {
                 const href = `${PAGE_HREF}${a.id}.html`;
-                const date = this._formatDate(a.date);
+                const date = this._formatDate(a.updated || a.date);
                 const excerpt = this._excerpt(a.bodyText || '', q);
                 const excerptHTML = excerpt ? `<span class="qx-search-item-excerpt">${excerpt}</span>` : '';
                 return `<a href="${href}" class="qx-search-item" data-idx="${i}">
