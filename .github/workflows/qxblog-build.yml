@@ -18,8 +18,14 @@ jobs:
       - name: "[Checkout] 检出代码仓库"
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "[Fetch] 获取最新的 articles.json"
+        run: |
+          if [ -f "blogData/articles.json" ]; then
+            echo "Using existing articles.json"
+          fi
 
       - name: "[Setup] 配置 Bun 环境"
         uses: oven-sh/setup-bun@v2
