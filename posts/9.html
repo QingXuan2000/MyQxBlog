@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <meta name="description" content="简介 Vaultwarden 是一个轻量级的 Bitwarden 服务器兼容实现，适合部署在低配置设备上。通过自托管，您可以完全掌控密码数据，同时免费使用原本需要付费的高级功能（如 TOTP 两步验证、文件附件等）。 我个人认为，对于希望减少对第三方服务依赖的用户来说，自部署是一个值得尝试的方向。当然，这也意味着您需要">
+    <meta name="keywords" content="编程, 学习, 教程">
+    <meta name="author" content="QingXuanJun">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta property="og:title" content="QxBlog - 自部署 Vaultwarden 简明指南">
+    <meta property="og:description" content="简介 Vaultwarden 是一个轻量级的 Bitwarden 服务器兼容实现，适合部署在低配置设备上。通过自托管，您可以完全掌控密码数据，同时免费使用原本需要付费的高级功能（如 TOTP 两步验证、文件附件等）。 我个人认为，对于希望减少对第三方服务依赖的用户来说，自部署是一个值得尝试的方向。当然，这也意味着您需要">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blog.qxbit.me/posts/9.html">
+    <meta property="og:site_name" content="QxBlog">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="QxBlog - 自部署 Vaultwarden 简明指南">
+    <meta name="twitter:description" content="简介 Vaultwarden 是一个轻量级的 Bitwarden 服务器兼容实现，适合部署在低配置设备上。通过自托管，您可以完全掌控密码数据，同时免费使用原本需要付费的高级功能（如 TOTP 两步验证、文件附件等）。 我个人认为，对于希望减少对第三方服务依赖的用户来说，自部署是一个值得尝试的方向。当然，这也意味着您需要">
+    <meta property="article:published_time" content="2026-05-31T17:06:13.000Z">
+    <meta property="article:modified_time" content="2026-06-02T18:45:38.000Z">
+    <meta property="article:tag" content="编程">
+    <meta property="article:tag" content="学习">
+    <meta property="article:tag" content="教程">
+    <link rel="canonical" href="https://blog.qxbit.me/posts/9.html">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "自部署 Vaultwarden 简明指南",
+  "description": "基于 Issues 驱动的静态博客，分享代码、设计与思考。",
+  "url": "https://blog.qxbit.me/posts/9.html",
+  "datePublished": "2026-05-31T17:06:13.000Z",
+  "dateModified": "2026-06-02T18:45:38.000Z",
+  "author": {
+    "@type": "Person",
+    "name": "QingXuanJun"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "QxBlog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://blog.qxbit.me/favicon.svg"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.qxbit.me/posts/9.html"
+  },
+  "keywords": "编程, 学习, 教程"
+}</script>
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "QxBlog",
+      "item": "https://blog.qxbit.me"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "自部署 Vaultwarden 简明指南",
+      "item": "https://blog.qxbit.me/posts/9.html"
+    }
+  ]
+}</script>
+    <title>QxBlog - 自部署 Vaultwarden 简明指南</title>
+    <link rel="stylesheet" href="../css/katex.min.css">
+    <link rel="stylesheet" href="../css/default.css">
+    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
+    <script type="module" src="../js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="qx-loader">
+        <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
+            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
+            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
+            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
+            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
+            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
+            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
+        </svg>
+    </div>
+    <article class="qx-post">
+        <header class="qx-post-header">
+            <a href="javascript:history.back()" class="qx-post-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
+            </a>
+            <h1 class="qx-post-title">自部署 Vaultwarden 简明指南</h1>
+            <div class="qx-post-meta">
+                <span class="qx-post-date">发布日期：2026-05-31</span>
+                <span class="qx-post-author">QingXuanJun</span>
+            </div>
+            <div class="qx-post-labels"><a href="../categories/%E7%BC%96%E7%A8%8B/" class="qx-article-card-label">编程</a>
+<a href="../categories/%E5%AD%A6%E4%B9%A0/" class="qx-article-card-label">学习</a>
+<a href="../categories/%E6%95%99%E7%A8%8B/" class="qx-article-card-label">教程</a></div>
+        </header>
+        <div class="qx-post-body"><h2 id="简介"><a class="qx-heading-anchor" href="#简介">简介</a></h2>
+<p>Vaultwarden 是一个轻量级的 Bitwarden 服务器兼容实现，适合部署在低配置设备上。通过自托管，您可以完全掌控密码数据，同时免费使用原本需要付费的高级功能（如 TOTP 两步验证、文件附件等）。</p>
+<p>我个人认为，对于希望减少对第三方服务依赖的用户来说，自部署是一个值得尝试的方向。当然，这也意味着您需要自行承担数据备份和安全维护的责任，这一点请务必权衡。</p>
+<p>本文提供一份极简部署方案，仅需 Docker 和一个域名（可选）即可运行。需要说明的是，不同操作系统和网络环境下可能会遇到一些意外问题，我的经验主要基于 Ubuntu 22.04，其他发行版可能需要微调，恕我无法保证完全通用。</p>
+<h2 id="准备工作"><a class="qx-heading-anchor" href="#准备工作">准备工作</a></h2>
+<ul>
+<li>一台 Linux 服务器（最低配置：1核 CPU，256MB 内存，1GB 可用磁盘空间。但说实话，256MB 跑起来可能稍紧，我建议至少 512MB）</li>
+<li>已安装 Docker（建议使用 Compose V2，即 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>docker compose</span></span></code></span> 命令）</li>
+<li>（可选）一个域名及 HTTPS 证书（推荐使用 Let's Encrypt，免费且自动化）</li>
+</ul>
+<h2 id="快速部署使用-sqlite"><a class="qx-heading-anchor" href="#快速部署使用-sqlite">快速部署（使用 SQLite）</a></h2>
+<p>创建目录并进入：</p>
+<p>mkdir ~/vaultwarden &#x26;&#x26; cd ~/vaultwarden</p>
+<p>创建 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>compose.yml</span></span></code></span>：</p>
+<p>services:<br>
+vaultwarden:<br>
+image: vaultwarden/server:latest<br>
+container_name: vaultwarden<br>
+restart: always<br>
+environment:<br>
+DOMAIN: "<a href="https://vault.example.com">https://vault.example.com</a>"          # 换成你的实际域名，末尾不要加斜杠<br>
+WEBSOCKET_ENABLED: "true"                    # 显式启用 WebSocket<br>
+SIGNUPS_ALLOWED: "true"                      # 首次部署时启用，注册完第一个账号后改为 false<br>
+ADMIN_TOKEN: "your_very_strong_token"        # 用 openssl rand -base64 48 生成<br>
+volumes:<br>
+- ./data:/data<br>
+ports:<br>
+- "127.0.0.1:8080:80"                       # 仅监听本地，由反向代理对外暴露</p>
+<p>启动服务：</p>
+<p>docker compose up -d</p>
+<p><strong>关于 WebSocket 的说明</strong>：从 Vaultwarden v1.29.0 开始，WebSocket 实时同步已整合到主 HTTP 端口，3012 端口已废弃。新部署直接走 80 端口即可。</p>
+<h2 id="volume-配置推荐"><a class="qx-heading-anchor" href="#volume-配置推荐">Volume 配置推荐</a></h2>
+<p>虽然上述配置使用 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>./data:/data</span></span></code></span> 已经可以使用，但为了更好的性能、安全性和可维护性，建议考虑以下方案：</p>
+<h3 id="1-使用-docker-命名卷而非-bind-mount"><a class="qx-heading-anchor" href="#1-使用-docker-命名卷而非-bind-mount">1. 使用 Docker 命名卷而非 bind mount</a></h3>
+<p>命名卷由 Docker 管理，权限问题更少，备份也方便：</p>
+<p>volumes:<br>
+vaultwarden_data:</p>
+<p>services:<br>
+vaultwarden:<br>
+...<br>
+volumes:<br>
+- vaultwarden_data:/data</p>
+<p>volumes:<br>
+vaultwarden_data:</p>
+<p>备份时可用 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>docker run --rm -v vaultwarden_data:/data -v $(pwd):/backup alpine tar czf /backup/vaultwarden_data_backup.tar.gz /data</span></span></code></span></p>
+<h3 id="2-限制-sqlite-数据库的并发连接数避免数据损坏"><a class="qx-heading-anchor" href="#2-限制-sqlite-数据库的并发连接数避免数据损坏">2. 限制 SQLite 数据库的并发连接数（避免数据损坏）</a></h3>
+<p>在 environment 中添加：<br>
+DATA_DB_MAX_CONNS: "1"        # SQLite 官方建议单写连接</p>
+<h3 id="3-如果坚持使用-bind-mountdatadata建议设置主机目录权限"><a class="qx-heading-anchor" href="#3-如果坚持使用-bind-mountdatadata建议设置主机目录权限">3. 如果坚持使用 bind mount（./data:/data），建议设置主机目录权限</a></h3>
+<p>mkdir -p ./data<br>
+chown -R 65532:65532 ./data      # Vaultwarden 容器内默认使用 uid 65532（非 root 用户）<br>
+chmod 750 ./data</p>
+<p>这样可以防止容器以 root 运行（默认已是非 root，但确保挂载目录属主正确）。</p>
+<h3 id="4-为数据目录启用-noexecnodev-等挂载选项仅限高级用户"><a class="qx-heading-anchor" href="#4-为数据目录启用-noexecnodev-等挂载选项仅限高级用户">4. 为数据目录启用 noexec、nodev 等挂载选项（仅限高级用户）</a></h3>
+<p>如果使用单独的数据分区，可以在 /etc/fstab 中添加挂载选项，但普通用户可忽略。</p>
+<h2 id="首次使用"><a class="qx-heading-anchor" href="#首次使用">首次使用</a></h2>
+<ol>
+<li>通过 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>http://你的服务器IP:8080</span></span></code></span> 访问网页端（仅用于注册，建议在内网操作）。</li>
+<li>点击“创建账户”，输入姓名、邮箱地址、主密码（务必牢记且足够复杂。主密码一旦忘记，没有任何办法恢复）。</li>
+<li>注册成功后，立即关闭公开注册：编辑 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>compose.yml</span></span></code></span>，将 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>SIGNUPS_ALLOWED</span></span></code></span> 改为 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>"false"</span></span></code></span>，然后执行 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>docker compose up -d</span></span></code></span> 重启服务。</li>
+</ol>
+<h2 id="配置反向代理与-https强烈推荐"><a class="qx-heading-anchor" href="#配置反向代理与-https强烈推荐">配置反向代理与 HTTPS（强烈推荐）</a></h2>
+<h3 id="安装-nginx-和-certbot"><a class="qx-heading-anchor" href="#安装-nginx-和-certbot">安装 Nginx 和 Certbot</a></h3>
+<p>sudo apt update &#x26;&#x26; sudo apt install nginx certbot python3-certbot-nginx</p>
+<h3 id="创建-nginx-配置"><a class="qx-heading-anchor" href="#创建-nginx-配置">创建 Nginx 配置</a></h3>
+<p>编辑 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>/etc/nginx/sites-available/vault</span></span></code></span>：</p>
+<h1 id="websocket-支持"><a class="qx-heading-anchor" href="#websocket-支持">WebSocket 支持</a></h1>
+<p>map <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mi>t</mi><mi>t</mi><msub><mi>p</mi><mi>u</mi></msub><mi>p</mi><mi>g</mi><mi>r</mi><mi>a</mi><mi>d</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">http_upgrade </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">h</span><span class="mord mathnormal">tt</span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal">p</span><span class="mord mathnormal" style="margin-right:0.0359em;">g</span><span class="mord mathnormal" style="margin-right:0.0278em;">r</span><span class="mord mathnormal">a</span><span class="mord mathnormal">d</span><span class="mord mathnormal">e</span></span></span></span>connection_upgrade {<br>
+default upgrade;<br>
+''      "";<br>
+}</p>
+<p>upstream vaultwarden-default {<br>
+server 127.0.0.1:8080;<br>
+keepalive 2;<br>
+}</p>
+<p>server {<br>
+listen 80;<br>
+listen [::]:80;<br>
+server_name vault.example.com;<br>
+return 301 https://<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">host</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">h</span><span class="mord mathnormal">os</span><span class="mord mathnormal">t</span></span></span></span>request_uri;<br>
+}</p>
+<p>server {<br>
+listen 443 ssl;<br>
+listen [::]:443 ssl;<br>
+http2 on;<br>
+server_name vault.example.com;</p>
+<figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span>ssl_certificate /etc/letsencrypt/live/vault.example.com/fullchain.pem;</span></span>
+<span data-line=""><span>ssl_certificate_key /etc/letsencrypt/live/vault.example.com/privkey.pem;</span></span>
+<span data-line=""> </span>
+<span data-line=""><span>client_max_body_size 525M;</span></span>
+<span data-line=""> </span>
+<span data-line=""><span>proxy_http_version 1.1;</span></span>
+<span data-line=""><span>proxy_set_header Upgrade $http_upgrade;</span></span>
+<span data-line=""><span>proxy_set_header Connection $connection_upgrade;</span></span>
+<span data-line=""><span>proxy_set_header Host $host;</span></span>
+<span data-line=""><span>proxy_set_header X-Real-IP $remote_addr;</span></span>
+<span data-line=""><span>proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span></span>
+<span data-line=""><span>proxy_set_header X-Forwarded-Proto $scheme;</span></span>
+<span data-line=""> </span>
+<span data-line=""><span>location / {</span></span>
+<span data-line=""><span>    proxy_pass http://vaultwarden-default;</span></span>
+<span data-line=""><span>}</span></span></code></pre></figure>
+<p>}</p>
+<p>启用站点并获取证书：</p>
+<p>sudo ln -s /etc/nginx/sites-available/vault /etc/nginx/sites-enabled/<br>
+sudo certbot --nginx -d vault.example.com</p>
+<p>Certbot 会自动修改 Nginx 配置并重载。如果出现错误，请检查域名 DNS 是否正确解析到服务器 IP。</p>
+<p><strong>注意</strong>：如果你之前照着旧教程配过 3012 端口和 /notifications/hub 规则，现在可以全部删掉。所有流量统一走 location / 转发到 8080 端口。</p>
+<h2 id="基本安全设置"><a class="qx-heading-anchor" href="#基本安全设置">基本安全设置</a></h2>
+<ul>
+<li><strong>禁用公开注册</strong>：如上所述设置 SIGNUPS_ALLOWED=false</li>
+<li><strong>设置强 ADMIN_TOKEN</strong>：使用 openssl rand -base64 48 生成</li>
+<li><strong>（可选）管理面板 IP 限制</strong>：在 Nginx 配置的 server 块中添加：<br>
+location /admin {<br>
+allow 你的可信IP/32;<br>
+deny all;<br>
+proxy_pass <a href="http://vaultwarden-default">http://vaultwarden-default</a>;<br>
+}<br>
+注意：如果 IP 是动态的，可能把自己锁在外面，谨慎使用。</li>
+</ul>
+<h2 id="日常维护"><a class="qx-heading-anchor" href="#日常维护">日常维护</a></h2>
+<h3 id="更新-vaultwarden"><a class="qx-heading-anchor" href="#更新-vaultwarden">更新 Vaultwarden</a></h3>
+<p>cd ~/vaultwarden<br>
+docker compose pull<br>
+docker compose up -d</p>
+<h3 id="定期备份推荐安全方式"><a class="qx-heading-anchor" href="#定期备份推荐安全方式">定期备份（推荐安全方式）</a></h3>
+<p>cd ~/vaultwarden<br>
+docker compose stop vaultwarden<br>
+tar -czf vaultwarden_backup_$(date +%Y%m%d).tar.gz data<br>
+docker compose start vaultwarden</p>
+<p>如果使用 Docker 命名卷，备份命令参考上文。</p>
+<p>建议将备份文件加密后上传到云存储或另一台机器。</p>
+<h2 id="客户端连接"><a class="qx-heading-anchor" href="#客户端连接">客户端连接</a></h2>
+<p>在 Bitwarden 官方客户端（浏览器扩展、手机 App）中，选择“自托管”并输入 <a href="https://vault.example.com%EF%BC%8C%E7%84%B6%E5%90%8E%E4%BD%BF%E7%94%A8%E4%B9%8B%E5%89%8D%E6%B3%A8%E5%86%8C%E7%9A%84%E9%82%AE%E7%AE%B1%E5%92%8C%E4%B8%BB%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95%E3%80%82%E5%A6%82%E6%9E%9C%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5%EF%BC%8C%E4%BC%98%E5%85%88%E6%A3%80%E6%9F%A5%E9%98%B2%E7%81%AB%E5%A2%99%E5%92%8C">https://vault.example.com，然后使用之前注册的邮箱和主密码登录。如果连接失败，优先检查防火墙和</a> Nginx 日志：</p>
+<p>sudo tail -f /var/log/nginx/error.log</p>
+<h2 id="结语"><a class="qx-heading-anchor" href="#结语">结语</a></h2>
+<p>通过以上步骤，您已经拥有一个安全、私密且完全免费的密码管理服务。后续可以根据需要进一步配置 SMTP 邮件、文件大小限制等高级选项。自部署的核心是“数据自主”，请务必保管好您的服务器和备份。</p></div>
+        <footer class="qx-post-footer">
+            <p class="qx-post-updated">最后更新：2026-06-02</p>
+        </footer>
+    </article>
+</body>
+
+</html>
