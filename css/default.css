@@ -1665,6 +1665,14 @@ body {
         --qx-code-pad-x: 14px;
         --qx-code-pad-left: 0px;
     }
+    
+    .qx-post-body figure[data-rehype-pretty-code-figure] code {
+        font-size: 13px;
+    }
+    
+    .qx-post-body span[data-rehype-pretty-code-figure] code {
+        font-size: 13px;
+    }
 }
 
 [data-theme="light"] figure[data-rehype-pretty-code-figure] code span {
