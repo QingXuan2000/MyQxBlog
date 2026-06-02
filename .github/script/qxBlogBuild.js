@@ -1031,8 +1031,15 @@ async function buildFromGitHubIssues() {
         return;
     }
     
-    log('Start', 'QxBlog Build Script Starting...');
+    log('Start', 'QxBlog CI Build Script Starting...');
     log('Info', 'Root directory', { root: ROOT });
+    
+    // 构建模式判断：单文章 vs 全部
+    const buildMode = issueId ? 'single' : 'all';
+    log('Config', `Build mode: ${buildMode}`, { 
+        mode: buildMode, 
+        issueId: issueId || 'N/A' 
+    });
     
     ensureDir(POSTS_DIR);
     
@@ -1051,10 +1058,24 @@ async function buildFromGitHubIssues() {
             return;
         }
         
-        log('GitHub', `Found ${issues.length} total issues`, { 
-            issueNumbers: issues.map(i => i.number),
-            issueTitles: issues.map(i => i.title)
-        });
+        // 根据 ISSUE_ID 过滤：如果设置了 ISSUE_ID，只处理这一个 issue
+        let targetIssues = issues;
+        if (issueId) {
+            targetIssues = issues.filter(issue => issue.number === issueId);
+            if (targetIssues.length === 0) {
+                log('Error', `Issue #${issueId} not found in repository`);
+                process.exit(1);
+            }
+            log('GitHub', `Single issue mode - Building issue #${issueId}`, { 
+                issueNumber: issueId,
+                issueTitle: targetIssues[0].title
+            });
+        } else {
+            log('GitHub', `All issues mode - Found ${issues.length} total issues`, { 
+                issueNumbers: issues.map(i => i.number),
+                issueTitles: issues.map(i => i.title)
+            });
+        }
         
         const articles = [];
         const markdownDir = path.join(BLOG_DATA_DIR, 'markdown');
@@ -1063,7 +1084,7 @@ async function buildFromGitHubIssues() {
         let skippedCount = 0;
         let processedCount = 0;
         
-        for (const issue of issues) {
+        for (const issue of targetIssues) {
             const isConventionalCommit = issueRE.test(issue.title);
             const hasArticleLabel = issue.labels?.some(l => l.name === 'article');
             const hasNoArticleLabel = issue.labels?.some(l => l.name === 'no-article');
@@ -1124,8 +1145,9 @@ ${issue.body || ''}`;
             }
         }
         
-        log('Summary', 'Issue processing complete', {
-            totalIssues: issues.length,
+        log('Summary', `Issue processing complete (${buildMode} mode)`, {
+            mode: buildMode,
+            totalIssues: targetIssues.length,
             processed: processedCount,
             skipped: skippedCount,
             articlesGenerated: articles.length
@@ -1144,7 +1166,8 @@ ${issue.body || ''}`;
         generateSitemap(articles, categories);
         generateRobotsTxt();
         
-        log('Complete', 'Build complete!', {
+        log('Complete', `Build complete! (${buildMode} mode)`, {
+            mode: buildMode,
             totalArticles: articles.length,
             totalCategories: categories.length,
             outputFiles: {
