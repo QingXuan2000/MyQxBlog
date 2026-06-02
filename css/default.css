@@ -1671,22 +1671,32 @@ body {
     .qx-post-body figure[data-rehype-pretty-code-figure] {
         --qx-code-pad-x: 14px;
         --qx-code-pad-left: 0px;
+        margin: 20px 0;
     }
     
-    .qx-post-body figure[data-rehype-pretty-code-figure] pre,
+    .qx-post-body figure[data-rehype-pretty-code-figure] pre {
+        padding: 16px var(--qx-code-pad-x) 16px var(--qx-code-pad-left);
+    }
+    
+    /* 移动端代码块样式 - 全面覆盖 */
     .qx-post-body figure[data-rehype-pretty-code-figure] code,
-    .qx-post-body figure[data-rehype-pretty-code-figure] code span,
-    .qx-post-body figure[data-rehype-pretty-code-figure] code span span,
+    .qx-post-body figure[data-rehype-pretty-code-figure] code *,
+    .qx-post-body figure[data-rehype-pretty-code-figure] pre,
+    .qx-post-body figure[data-rehype-pretty-code-figure] pre code,
+    .qx-post-body figure[data-rehype-pretty-code-figure] pre code *,
     .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line],
-    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] span,
+    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] * {
+        font-family: "JetBrains Mono", Consolas, "Courier New", monospace !important;
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+    }
+    
+    /* 移动端内联代码样式 */
     .qx-post-body span[data-rehype-pretty-code-figure] code,
-    .qx-post-body span[data-rehype-pretty-code-figure] code span,
-    .qx-post-body span[data-rehype-pretty-code-figure] code span span,
-    .qx-post-body span[data-rehype-pretty-code-figure] code [data-line],
-    .qx-post-body span[data-rehype-pretty-code-figure] code [data-line] span {
-        font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
-        font-size: 13px;
-        line-height: 1.5;
+    .qx-post-body span[data-rehype-pretty-code-figure] code * {
+        font-family: "JetBrains Mono", Consolas, "Courier New", monospace !important;
+        font-size: 12px !important;
+        line-height: 1.4 !important;
     }
 }
 
