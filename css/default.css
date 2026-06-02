@@ -200,6 +200,8 @@
 html {
     height: 100%;
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
@@ -1559,8 +1561,6 @@ body {
     margin: 0;
 }
 
-/* ---- Code Block ---- */
-
 .qx-post-body figure[data-rehype-pretty-code-figure] {
     position: relative;
     margin: 28px 0;
@@ -1570,32 +1570,29 @@ body {
     border-radius: 2px;
     overflow: hidden;
     transition: background .3s, border-color .3s;
-    --qx-code-pad-x: 20px;
-    --qx-code-pad-left: 0px;
 }
 
 .qx-post-body figcaption[data-rehype-pretty-code-title] {
-    font-family: "JetBrains Mono", "MiSans", Consolas, "Courier New", monospace;
+    font-family: "JetBrains Mono", Consolas, monospace;
     font-size: .65rem;
     font-weight: 500;
     letter-spacing: var(--tracking-mono);
     opacity: .6;
     text-transform: uppercase;
-    padding: 12px var(--qx-code-pad-x) 0;
+    padding: 12px 20px 0;
     user-select: none;
 }
 
 .qx-post-body figure[data-rehype-pretty-code-figure] pre {
     position: relative;
     margin: 0;
-    padding: 22px var(--qx-code-pad-x) 22px var(--qx-code-pad-left);
+    padding: 22px 20px;
     background: transparent;
     border: none;
     border-radius: 2px;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    transition: none;
 }
 
 .qx-code-copy {
@@ -1619,36 +1616,24 @@ body {
     opacity: .6;
 }
 
-.qx-code-copy:hover {
-    opacity: .9;
-}
-
 .qx-post-body figure[data-rehype-pretty-code-figure] code {
-    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
-    font-size: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 15px;
     font-weight: 400;
     font-variant-ligatures: none;
-    line-height: 1.75;
+    line-height: 1.6;
     letter-spacing: -0.02em;
     tab-size: 4;
     padding: 0;
     background: none;
     border: none;
-    border-radius: 2px;
     counter-reset: line;
-}
-
-.qx-post-body figure[data-rehype-pretty-code-figure] code span {
-    font-family: inherit;
-    font-size: inherit;
 }
 
 .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] {
     display: block;
     min-height: 1.75em;
     white-space: pre;
-    font-family: inherit;
-    font-size: inherit;
 }
 
 .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line]::before {
@@ -1656,47 +1641,43 @@ body {
     counter-increment: line;
     display: inline-block;
     text-align: right;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 0 10px;
     color: var(--code-accent);
     opacity: 0.5;
     user-select: none;
     border-right: 1px solid var(--code-border);
     margin-right: 10px;
     min-width: 2.5em;
-    vertical-align: top;
 }
 
 @media (max-width: 768px) {
     .qx-post-body figure[data-rehype-pretty-code-figure] {
-        --qx-code-pad-x: 14px;
-        --qx-code-pad-left: 0px;
         margin: 20px 0;
     }
-    
+
     .qx-post-body figure[data-rehype-pretty-code-figure] pre {
-        padding: 16px var(--qx-code-pad-x) 16px var(--qx-code-pad-left);
+        padding: 16px 14px;
     }
-    
-    /* 移动端代码块样式 - 全面覆盖 */
-    .qx-post-body figure[data-rehype-pretty-code-figure] code,
-    .qx-post-body figure[data-rehype-pretty-code-figure] code *,
-    .qx-post-body figure[data-rehype-pretty-code-figure] pre,
-    .qx-post-body figure[data-rehype-pretty-code-figure] pre code,
-    .qx-post-body figure[data-rehype-pretty-code-figure] pre code *,
-    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line],
-    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] * {
-        font-family: "JetBrains Mono", Consolas, "Courier New", monospace !important;
-        font-size: 12px !important;
-        line-height: 1.4 !important;
+
+    .qx-post-body figure[data-rehype-pretty-code-figure] code {
+        font-size: 13px;
+        line-height: 1.5;
     }
-    
-    /* 移动端内联代码样式 */
-    .qx-post-body span[data-rehype-pretty-code-figure] code,
-    .qx-post-body span[data-rehype-pretty-code-figure] code * {
-        font-family: "JetBrains Mono", Consolas, "Courier New", monospace !important;
-        font-size: 12px !important;
-        line-height: 1.4 !important;
+
+    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] {
+        min-height: 1.5em;
+    }
+}
+
+@supports (-webkit-touch-callout: none) {
+    .qx-post-body figure[data-rehype-pretty-code-figure] {
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+    }
+
+    .qx-post-body figure[data-rehype-pretty-code-figure] code {
+        font-size: 13px;
+        line-height: 1.5;
     }
 }
 
@@ -1714,9 +1695,9 @@ body {
 
 .qx-post-body span[data-rehype-pretty-code-figure] code {
     display: inline;
-    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
-    font-size: 14px;
-    font-weight: 400;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.95em;
+    font-weight: 500;
     font-variant-ligatures: none;
     letter-spacing: -0.02em;
     padding: 2px 6px;
@@ -1724,11 +1705,6 @@ body {
     border: 1px solid var(--code-inline-border);
     border-radius: 2px;
     color: var(--code-fg);
-}
-
-.qx-post-body span[data-rehype-pretty-code-figure] code span {
-    font-family: inherit;
-    font-size: inherit;
 }
 
 [data-theme="light"] .qx-post-body span[data-rehype-pretty-code-figure] code span {
