@@ -1671,24 +1671,48 @@ body {
         --qx-code-pad-left: 0px;
     }
     
+    .qx-post-body figure[data-rehype-pretty-code-figure] pre {
+        font-size: 13px !important;
+    }
+    
     .qx-post-body figure[data-rehype-pretty-code-figure] code {
-        font-size: 13px;
+        font-size: 13px !important;
     }
     
     .qx-post-body figure[data-rehype-pretty-code-figure] code span {
-        font-size: 13px;
+        font-size: 13px !important;
+    }
+    
+    .qx-post-body figure[data-rehype-pretty-code-figure] code span span {
+        font-size: 13px !important;
     }
     
     .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] {
-        font-size: 13px;
+        font-size: 13px !important;
+    }
+    
+    .qx-post-body figure[data-rehype-pretty-code-figure] code [data-line] span {
+        font-size: 13px !important;
     }
     
     .qx-post-body span[data-rehype-pretty-code-figure] code {
-        font-size: 13px;
+        font-size: 13px !important;
     }
     
     .qx-post-body span[data-rehype-pretty-code-figure] code span {
-        font-size: 13px;
+        font-size: 13px !important;
+    }
+    
+    .qx-post-body span[data-rehype-pretty-code-figure] code span span {
+        font-size: 13px !important;
+    }
+    
+    .qx-post-body span[data-rehype-pretty-code-figure] code [data-line] {
+        font-size: 13px !important;
+    }
+    
+    .qx-post-body span[data-rehype-pretty-code-figure] code [data-line] span {
+        font-size: 13px !important;
     }
 }
 
