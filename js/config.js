@@ -133,13 +133,14 @@ export class QxConfig {
 
     static renderNav() {
         const logoHref = new URL('index.html', ROOT).href;
+        const logoLightSrc = `${ROOT}img/logo/light.svg`;
+        const logoDarkSrc = `${ROOT}img/logo/dark.svg`;
         const html = `
             <header class="qx-header">
                 <nav class="qx-nav">
                     <a href="${logoHref}" class="qx-nav-logo">
-                        <svg class="qx-nav-logo-svg" width="32" height="32" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            ${LOGO_SVG}
-                        </svg>
+                        <img class="qx-nav-logo-img qx-nav-logo-light" src="${logoLightSrc}" alt="Logo">
+                        <img class="qx-nav-logo-img qx-nav-logo-dark" src="${logoDarkSrc}" alt="Logo">
                     </a>
                     <span class="qx-nav-brand"></span>
                     <div class="qx-nav-actions">

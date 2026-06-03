@@ -447,6 +447,10 @@ async function genArticleHTML(article) {
         { name: article.title, url: articleUrl }
     ]);
 
+    const loaderCSS = `<style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>`;
+    
+    const loaderHTML = `<div class="qx-loader"><svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg"><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g><line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/><polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/><polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/><circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/><circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/><circle class="qx-loader-core" cx="310" cy="310" r="8"/></svg></div>`;
+
     return `<!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -460,7 +464,7 @@ async function genArticleHTML(article) {
     <title>${SITE_NAME2} - ${article.title}</title>
     <link rel="stylesheet" href="${prefix}css/katex.min.css">
     <link rel="stylesheet" href="${prefix}css/default.css">
-    \${LOADER_CSS}
+    ${loaderCSS}
     <script type="module" src="${prefix}js/default.js"></script>
     <script>
         (function () {
@@ -472,12 +476,14 @@ async function genArticleHTML(article) {
 </head>
 
 <body>
-    \${LOADER_HTML}
+    ${loaderHTML}
     <article class="qx-post">
         <header class="qx-post-header">
-            <a href="javascript:history.back()" class="qx-post-back">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
-            </a>
+            <div class="qx-post-back-wrapper">
+                <a href="javascript:history.back()" class="qx-post-back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
+                </a>
+            </div>
             <h1 class="qx-post-title">${article.title}</h1>
             <div class="qx-post-meta">
                 <span class="qx-post-date">发布日期：${formatDate(article.date)}</span>
@@ -514,6 +520,10 @@ function genCategoryHTML(label, articleCount) {
         { name: label, url: categoryUrl }
     ]);
 
+    const loaderCSS = `<style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>`;
+    
+    const loaderHTML = `<div class="qx-loader"><svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg"><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g><g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g><line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/><polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/><polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/><circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/><circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/><circle class="qx-loader-core" cx="310" cy="310" r="8"/></svg></div>`;
+
     return `<!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -525,7 +535,7 @@ function genCategoryHTML(label, articleCount) {
     ${breadcrumbData}
     <title>${SITE_NAME2} - ${label}</title>
     <link rel="stylesheet" href="${prefix}css/default.css">
-    \${LOADER_CSS}
+    ${loaderCSS}
     <script type="module" src="${prefix}js/default.js"></script>
     <script>
         (function () {
@@ -537,8 +547,13 @@ function genCategoryHTML(label, articleCount) {
 </head>
 
 <body>
-    \${LOADER_HTML}
+    ${loaderHTML}
     <section class="qx-page-hero">
+        <div class="qx-page-hero-back-wrapper">
+            <a href="javascript:history.back()" class="qx-page-hero-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
+            </a>
+        </div>
         <span class="qx-page-hero-tag">&lt;Category /&gt;</span>
         <h1 class="qx-page-hero-title">${label}</h1>
         <p class="qx-page-hero-sub">共 ${articleCount} 篇文章</p>
@@ -547,6 +562,92 @@ function genCategoryHTML(label, articleCount) {
     <section class="qx-articles">
         <div class="qx-articles-grid"></div>
         <div class="qx-pagination" id="qxPagination" data-source="category" data-label="${label}"></div>
+    </section>
+
+</body>
+
+</html>`;
+}
+
+async function generateCategoryPages(categories, articles) {
+    const categoriesDir = path.join(ROOT, 'categories');
+    ensureDir(categoriesDir);
+    
+    for (const category of categories) {
+        const categoryDir = path.join(categoriesDir, category.label);
+        ensureDir(categoryDir);
+        
+        const html = genCategoryHTML(category.label, category.count);
+        const indexPath = path.join(categoryDir, 'index.html');
+        fs.writeFileSync(indexPath, html, 'utf-8');
+        log('File', `Generated category page: ${indexPath}`);
+    }
+    
+    // 生成分类列表页（如果有的话）
+    const categoriesListPath = path.join(categoriesDir, 'index.html');
+    if (!fs.existsSync(categoriesListPath)) {
+        const categoriesListHTML = genCategoriesListPage(categories);
+        fs.writeFileSync(categoriesListPath, categoriesListHTML, 'utf-8');
+        log('File', `Generated categories list page: ${categoriesListPath}`);
+    }
+    
+    log('Info', `Generated ${categories.length} category pages`);
+}
+
+function genCategoriesListPage(categories) {
+    const categoriesHTML = categories.map(c => `
+        <a href="${c.label}/" class="qx-category-item">
+            <span class="qx-category-name">${c.label}</span>
+            <span class="qx-category-count">${c.count} 篇</span>
+        </a>
+    `).join('');
+    
+    return `<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <title>${SITE_NAME2} - 分类</title>
+    <link rel="stylesheet" href="../css/default.css">
+    <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
+    <script type="module" src="../js/default.js"></script>
+    <script>
+        (function () {
+            var t = localStorage.getItem('qx-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="qx-loader">
+        <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
+            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
+            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
+            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
+            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
+            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
+            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
+            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
+        </svg>
+    </div>
+    <section class="qx-page-hero">
+        <div class="qx-page-hero-back-wrapper">
+            <a href="javascript:history.back()" class="qx-page-hero-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
+            </a>
+        </div>
+        <span class="qx-page-hero-tag">&lt;Categories /&gt;</span>
+        <h1 class="qx-page-hero-title">分类</h1>
+        <p class="qx-page-hero-sub">按标签浏览文章。</p>
+    </section>
+
+    <section class="qx-categories">
+        <div class="qx-categories-list">${categoriesHTML}</div>
     </section>
 
 </body>
@@ -979,9 +1080,11 @@ async function buildSingleArticle(options) {
     </div>
     <article class="qx-post">
         <header class="qx-post-header">
-            <a href="javascript:history.back()" class="qx-post-back">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
-            </a>
+            <div class="qx-post-back-wrapper">
+                <a href="javascript:history.back()" class="qx-post-back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
+                </a>
+            </div>
             <h1 class="qx-post-title">${title}</h1>
             <div class="qx-post-meta">
                 <span class="qx-post-date">发布日期：${formatDate(date)}</span>
@@ -1374,6 +1477,9 @@ async function buildFromGitHubIssues() {
         generateSitemap(articles, categories);
         generateRobotsTxt();
         
+        // 生成分类详情页
+        await generateCategoryPages(categories, articles);
+        
         log('Complete', `Build complete! (${buildMode} mode)`, {
             mode: buildMode,
             totalArticles: articles.length,
@@ -1417,6 +1523,9 @@ async function buildFromLocalMarkdown(fileId) {
 
     generateSitemap(articles, categories);
     generateRobotsTxt();
+    
+    // 生成分类详情页
+    await generateCategoryPages(categories, articles);
 
     log('Complete', 'Build complete!', {
         articleId: article.id,
@@ -1466,6 +1575,9 @@ async function buildAllLocalArticles() {
     
     generateSitemap(updatedArticles, categories);
     generateRobotsTxt();
+    
+    // 生成分类详情页
+    await generateCategoryPages(categories, updatedArticles);
     
     log('Complete', 'Build complete!', {
         totalArticles: updatedArticles.length,

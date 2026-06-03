@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="img/logo.svg" alt="QxBlog Logo" width="120" height="120">
+  <img src="img/logo/dark.svg" alt="QxBlog Logo" width="120" height="120">
   <h1>QxBlog</h1>
   <p>基于 Issues 驱动的静态博客系统</p>
   <p>

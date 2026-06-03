@@ -67,11 +67,12 @@ export class QxArticles {
             }).join('\n');
             const href = new URL(`posts/${a.id}.html`, ROOT).pathname;
             const displayDate = this._formatDisplayDate(a.updated || a.date);
-            return `<a href="${href}" class="qx-article-card">
+            return `<div class="qx-article-card">
+                <a href="${href}" class="qx-article-card-link" aria-label="阅读文章：${a.title}"></a>
                 <div class="qx-article-card-date">${displayDate}</div>
                 <div class="qx-article-card-title">${a.title}</div>
                 <div class="qx-article-card-labels">${labelsHTML}</div>
-            </a>`;
+            </div>`;
         }).join('\n');
     }
 

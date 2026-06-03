@@ -291,11 +291,29 @@ body {
     flex-shrink: 0;
     border-right: 1px solid var(--text-body);
     color: var(--text-body);
+    position: relative;
 }
 
-.qx-nav-logo-svg {
+.qx-nav-logo-img {
     width: 32px;
     height: 32px;
+    position: absolute;
+}
+
+.qx-nav-logo-light {
+    display: block;
+}
+
+.qx-nav-logo-dark {
+    display: none;
+}
+
+[data-theme="dark"] .qx-nav-logo-light {
+    display: none;
+}
+
+[data-theme="dark"] .qx-nav-logo-dark {
+    display: block;
 }
 
 .qx-nav-brand {
@@ -1095,8 +1113,9 @@ body {
 
 .qx-article-card {
     display: block;
+    position: relative;
     padding: 24px 0 0;
-    text-decoration: none;
+    border-bottom: 1px solid var(--text-body);
     color: var(--text-body);
     opacity: .75;
     transition: opacity .2s;
@@ -1104,6 +1123,12 @@ body {
 
 .qx-article-card:hover {
     opacity: 1;
+}
+
+.qx-article-card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
 }
 
 .qx-article-card-date {
@@ -1126,10 +1151,11 @@ body {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--text-body);
 }
 
 .qx-article-card-label {
+    position: relative;
+    z-index: 1;
     font-size: .72rem;
     font-weight: 500;
     line-height: 1.35;
@@ -1283,7 +1309,28 @@ body {
 .qx-page-hero {
     max-width: 72ch;
     margin: 0 auto;
-    padding: 80px 24px 60px;
+    padding: 60px 24px 60px;
+}
+
+.qx-page-hero-back-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.qx-page-hero-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .85rem;
+    color: var(--text-body);
+    text-decoration: none;
+    opacity: .5;
+    transition: opacity .2s;
+}
+
+.qx-page-hero-back:hover {
+    opacity: 1;
 }
 
 .qx-page-hero-tag {
@@ -1302,7 +1349,7 @@ body {
     line-height: 1.08;
     letter-spacing: 0;
     color: var(--text-body);
-    margin-top: 12px;
+    margin-top: 16px;
 }
 
 .qx-page-hero-sub {
@@ -1416,16 +1463,25 @@ body {
 .qx-post {
     max-width: 72ch;
     margin: 0 auto;
-    padding: 80px 24px 120px;
+    padding: 60px 24px 120px;
 }
 
 .qx-post-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     margin-bottom: 48px;
 }
 
+.qx-post-back-wrapper {
+    display: flex;
+    align-items: center;
+}
+
 .qx-post-back {
-    display: inline-block;
-    margin-bottom: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: .85rem;
     color: var(--text-body);
     text-decoration: none;
