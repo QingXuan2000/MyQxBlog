@@ -585,6 +585,7 @@ body {
     gap: 0;
     overflow: hidden;
     border-bottom: 1px solid var(--text-body);
+    container-type: inline-size;
 }
 
 .qx-hero-left {
@@ -605,19 +606,47 @@ body {
 }
 
 .qx-hero-title {
-    font-size: clamp(2.5rem, 8vw, 6rem);
+    /* 降级方案：使用 vw 单位 */
+    font-size: clamp(1.8rem, 6.5vw, 6rem);
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: 0;
     color: var(--text-body);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+/* 支持容器查询的浏览器使用 cqw 单位 */
+@supports (container-type: inline-size) {
+    .qx-hero-title {
+        font-size: clamp(1.8rem, 6.5cqw, 6rem);
+    }
+}
+
+/* 支持 text-wrap: balance 的浏览器使用该特性 */
+@supports (text-wrap: balance) {
+    .qx-hero-title {
+        text-wrap: balance;
+    }
 }
 
 .qx-hero-sub {
-    font-size: clamp(.85rem, 1.4vw, 1.15rem);
+    /* 降级方案：使用 vw 单位 */
+    font-size: clamp(.9rem, 1.6vw, 1.25rem);
     color: var(--text-body);
     opacity: .4;
     line-height: 1.65;
     letter-spacing: var(--tracking-ui);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* 支持容器查询的浏览器使用 cqw 单位 */
+@supports (container-type: inline-size) {
+    .qx-hero-sub {
+        font-size: clamp(.9rem, 1.6cqw, 1.25rem);
+    }
 }
 
 .qx-hero-right {
@@ -786,8 +815,18 @@ body {
         gap: 14px;
     }
 
+    /* 降级方案 */
     .qx-hero-title {
-        font-size: clamp(2rem, 10vw, 3rem);
+        font-size: clamp(1.6rem, 9vw, 2.8rem);
+    }
+}
+
+/* 支持容器查询的浏览器使用 cqw 单位 */
+@supports (container-type: inline-size) {
+    @media (max-width: 480px) {
+        .qx-hero-title {
+            font-size: clamp(1.6rem, 9cqw, 2.8rem);
+        }
     }
 }
 
