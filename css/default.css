@@ -36,11 +36,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-
-    -webkit-text-size-adjust: none;
-    -moz-text-size-adjust: none;
-    -ms-text-size-adjust: none;
-    text-size-adjust: none;
 }
 
 /* ========== Loader ========== */
@@ -417,7 +412,7 @@ body {
     background: transparent;
     color: var(--text-body);
     font-family: "Inter", "MiSans", sans-serif;
-    font-size: .9rem;
+    font-size: 1rem;
     outline: none;
 }
 
@@ -1300,7 +1295,7 @@ body {
     background: transparent;
     color: var(--text-body);
     font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
-    font-size: .8rem;
+    font-size: 1rem;
     text-align: center;
     opacity: .5;
     outline: none;
