@@ -8,18 +8,18 @@
   },
   "hero": {
     "tag": "<Blog />",
-    "title": "「用代码，写世界。」",
-    "subtitle": "Thoughts on code, design, and everything in between."
+    "title": "「保持专注，保持思考。」",
+    "subtitle": "Stay focused, stay reflective."
   },
   "about": {
     "sections": [
       {
         "head": "关于我",
-        "text": "一名前端工程师，热爱代码与设计。<br>用技术构建数字世界中的每一个细节。"
+        "text": "我是 QingXuanJun。<br />「保持专注，保持思考。」<br />是我的座右铭。以此为导，我正在寻找自己想走的道路，并记录沿途的所见和所闻。"
       },
       {
         "head": "关于本站",
-        "text": "基于 Issues 驱动的静态博客。<br>通过 GitHub Actions 自动构建部署。"
+        "text": "这是我在这偌大互联网中留下的地标，是我存在过的痕迹，是我的一个微小理想，是我走过的一条分支……"
       }
     ],
     "friendLinks": [
@@ -34,7 +34,7 @@
     "<a style=\"color: inherit; text-decoration: none;\" href=\"https://icp.gov.moe/?keyword=20266099\" target=\"_blank\">萌ICP备20266099号</a>"
   ],
   "sidebar": {
-    "motto": "用代码，写世界。",
+    "motto": "保持专注，保持思考。",
     "links": [
       {
         "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"></path><polyline points=\"9 22 9 12 15 12 15 22\"></polyline></svg> 首页",
