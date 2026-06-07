@@ -1,23 +1,23 @@
 [
   {
+    "label": "编程",
+    "count": 5
+  },
+  {
+    "label": "学习",
+    "count": 5
+  },
+  {
+    "label": "教程",
+    "count": 4
+  },
+  {
     "label": "碎碎念",
     "count": 4
   },
   {
     "label": "前端",
     "count": 4
-  },
-  {
-    "label": "编程",
-    "count": 4
-  },
-  {
-    "label": "学习",
-    "count": 4
-  },
-  {
-    "label": "教程",
-    "count": 3
   },
   {
     "label": "游戏",

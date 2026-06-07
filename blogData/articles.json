@@ -1,5 +1,19 @@
 [
   {
+    "id": 9,
+    "slug": "自部署-vaultwarden-简明指南",
+    "title": "自部署 Vaultwarden 简明指南",
+    "author": "QingXuanJun",
+    "date": "2026-05-31T17:06:13.000Z",
+    "updated": "2026-06-07T18:15:39.000Z",
+    "labels": [
+      "编程",
+      "学习",
+      "教程"
+    ],
+    "markdownPath": "blogData/markdown/9.md"
+  },
+  {
     "id": 8,
     "slug": "qxblog-updata-v0-1-1更新",
     "title": "QxBlog Updata v0.1.1更新",
