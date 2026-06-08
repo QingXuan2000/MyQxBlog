@@ -22,7 +22,7 @@ export class QxArticles {
         if (!res.ok) return [];
         const data = await res.json();
         const list = Array.isArray(data) ? data : Object.values(data || {});
-        this.allArticles = list.sort((a, b) => new Date(b.updated || b.date) - new Date(a.updated || a.date));
+        this.allArticles = list.sort((a, b) => new Date(b.date) - new Date(a.date));
         return this.allArticles;
     }
 
@@ -66,7 +66,7 @@ export class QxArticles {
                 return `<a href="${href}" class="qx-article-card-label">${l}</a>`;
             }).join('\n');
             const href = new URL(`posts/${a.id}.html`, ROOT).pathname;
-            const displayDate = this._formatDisplayDate(a.updated || a.date);
+            const displayDate = this._formatDisplayDate(a.date);
             return `<div class="qx-article-card">
                 <a href="${href}" class="qx-article-card-link" aria-label="阅读文章：${a.title}"></a>
                 <div class="qx-article-card-date">${displayDate}</div>
