@@ -1,5 +1,19 @@
 [
   {
+    "id": 8,
+    "slug": "博客系统更新日志",
+    "title": "博客系统更新日志",
+    "author": "QingXuanJun",
+    "date": "2026-05-27T05:32:47.000Z",
+    "updated": "2026-06-08T14:59:33.000Z",
+    "labels": [
+      "碎碎念",
+      "前端",
+      "编程"
+    ],
+    "markdownPath": "blogData/markdown/8.md"
+  },
+  {
     "id": 9,
     "slug": "自部署-vaultwarden-简明指南",
     "title": "自部署 Vaultwarden 简明指南",
@@ -12,20 +26,6 @@
       "教程"
     ],
     "markdownPath": "blogData/markdown/9.md"
-  },
-  {
-    "id": 8,
-    "slug": "qxblog-updata-v0-1-1更新",
-    "title": "QxBlog Updata v0.1.1更新",
-    "author": "QingXuanJun",
-    "date": "2026-05-27T05:32:47.000Z",
-    "updated": "2026-05-27T05:32:47.000Z",
-    "labels": [
-      "碎碎念",
-      "前端",
-      "编程"
-    ],
-    "markdownPath": "blogData/markdown/8.md"
   },
   {
     "id": 7,
