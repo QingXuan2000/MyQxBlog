@@ -5,21 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
-    <meta name="description" content="QxBlog v0.1.1 发布：引擎升级，阅读体验全面优化 QxBlog 迎来 v0.1.1 更新。 核心改动：Markdown 引擎从 featherdown 迁移至 unified 这是 v0.1.1 最关键的技术决策。 过去 QxBlog 使用 featherdown 处理 Markdown 渲染，虽然轻量，但">
+    <meta name="description" content="从 featherdown 到 unified，不只是换个引擎那么简单。代码高亮、搜索直读、排版调优——这次更新，让写博客和读博客都更顺手了。 QxBlog 迎来 v0.1.1 更新。 核心改动：Markdown 引擎从 featherdown 迁移至 unified 这是 v0.1.1 最关键的技术决策，说实话，也是">
     <meta name="keywords" content="碎碎念, 前端, 编程">
     <meta name="author" content="QingXuanJun">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
     <meta property="og:title" content="QxBlog - 博客系统更新日志">
-    <meta property="og:description" content="QxBlog v0.1.1 发布：引擎升级，阅读体验全面优化 QxBlog 迎来 v0.1.1 更新。 核心改动：Markdown 引擎从 featherdown 迁移至 unified 这是 v0.1.1 最关键的技术决策。 过去 QxBlog 使用 featherdown 处理 Markdown 渲染，虽然轻量，但">
+    <meta property="og:description" content="从 featherdown 到 unified，不只是换个引擎那么简单。代码高亮、搜索直读、排版调优——这次更新，让写博客和读博客都更顺手了。 QxBlog 迎来 v0.1.1 更新。 核心改动：Markdown 引擎从 featherdown 迁移至 unified 这是 v0.1.1 最关键的技术决策，说实话，也是">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://blog.qxbit.me/posts/8.html">
     <meta property="og:site_name" content="QxBlog">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="QxBlog - 博客系统更新日志">
-    <meta name="twitter:description" content="QxBlog v0.1.1 发布：引擎升级，阅读体验全面优化 QxBlog 迎来 v0.1.1 更新。 核心改动：Markdown 引擎从 featherdown 迁移至 unified 这是 v0.1.1 最关键的技术决策。 过去 QxBlog 使用 featherdown 处理 Markdown 渲染，虽然轻量，但">
+    <meta name="twitter:description" content="从 featherdown 到 unified，不只是换个引擎那么简单。代码高亮、搜索直读、排版调优——这次更新，让写博客和读博客都更顺手了。 QxBlog 迎来 v0.1.1 更新。 核心改动：Markdown 引擎从 featherdown 迁移至 unified 这是 v0.1.1 最关键的技术决策，说实话，也是">
     <meta property="article:published_time" content="2026-05-27T05:32:47.000Z">
-    <meta property="article:modified_time" content="2026-06-08T14:59:33.000Z">
+    <meta property="article:modified_time" content="2026-06-08T15:25:50.000Z">
     <meta property="article:tag" content="碎碎念">
     <meta property="article:tag" content="前端">
     <meta property="article:tag" content="编程">
@@ -31,7 +31,7 @@
   "description": "基于 Issues 驱动的静态博客，分享代码、设计与思考。",
   "url": "https://blog.qxbit.me/posts/8.html",
   "datePublished": "2026-05-27T05:32:47.000Z",
-  "dateModified": "2026-06-08T14:59:33.000Z",
+  "dateModified": "2026-06-08T15:25:50.000Z",
   "author": {
     "@type": "Person",
     "name": "QingXuanJun"
@@ -112,31 +112,32 @@
 <a href="../categories/%E7%BC%96%E7%A8%8B/" class="qx-article-card-label">编程</a></div>
         </header>
         <div class="qx-post-body"><blockquote>
-<p>QxBlog v0.1.1 发布：引擎升级，阅读体验全面优化</p>
+<p>从 featherdown 到 unified，不只是换个引擎那么简单。代码高亮、搜索直读、排版调优——这次更新，让写博客和读博客都更顺手了。</p>
 </blockquote>
 <p>QxBlog 迎来 <strong>v0.1.1</strong> 更新。</p>
 <h2 id="核心改动markdown-引擎从-featherdown-迁移至-unified"><a class="qx-heading-anchor" href="#核心改动markdown-引擎从-featherdown-迁移至-unified">核心改动：Markdown 引擎从 featherdown 迁移至 unified</a></h2>
-<p>这是 v0.1.1 最关键的技术决策。</p>
-<p>过去 QxBlog 使用 featherdown 处理 Markdown 渲染，虽然轻量，但在扩展性上逐渐遇到瓶颈。这次我们将其全面替换为基于 <a href="https://unifiedjs.com/">unified</a> 的现代化文本处理流水线。</p>
-<p>unified 的优势在于插件化架构：解析、转换、生成三个环节可以自由组合插件，像搭积木一样扩展语法支持。迁移完成后，不仅当下的渲染质量得到提升，也为后续引入更多 Markdown 扩展语法（比如自定义容器、脚注等）打下了坚实基础。</p>
+<p>这是 v0.1.1 最关键的技术决策，说实话，也是早就该做的一件事。</p>
+<p>过去 QxBlog 使用 featherdown 处理 Markdown 渲染，虽然轻量，但在扩展性上逐渐遇到瓶颈。当你想要加点什么东西的时候，就会发现路子越走越窄。这次我们将其全面替换为基于 <a href="https://unifiedjs.com/">unified</a> 的现代化文本处理流水线。</p>
+<p>unified 的优势在于插件化架构：解析、转换、生成三个环节可以自由组合插件，像搭积木一样扩展语法支持。迁移完成后，不仅当下的渲染质量得到提升，也为后续引入更多 Markdown 扩展语法（比如自定义容器、脚注等）打下了坚实基础。说白了，就是以后想加什么功能，不用再从头造轮子了。</p>
 <hr>
 <h2 id="v011-具体带来了哪些变化"><a class="qx-heading-anchor" href="#v011-具体带来了哪些变化">v0.1.1 具体带来了哪些变化？</a></h2>
 <h3 id="1-代码块终于有语法高亮了"><a class="qx-heading-anchor" href="#1-代码块终于有语法高亮了">1. 代码块终于有语法高亮了</a></h3>
-<p>借助 unified 生态的语法高亮能力，文章内的代码块现在支持自动语言检测与着色。无论是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>```js</span></span></code></span> 还是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>```python</span></span></code></span>，都能获得清晰易读的视觉呈现，技术类文章的阅读体验提升非常明显。</p>
+<p>是的，终于有了。</p>
+<p>借助 unified 生态的语法高亮能力，文章内的代码块现在支持自动语言检测与着色。无论是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>```js</span></span></code></span> 还是 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>```python</span></span></code></span>，都能获得清晰易读的视觉呈现。技术类文章的阅读体验提升非常明显——不用再靠肉眼分辨关键字了。</p>
 <h3 id="2-搜索引擎改为直接查询本地-markdown-文件"><a class="qx-heading-anchor" href="#2-搜索引擎改为直接查询本地-markdown-文件">2. 搜索引擎改为直接查询本地 Markdown 文件</a></h3>
 <p>我们调整了搜索数据的来源。构建脚本现在会额外把每篇 Issue 的原始 Markdown 正文连同元数据一起，保存到 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>blogData/markdown/{id}.md</span></span></code></span>。站内搜索不再走其他数据层，而是直接读取这些本地 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>.md</span></span></code></span> 文件，查询链路更短，逻辑也更直接。</p>
-<p>同时，这也意味着你的所有文章原文都以标准 Markdown 格式留在了仓库里。日后如果想备份、迁移或者批量处理，直接从 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>blogData/markdown/</span></span></code></span> 目录取走即可，非常方便。</p>
+<p>同时，这也意味着你的所有文章原文都以标准 Markdown 格式留在了仓库里。日后如果想备份、迁移或者批量处理，直接从 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>blogData/markdown/</span></span></code></span> 目录取走即可，非常方便。不会再有“文章发出去就再也拿不回来”的焦虑。</p>
 <h3 id="3-排版与阅读体验优化"><a class="qx-heading-anchor" href="#3-排版与阅读体验优化">3. 排版与阅读体验优化</a></h3>
 <ul>
-<li><strong>阅读宽度调整</strong>：文章正文和列表页的最大宽度从 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>800px</span></span></code></span> 改为 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>72ch</span></span></code></span>。以字符数为基准的度量方式，对中文排版更友好，行长更适宜阅读，能有效减少视线跳跃带来的疲劳感。</li>
+<li><strong>阅读宽度调整</strong>：文章正文和列表页的最大宽度从 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>800px</span></span></code></span> 改为 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>72ch</span></span></code></span>。以字符数为基准的度量方式，对中文排版更友好，行长更适宜阅读，能有效减少视线跳跃带来的疲劳感。简单说就是——看着没那么累了。</li>
 <li><strong>目录样式重构</strong>：DOM 生成的文章目录（TOC）重新设计了样式与交互，层级更清晰，锚点跳转更平滑。</li>
-<li><strong>UI 细节微调</strong>：间距、字号、色彩对比度等做了小幅调整，整体视觉更干净统一。</li>
+<li><strong>UI 细节微调</strong>：间距、字号、色彩对比度等做了小幅调整，整体视觉更干净统一。这些东西单独拎出来说好像没什么，但放在一起，就是“顺手了”的感觉。</li>
 </ul>
 <h3 id="4-加载动画更连贯"><a class="qx-heading-anchor" href="#4-加载动画更连贯">4. 加载动画更连贯</a></h3>
-<p>加载动画改为硬编码且默认显示，等到 DOM 完全就绪后再自动隐藏。这消除了以往可能出现的白屏闪烁或布局跳动，页面从打开到可阅读的过程更加连贯自然。</p>
+<p>加载动画改为硬编码且默认显示，等到 DOM 完全就绪后再自动隐藏。这消除了以往可能出现的白屏闪烁或布局跳动，页面从打开到可阅读的过程更加连贯自然。说白了，就是不会一闪一闪的了。</p>
 <hr>
 <h2 id="现在的-qxblog-是什么样的"><a class="qx-heading-anchor" href="#现在的-qxblog-是什么样的">现在的 QxBlog 是什么样的？</a></h2>
-<p>如果你还不熟悉这个项目，QxBlog 是一个基于 <strong>GitHub Issues</strong> 驱动的静态博客方案。你只需要在仓库里新建 Issue 写文章，GitHub Actions 就会自动构建并生成静态页面，配合 GitHub Pages 即可完成部署。</p>
+<p>如果你还不熟悉这个项目，QxBlog 是一个基于 <strong>GitHub Issues</strong> 驱动的静态博客方案。你只需要在仓库里新建 Issue 写文章，GitHub Actions 就会自动构建并生成静态页面，配合 GitHub Pages 即可完成部署。全程不用碰服务器，也不用折腾数据库。</p>
 <p>目前支持的核心能力包括：</p>
 <ul>
 <li>Issue 驱动发布文章</li>
@@ -146,7 +147,7 @@
 <li>明暗主题切换</li>
 <li>响应式布局（桌面与移动端）</li>
 </ul>
-<p>默认主题 <strong>QxPaper</strong> 的定位是"简洁阅读 + 轻量交互"，主打干净留白与卡片式信息组织，让文章内容本身成为页面的绝对主角。</p>
+<p>默认主题 <strong>QxPaper</strong> 的定位是"简洁阅读 + 轻量交互"，主打干净留白与卡片式信息组织，让文章内容本身成为页面的绝对主角。不花哨，不打扰，专心读就好。</p>
 <hr>
 <h2 id="如何开始"><a class="qx-heading-anchor" href="#如何开始">如何开始？</a></h2>
 <p>如果你还没有部署，大致只需这几步：</p>
@@ -160,7 +161,7 @@
 <p>更详细的配置说明和部署指南，请参考仓库内的 <a href="https://github.com/qingxuan2000/QxBlog/blob/main/README.md">README.md</a>。</p>
 <hr>
 <h2 id="写在最后"><a class="qx-heading-anchor" href="#写在最后">写在最后</a></h2>
-<p>如果你在使用过程中遇到问题，或者有新的功能建议，欢迎随时通过 GitHub Issues 反馈。</p>
+<p>如果你在使用过程中遇到问题，或者有新的功能建议，欢迎随时通过 GitHub Issues 反馈。项目还在慢慢打磨，你的每一次反馈都很重要。</p>
 <blockquote>
 <p><strong>项目地址</strong>：<a href="https://github.com/qingxuan2000/QxBlog">github.com/qingxuan2000/QxBlog</a></p>
 </blockquote></div>
