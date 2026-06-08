@@ -1,9 +1,5 @@
 [
   {
-    "label": "碎碎念",
-    "count": 4
-  },
-  {
     "label": "前端",
     "count": 4
   },
@@ -12,8 +8,16 @@
     "count": 5
   },
   {
+    "label": "工作",
+    "count": 2
+  },
+  {
     "label": "学习",
     "count": 5
+  },
+  {
+    "label": "碎碎念",
+    "count": 4
   },
   {
     "label": "教程",
@@ -21,10 +25,6 @@
   },
   {
     "label": "游戏",
-    "count": 2
-  },
-  {
-    "label": "工作",
     "count": 2
   },
   {
