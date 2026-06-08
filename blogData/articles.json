@@ -1,5 +1,20 @@
 [
   {
+    "id": 4,
+    "slug": "这个博客的一些事务",
+    "title": "这个博客的一些事务",
+    "author": "QingXuanJun",
+    "date": "2026-05-18T06:09:04.000Z",
+    "updated": "2026-06-08T16:51:26.000Z",
+    "labels": [
+      "前端",
+      "编程",
+      "工作",
+      "学习"
+    ],
+    "markdownPath": "blogData/markdown/4.md"
+  },
+  {
     "id": 10,
     "slug": "不要使用ai来代替我们的思考",
     "title": "不要使用AI来代替我们的思考",
@@ -27,21 +42,6 @@
       "生活"
     ],
     "markdownPath": "blogData/markdown/3.md"
-  },
-  {
-    "id": 4,
-    "slug": "关于qxblog的一些事",
-    "title": "关于QxBlog的一些事",
-    "author": "QingXuanJun",
-    "date": "2026-05-18T06:09:04.000Z",
-    "updated": "2026-06-08T15:45:13.000Z",
-    "labels": [
-      "前端",
-      "编程",
-      "工作",
-      "学习"
-    ],
-    "markdownPath": "blogData/markdown/4.md"
   },
   {
     "id": 8,
