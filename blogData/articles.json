@@ -1,5 +1,21 @@
 [
   {
+    "id": 10,
+    "slug": "不要使用ai来代替我们的思考",
+    "title": "不要使用AI来代替我们的思考",
+    "author": "QingXuanJun",
+    "date": "2026-06-08T15:38:43.000Z",
+    "updated": "2026-06-09T13:02:24.000Z",
+    "labels": [
+      "AI",
+      "反思",
+      "思考",
+      "人类",
+      "本质"
+    ],
+    "markdownPath": "blogData/markdown/10.md"
+  },
+  {
     "id": 4,
     "slug": "这个博客的一些事务",
     "title": "这个博客的一些事务",
@@ -13,22 +29,6 @@
       "学习"
     ],
     "markdownPath": "blogData/markdown/4.md"
-  },
-  {
-    "id": 10,
-    "slug": "不要使用ai来代替我们的思考",
-    "title": "不要使用AI来代替我们的思考",
-    "author": "QingXuanJun",
-    "date": "2026-06-08T15:38:43.000Z",
-    "updated": "2026-06-08T16:49:01.000Z",
-    "labels": [
-      "AI",
-      "反思",
-      "思考",
-      "人类",
-      "本质"
-    ],
-    "markdownPath": "blogData/markdown/10.md"
   },
   {
     "id": 3,
