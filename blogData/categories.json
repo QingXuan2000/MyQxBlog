@@ -1,22 +1,26 @@
 [
   {
-    "label": "AI",
-    "count": 1
+    "label": "碎碎念",
+    "count": 5
   },
   {
     "label": "反思",
-    "count": 1
+    "count": 2
   },
   {
     "label": "思考",
-    "count": 1
+    "count": 2
   },
   {
     "label": "人类",
-    "count": 1
+    "count": 2
   },
   {
     "label": "本质",
+    "count": 2
+  },
+  {
+    "label": "AI",
     "count": 1
   },
   {
@@ -34,10 +38,6 @@
   {
     "label": "学习",
     "count": 5
-  },
-  {
-    "label": "碎碎念",
-    "count": 4
   },
   {
     "label": "生活",
