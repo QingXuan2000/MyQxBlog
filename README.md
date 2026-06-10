@@ -197,9 +197,9 @@ QxBlog/
 ├── articles/                # 文章列表页
 ├── blogData/                # 博客数据
 │   ├── articles.json        # 文章索引
-│   ├── categories.json      # 分类数据
+│   ├── tags.json            # 标签数据
 │   └── markdown/            # Markdown 源文件
-├── categories/              # 分类页面
+├── tags/                    # 标签页面
 ├── config/                  # 配置文件
 │   ├── siteConfig.json      # 站点配置
 │   └── buildConfig.json     # 构建配置
@@ -217,7 +217,7 @@ QxBlog/
 ├── js/                      # JavaScript 模块
 │   ├── default.js           # 主入口（模块加载、代码复制、表格包装等）
 │   ├── articles.js          # 文章列表与分页
-│   ├── categories.js        # 分类管理
+│   ├── tags.js              # 标签管理
 │   ├── config.js            # 配置加载与导航渲染
 │   ├── nav.js               # 导航栏交互
 │   ├── search.js            # 搜索功能
@@ -238,8 +238,8 @@ QxBlog/
 | QxConfig | `js/config.js` | 加载配置、渲染导航栏和侧边栏 |
 | QxNav | `js/nav.js` | 移动端菜单、主题切换、当前页面高亮 |
 | QxSearch | `js/search.js` | 实时搜索（标题/标签/正文），键盘导航 |
-| QxArticles | `js/articles.js` | 文章列表渲染、分页逻辑、分类筛选 |
-| QxCategories | `js/categories.js` | 分类列表加载与渲染 |
+| QxArticles | `js/articles.js` | 文章列表渲染、分页逻辑、标签筛选 |
+| QxTags | `js/tags.js` | 标签列表加载与渲染 |
 | QxToc | `js/toc.js` | 文章目录生成、滚动高亮、点击跳转 |
 
 ## 写作指南

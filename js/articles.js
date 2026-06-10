@@ -62,7 +62,7 @@ export class QxArticles {
     _render(articles) {
         this.container.innerHTML = articles.map(a => {
             const labelsHTML = (a.labels || []).map(l => {
-                const href = new URL(`categories/${encodeURIComponent(l)}/`, ROOT).pathname;
+                const href = new URL(`tags/${encodeURIComponent(l)}/`, ROOT).pathname;
                 return `<a href="${href}" class="qx-article-card-label">${l}</a>`;
             }).join('\n');
             const href = new URL(`posts/${a.id}.html`, ROOT).pathname;

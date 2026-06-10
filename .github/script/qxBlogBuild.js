@@ -15,7 +15,7 @@ const MARKDOWN_DIR = path.join(BLOG_DATA_DIR, 'markdown');
 
 const SITE_CONFIG_PATH = path.join(CONFIG_DIR, 'siteConfig.json');
 const BUILD_CONFIG_PATH = path.join(CONFIG_DIR, 'buildConfig.json');
-const CATEGORIES_JSON_PATH = path.join(BLOG_DATA_DIR, 'categories.json');
+const TAGS_JSON_PATH = path.join(BLOG_DATA_DIR, 'tags.json');
 const ARTICLES_JSON_PATH = path.join(BLOG_DATA_DIR, 'articles.json');
 
 const SITE_NAME = 'QxBlog';
@@ -130,7 +130,7 @@ const LOAD = (f) => {
 log('Init', 'Loading configuration files...');
 const siteCfg = LOAD(SITE_CONFIG_PATH) || {};
 const buildCfg = LOAD(BUILD_CONFIG_PATH) || {};
-const categoriesData = LOAD(CATEGORIES_JSON_PATH) || [];
+const tagsData = LOAD(TAGS_JSON_PATH) || [];
 
 if (!siteCfg.site) {
     log('Warning', 'siteConfig.json is empty or invalid, using defaults');
@@ -374,7 +374,7 @@ const LOAD2 = (f) => {
 
 const siteCfg2 = LOAD2(SITE_CONFIG_PATH) || {};
 const buildCfg2 = LOAD2(BUILD_CONFIG_PATH) || {};
-const categoriesData2 = LOAD2(CATEGORIES_JSON_PATH) || [];
+const tagsData2 = LOAD2(TAGS_JSON_PATH) || [];
 const MAX_PER_PAGE3 = buildCfg2.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
 
 const LOGO_SVG = `<polygon points="570,310 440,535 180,535 50,310 180,85 440,85" stroke="currentColor" stroke-width="18" stroke-linejoin="round"/>
@@ -426,7 +426,7 @@ async function genArticleHTML(article) {
     const articleUrl = `${SITE_URL}/posts/${article.id}.html`;
 
     const labelsHTML = (article.labels || []).map(l =>
-        `<a href="${prefix}categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
+        `<a href="${prefix}tags/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
     ).join('\n');
 
     const metaTags = genMetaTags({
@@ -502,22 +502,22 @@ async function genArticleHTML(article) {
 </html>`;
 }
 
-function genCategoryHTML(label, articleCount) {
+function genTagHTML(label, articleCount) {
     const prefix = '../../';
-    const categoryUrl = `${SITE_URL}/categories/${encodeURIComponent(label)}/`;
-    const description = `${label} 分类下的所有文章，共 ${articleCount} 篇。`;
+    const tagUrl = `${SITE_URL}/tags/${encodeURIComponent(label)}/`;
+    const description = `${label} 标签下的所有文章，共 ${articleCount} 篇。`;
 
     const metaTags = genMetaTags({
         title: `${SITE_NAME2} - ${label}`,
         description,
         keywords: `${label}, ${SITE_KEYWORDS}`,
-        url: categoryUrl
+        url: tagUrl
     });
 
     const breadcrumbData = genStructuredDataBreadcrumb([
         { name: SITE_NAME, url: SITE_URL },
-        { name: '分类', url: `${SITE_URL}/categories/` },
-        { name: label, url: categoryUrl }
+        { name: '标签', url: `${SITE_URL}/tags/` },
+        { name: label, url: tagUrl }
     ]);
 
     const loaderCSS = `<style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>`;
@@ -554,14 +554,14 @@ function genCategoryHTML(label, articleCount) {
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
             </a>
         </div>
-        <span class="qx-page-hero-tag">&lt;Category /&gt;</span>
+        <span class="qx-page-hero-tag">&lt;Tag /&gt;</span>
         <h1 class="qx-page-hero-title">${label}</h1>
         <p class="qx-page-hero-sub">共 ${articleCount} 篇文章</p>
     </section>
 
     <section class="qx-articles">
         <div class="qx-articles-grid"></div>
-        <div class="qx-pagination" id="qxPagination" data-source="category" data-label="${label}"></div>
+        <div class="qx-pagination" id="qxPagination" data-source="tag" data-label="${label}"></div>
     </section>
 
 </body>
@@ -569,36 +569,36 @@ function genCategoryHTML(label, articleCount) {
 </html>`;
 }
 
-async function generateCategoryPages(categories, articles) {
-    const categoriesDir = path.join(ROOT, 'categories');
-    ensureDir(categoriesDir);
+async function generateTagPages(tags, articles) {
+    const tagsDir = path.join(ROOT, 'tags');
+    ensureDir(tagsDir);
     
-    for (const category of categories) {
-        const categoryDir = path.join(categoriesDir, category.label);
-        ensureDir(categoryDir);
+    for (const tag of tags) {
+        const tagDir = path.join(tagsDir, tag.label);
+        ensureDir(tagDir);
         
-        const html = genCategoryHTML(category.label, category.count);
-        const indexPath = path.join(categoryDir, 'index.html');
+        const html = genTagHTML(tag.label, tag.count);
+        const indexPath = path.join(tagDir, 'index.html');
         fs.writeFileSync(indexPath, html, 'utf-8');
-        log('File', `Generated category page: ${indexPath}`);
+        log('File', `Generated tag page: ${indexPath}`);
     }
     
-    // 生成分类列表页（如果有的话）
-    const categoriesListPath = path.join(categoriesDir, 'index.html');
-    if (!fs.existsSync(categoriesListPath)) {
-        const categoriesListHTML = genCategoriesListPage(categories);
-        fs.writeFileSync(categoriesListPath, categoriesListHTML, 'utf-8');
-        log('File', `Generated categories list page: ${categoriesListPath}`);
+    // 生成标签列表页（如果有的话）
+    const tagsListPath = path.join(tagsDir, 'index.html');
+    if (!fs.existsSync(tagsListPath)) {
+        const tagsListHTML = genTagsListPage(tags);
+        fs.writeFileSync(tagsListPath, tagsListHTML, 'utf-8');
+        log('File', `Generated tags list page: ${tagsListPath}`);
     }
     
-    log('Info', `Generated ${categories.length} category pages`);
+    log('Info', `Generated ${tags.length} tag pages`);
 }
 
-function genCategoriesListPage(categories) {
-    const categoriesHTML = categories.map(c => `
-        <a href="${c.label}/" class="qx-category-item">
-            <span class="qx-category-name">${c.label}</span>
-            <span class="qx-category-count">${c.count} 篇</span>
+function genTagsListPage(tags) {
+    const tagsHTML = tags.map(c => `
+        <a href="${c.label}/" class="qx-tag-item">
+            <span class="qx-tag-name">${c.label}</span>
+            <span class="qx-tag-count">${c.count} 篇</span>
         </a>
     `).join('');
     
@@ -641,13 +641,13 @@ function genCategoriesListPage(categories) {
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
             </a>
         </div>
-        <span class="qx-page-hero-tag">&lt;Categories /&gt;</span>
+        <span class="qx-page-hero-tag">&lt;Tags /&gt;</span>
         <h1 class="qx-page-hero-title">分类</h1>
-        <p class="qx-page-hero-sub">按标签浏览文章。</p>
+        <p class="qx-page-hero-sub">浏览该标签下的文章。</p>
     </section>
 
-    <section class="qx-categories">
-        <div class="qx-categories-list">${categoriesHTML}</div>
+    <section class="qx-tags">
+        <div class="qx-tags-list">${tagsHTML}</div>
     </section>
 
 </body>
@@ -658,7 +658,7 @@ function genCategoriesListPage(categories) {
 function cleanupLegacyPaginationData() {
     const legacyDirs = [
         path.join(BLOG_DATA_DIR, 'articles'),
-        path.join(BLOG_DATA_DIR, 'categories'),
+        path.join(BLOG_DATA_DIR, 'tags'),
     ];
     legacyDirs.forEach(dir => {
         if (fs.existsSync(dir)) {
@@ -668,12 +668,12 @@ function cleanupLegacyPaginationData() {
     });
 }
 
-function genCategoriesJSON(allLabels, articles) {
-    const categories = allLabels.map(label => ({
+function genTagsJSON(allLabels, articles) {
+    const tags = allLabels.map(label => ({
         label,
         count: articles.filter(a => (a.labels || []).includes(label)).length,
     }));
-    return categories;
+    return tags;
 }
 
 function loadConfig() {
@@ -1020,7 +1020,7 @@ async function buildSingleArticle(options) {
     const plainText = stripHtml(articleBodyHTML).substring(0, 160);
     const articleUrl = `${SITE_URL}/posts/${id}.html`;
     const labelsHTML = labels.map(l =>
-        `<a href="../categories/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
+        `<a href="../tags/${encodeURIComponent(l)}/" class="qx-article-card-label">${l}</a>`
     ).join('\n');
 
     const metaTags = genMetaTags({
@@ -1128,14 +1128,14 @@ function updateArticlesJSON(newArticle) {
     return articles;
 }
 
-function updateCategoriesJSON(articles) {
+function updateTagsJSON(articles) {
     const allLabels = [...new Set(articles.flatMap(a => a.labels || []))];
-    const categories = allLabels.map(label => ({
+    const tags = allLabels.map(label => ({
         label,
         count: articles.filter(a => (a.labels || []).includes(label)).length,
     }));
-    saveJSON(CATEGORIES_JSON_PATH, categories);
-    return categories;
+    saveJSON(TAGS_JSON_PATH, tags);
+    return tags;
 }
 
 async function removeArticle(articleId, { keepMarkdown = false } = {}) {
@@ -1177,14 +1177,14 @@ async function removeArticle(articleId, { keepMarkdown = false } = {}) {
         log('Warning', `Article #${articleId} not found in articles.json`);
     }
 
-    const categories = updateCategoriesJSON(articles);
-    generateSitemap(articles, categories);
+    const tags = updateTagsJSON(articles);
+    generateSitemap(articles, tags);
     generateRobotsTxt();
 
     const doneLabel = keepMarkdown ? 'closed' : 'deleted';
     log('Complete', `Article #${articleId} ${doneLabel} successfully`, {
         totalArticles: articles.length,
-        totalCategories: categories.length,
+        totalTags: tags.length,
     });
 }
 
@@ -1467,26 +1467,26 @@ async function buildFromGitHubIssues() {
         saveJSON(ARTICLES_JSON_PATH, articles);
         
         const allLabels = [...new Set(articles.flatMap(a => a.labels || []))];
-        const categories = genCategoriesJSON(allLabels, articles);
-        saveJSON(CATEGORIES_JSON_PATH, categories);
+        const tags = genTagsJSON(allLabels, articles);
+        saveJSON(TAGS_JSON_PATH, tags);
         
-        log('Data', 'Categories generated', { categories });
+        log('Data', 'Tags generated', { tags });
         
         cleanupLegacyPaginationData();
         
-        generateSitemap(articles, categories);
+        generateSitemap(articles, tags);
         generateRobotsTxt();
         
-        // 生成分类详情页
-        await generateCategoryPages(categories, articles);
+        // 生成标签详情页
+        await generateTagPages(tags, articles);
         
         log('Complete', `Build complete! (${buildMode} mode)`, {
             mode: buildMode,
             totalArticles: articles.length,
-            totalCategories: categories.length,
+            totalTags: tags.length,
             outputFiles: {
                 articles: ARTICLES_JSON_PATH,
-                categories: CATEGORIES_JSON_PATH,
+                tags: TAGS_JSON_PATH,
                 posts: POSTS_DIR,
                 markdown: path.join(BLOG_DATA_DIR, 'markdown')
             }
@@ -1519,23 +1519,23 @@ async function buildFromLocalMarkdown(fileId) {
     }
 
     const articles = updateArticlesJSON(article);
-    const categories = updateCategoriesJSON(articles);
+    const tags = updateTagsJSON(articles);
 
-    generateSitemap(articles, categories);
+    generateSitemap(articles, tags);
     generateRobotsTxt();
     
-    // 生成分类详情页
-    await generateCategoryPages(categories, articles);
+    // 生成标签详情页
+    await generateTagPages(tags, articles);
 
     log('Complete', 'Build complete!', {
         articleId: article.id,
         articleTitle: article.title,
         totalArticles: articles.length,
-        totalCategories: categories.length,
+        totalTags: tags.length,
         outputFiles: {
             post: path.join(POSTS_DIR, `${article.id}.html`),
             articles: ARTICLES_JSON_PATH,
-            categories: CATEGORIES_JSON_PATH,
+            tags: TAGS_JSON_PATH,
         }
     });
 }
@@ -1571,21 +1571,21 @@ async function buildAllLocalArticles() {
     }
     
     const updatedArticles = updateArticlesJSONFromArray(articles);
-    const categories = updateCategoriesJSON(updatedArticles);
+    const tags = updateTagsJSON(updatedArticles);
     
-    generateSitemap(updatedArticles, categories);
+    generateSitemap(updatedArticles, tags);
     generateRobotsTxt();
     
-    // 生成分类详情页
-    await generateCategoryPages(categories, updatedArticles);
+    // 生成标签详情页
+    await generateTagPages(tags, updatedArticles);
     
     log('Complete', 'Build complete!', {
         totalArticles: updatedArticles.length,
-        totalCategories: categories.length,
+        totalTags: tags.length,
         outputFiles: {
             posts: POSTS_DIR,
             articles: ARTICLES_JSON_PATH,
-            categories: CATEGORIES_JSON_PATH,
+            tags: TAGS_JSON_PATH,
         }
     });
 }
@@ -1612,7 +1612,7 @@ function updateArticlesJSONFromArray(newArticles) {
     return articles;
 }
 
-function generateSitemap(articles, categories) {
+function generateSitemap(articles, tags) {
     const sitemapPath = path.join(ROOT, 'sitemap.xml');
     const now = new Date().toISOString();
     
@@ -1633,7 +1633,7 @@ function generateSitemap(articles, categories) {
     });
     
     urls.push({
-        loc: `${SITE_URL}/categories/`,
+        loc: `${SITE_URL}/tags/`,
         lastmod: now,
         changefreq: 'weekly',
         priority: '0.8'
@@ -1657,10 +1657,10 @@ function generateSitemap(articles, categories) {
         }
     }
     
-    if (Array.isArray(categories)) {
-        for (const category of categories) {
+    if (Array.isArray(tags)) {
+        for (const tag of tags) {
             urls.push({
-                loc: `${SITE_URL}/categories/${encodeURIComponent(category.label)}/`,
+                loc: `${SITE_URL}/tags/${encodeURIComponent(tag.label)}/`,
                 lastmod: now,
                 changefreq: 'weekly',
                 priority: '0.6'

@@ -2,7 +2,7 @@ import { QxConfig } from './config.js';
 import { QxNav } from './nav.js';
 import { QxSearch } from './search.js';
 import { QxArticles } from './articles.js';
-import { QxCategories } from './categories.js';
+import { QxTags } from './tags.js';
 import { QxToc } from './toc.js';
 
 QxConfig.renderNav();
@@ -34,15 +34,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (pagination) {
         const grid = document.querySelector('.qx-articles-grid');
         const source = pagination.dataset.source;
-        const label = source === 'category' ? pagination.dataset.label : null;
+        const label = source === 'tag' ? pagination.dataset.label : null;
         const articles = new QxArticles(grid, pagination, label, pageSize);
         await articles.load(1);
     }
 
-    const catList = document.querySelector('.qx-categories-list');
-    if (catList) {
-        const categories = new QxCategories(catList);
-        await categories.load();
+    const tagList = document.querySelector('.qx-tags-list');
+    if (tagList) {
+        const tags = new QxTags(tagList);
+        await tags.load();
     }
 
     document.querySelectorAll('.qx-post-body figure[data-rehype-pretty-code-figure]').forEach(figure => {

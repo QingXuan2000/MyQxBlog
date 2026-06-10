@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -r index.html 404.html favicon.svg sitemap.xml robots.txt _site/ 2>/dev/null || true
-          cp -r css js fonts img posts categories about articles blogData config _site/
+          cp -r css js fonts img posts tags about articles blogData config _site/
 
       - name: "[Upload] 上传 Pages 产物"
         uses: actions/upload-pages-artifact@v3
