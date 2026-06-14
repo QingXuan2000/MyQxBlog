@@ -1,5 +1,17 @@
 [
   {
+    "label": "碎碎念",
+    "count": 5
+  },
+  {
+    "label": "生活",
+    "count": 3
+  },
+  {
+    "label": "AI",
+    "count": 1
+  },
+  {
     "label": "反思",
     "count": 2
   },
@@ -16,10 +28,6 @@
     "count": 2
   },
   {
-    "label": "AI",
-    "count": 1
-  },
-  {
     "label": "前端",
     "count": 4
   },
@@ -34,14 +42,6 @@
   {
     "label": "学习",
     "count": 5
-  },
-  {
-    "label": "碎碎念",
-    "count": 4
-  },
-  {
-    "label": "生活",
-    "count": 2
   },
   {
     "label": "教程",
