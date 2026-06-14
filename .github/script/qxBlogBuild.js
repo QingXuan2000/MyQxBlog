@@ -609,7 +609,7 @@ function genTagsListPage(tags) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
-    <title>${SITE_NAME2} - 分类</title>
+    <title>${SITE_NAME2} - 标签</title>
     <link rel="stylesheet" href="../css/default.css">
     <style>.qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}</style>
     <script type="module" src="../js/default.js"></script>
@@ -642,8 +642,8 @@ function genTagsListPage(tags) {
             </a>
         </div>
         <span class="qx-page-hero-tag">&lt;Tags /&gt;</span>
-        <h1 class="qx-page-hero-title">分类</h1>
-        <p class="qx-page-hero-sub">浏览该标签下的文章。</p>
+        <h1 class="qx-page-hero-title">标签</h1>
+        <p class="qx-page-hero-sub">共 ${tags.length} 个标签</p>
     </section>
 
     <section class="qx-tags">

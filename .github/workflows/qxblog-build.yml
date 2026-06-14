@@ -1,4 +1,4 @@
-name: "[CI] QingBlog 构建与部署"
+name: "[CI] QxBlog 构建与部署"
 
 on:
   issues:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-deploy:
-    name: "[Build & Deploy] QingBlog"
+    name: "[Build & Deploy] QxBlog"
     runs-on: ubuntu-latest
 
     permissions:
