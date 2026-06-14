@@ -1,5 +1,20 @@
 [
   {
+    "id": 11,
+    "slug": "中国中职教育需要被改变",
+    "title": "中国中职教育需要被改变",
+    "author": "QingXuanJun",
+    "date": "2026-06-09T15:07:21.000Z",
+    "updated": "2026-06-14T18:04:39.000Z",
+    "labels": [
+      "反思",
+      "思考",
+      "人类",
+      "本质"
+    ],
+    "markdownPath": "blogData/markdown/11.md"
+  },
+  {
     "id": 10,
     "slug": "不要使用ai来代替我们的思考",
     "title": "不要使用AI来代替我们的思考",
@@ -16,21 +31,6 @@
       "本质"
     ],
     "markdownPath": "blogData/markdown/10.md"
-  },
-  {
-    "id": 11,
-    "slug": "中国中职教育需要被改变",
-    "title": "中国中职教育需要被改变",
-    "author": "QingXuanJun",
-    "date": "2026-06-09T15:07:21.000Z",
-    "updated": "2026-06-14T17:57:23.000Z",
-    "labels": [
-      "反思",
-      "思考",
-      "人类",
-      "本质"
-    ],
-    "markdownPath": "blogData/markdown/11.md"
   },
   {
     "id": 4,
