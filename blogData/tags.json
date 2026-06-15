@@ -1,1 +1,27 @@
-[]
+[
+  {
+    "label": "快讯",
+    "slug": "快讯",
+    "count": 1
+  },
+  {
+    "label": "动态",
+    "slug": "动态",
+    "count": 1
+  },
+  {
+    "label": "公告",
+    "slug": "公告",
+    "count": 1
+  },
+  {
+    "label": "活动",
+    "slug": "活动",
+    "count": 1
+  },
+  {
+    "label": "日志",
+    "slug": "日志",
+    "count": 1
+  }
+]
