@@ -5,9 +5,27 @@
     "title": "中国中职教育需要被改变",
     "author": "QingXuanJun",
     "date": "2026-06-15T06:09:26.000Z",
-    "updated": "2026-06-15T06:09:26.000Z",
-    "labels": [],
-    "labelSlugs": [],
+    "updated": "2026-06-15T06:10:17.000Z",
+    "labels": [
+      "感悟",
+      "反思",
+      "思考",
+      "看法",
+      "观点",
+      "帮助",
+      "本质",
+      "人类"
+    ],
+    "labelSlugs": [
+      "感悟",
+      "反思",
+      "思考",
+      "看法",
+      "观点",
+      "帮助",
+      "本质",
+      "人类"
+    ],
     "category": "观点",
     "categorySlug": "观点",
     "markdownPath": "blogData/markdown/5.md"

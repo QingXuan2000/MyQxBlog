@@ -2,36 +2,46 @@
   {
     "label": "感悟",
     "slug": "感悟",
-    "count": 1
+    "count": 2
   },
   {
     "label": "反思",
     "slug": "反思",
+    "count": 2
+  },
+  {
+    "label": "思考",
+    "slug": "思考",
     "count": 1
+  },
+  {
+    "label": "看法",
+    "slug": "看法",
+    "count": 2
   },
   {
     "label": "观点",
     "slug": "观点",
-    "count": 2
+    "count": 3
   },
   {
     "label": "帮助",
     "slug": "帮助",
-    "count": 2
+    "count": 3
   },
   {
     "label": "本质",
     "slug": "本质",
-    "count": 1
-  },
-  {
-    "label": "AI",
-    "slug": "ai",
-    "count": 1
+    "count": 2
   },
   {
     "label": "人类",
     "slug": "人类",
+    "count": 2
+  },
+  {
+    "label": "AI",
+    "slug": "ai",
     "count": 1
   },
   {
@@ -63,11 +73,6 @@
     "label": "日志",
     "slug": "日志",
     "count": 2
-  },
-  {
-    "label": "看法",
-    "slug": "看法",
-    "count": 1
   },
   {
     "label": "快讯",
