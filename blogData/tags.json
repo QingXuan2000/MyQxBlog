@@ -12,12 +12,12 @@
   {
     "label": "思考",
     "slug": "思考",
-    "count": 1
+    "count": 2
   },
   {
     "label": "看法",
     "slug": "看法",
-    "count": 2
+    "count": 3
   },
   {
     "label": "观点",
@@ -35,14 +35,14 @@
     "count": 2
   },
   {
-    "label": "人类",
-    "slug": "人类",
-    "count": 2
-  },
-  {
     "label": "AI",
     "slug": "ai",
     "count": 1
+  },
+  {
+    "label": "人类",
+    "slug": "人类",
+    "count": 2
   },
   {
     "label": "入门",
