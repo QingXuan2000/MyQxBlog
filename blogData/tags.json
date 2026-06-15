@@ -1,5 +1,30 @@
 [
   {
+    "label": "入门",
+    "slug": "入门",
+    "count": 1
+  },
+  {
+    "label": "避坑",
+    "slug": "避坑",
+    "count": 1
+  },
+  {
+    "label": "解惑",
+    "slug": "解惑",
+    "count": 2
+  },
+  {
+    "label": "答疑",
+    "slug": "答疑",
+    "count": 2
+  },
+  {
+    "label": "帮助",
+    "slug": "帮助",
+    "count": 1
+  },
+  {
     "label": "日志",
     "slug": "日志",
     "count": 2
@@ -12,16 +37,6 @@
   {
     "label": "观点",
     "slug": "观点",
-    "count": 1
-  },
-  {
-    "label": "解惑",
-    "slug": "解惑",
-    "count": 1
-  },
-  {
-    "label": "答疑",
-    "slug": "答疑",
     "count": 1
   },
   {

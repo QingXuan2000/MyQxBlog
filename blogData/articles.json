@@ -5,9 +5,21 @@
     "title": "X4：基石的入坑指北",
     "author": "QingXuanJun",
     "date": "2026-06-15T05:51:04.000Z",
-    "updated": "2026-06-15T05:51:04.000Z",
-    "labels": [],
-    "labelSlugs": [],
+    "updated": "2026-06-15T05:52:34.000Z",
+    "labels": [
+      "入门",
+      "避坑",
+      "解惑",
+      "答疑",
+      "帮助"
+    ],
+    "labelSlugs": [
+      "入门",
+      "避坑",
+      "解惑",
+      "答疑",
+      "帮助"
+    ],
     "category": "教程",
     "categorySlug": "教程",
     "markdownPath": "blogData/markdown/3.md"
