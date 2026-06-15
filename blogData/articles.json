@@ -5,9 +5,21 @@
     "title": "关于我本人",
     "author": "QingXuanJun",
     "date": "2026-06-15T05:47:42.000Z",
-    "updated": "2026-06-15T05:47:42.000Z",
-    "labels": [],
-    "labelSlugs": [],
+    "updated": "2026-06-15T05:48:52.000Z",
+    "labels": [
+      "日志",
+      "看法",
+      "观点",
+      "解惑",
+      "答疑"
+    ],
+    "labelSlugs": [
+      "日志",
+      "看法",
+      "观点",
+      "解惑",
+      "答疑"
+    ],
     "category": "观点",
     "categorySlug": "观点",
     "markdownPath": "blogData/markdown/2.md"

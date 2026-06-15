@@ -1,5 +1,30 @@
 [
   {
+    "label": "日志",
+    "slug": "日志",
+    "count": 2
+  },
+  {
+    "label": "看法",
+    "slug": "看法",
+    "count": 1
+  },
+  {
+    "label": "观点",
+    "slug": "观点",
+    "count": 1
+  },
+  {
+    "label": "解惑",
+    "slug": "解惑",
+    "count": 1
+  },
+  {
+    "label": "答疑",
+    "slug": "答疑",
+    "count": 1
+  },
+  {
     "label": "快讯",
     "slug": "快讯",
     "count": 1
@@ -17,11 +42,6 @@
   {
     "label": "活动",
     "slug": "活动",
-    "count": 1
-  },
-  {
-    "label": "日志",
-    "slug": "日志",
     "count": 1
   }
 ]
