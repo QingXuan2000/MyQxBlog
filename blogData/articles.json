@@ -1,5 +1,36 @@
 [
   {
+    "id": 5,
+    "slug": "中国中职教育需要被改变",
+    "title": "中国中职教育需要被改变",
+    "author": "QingXuanJun",
+    "date": "2026-06-15T06:09:26.000Z",
+    "updated": "2026-06-15T07:10:36.000Z",
+    "labels": [
+      "感悟",
+      "反思",
+      "思考",
+      "看法",
+      "观点",
+      "帮助",
+      "本质",
+      "人类"
+    ],
+    "labelSlugs": [
+      "感悟",
+      "反思",
+      "思考",
+      "看法",
+      "观点",
+      "帮助",
+      "本质",
+      "人类"
+    ],
+    "category": "观点",
+    "categorySlug": "观点",
+    "markdownPath": "blogData/markdown/5.md"
+  },
+  {
     "id": 4,
     "slug": "使用ai时-我们需要保持独立思考",
     "title": "使用AI时，我们需要保持独立思考",
@@ -31,37 +62,6 @@
     "category": "观点",
     "categorySlug": "观点",
     "markdownPath": "blogData/markdown/4.md"
-  },
-  {
-    "id": 5,
-    "slug": "中国中职教育需要被改变",
-    "title": "中国中职教育需要被改变",
-    "author": "QingXuanJun",
-    "date": "2026-06-15T06:09:26.000Z",
-    "updated": "2026-06-15T06:10:17.000Z",
-    "labels": [
-      "感悟",
-      "反思",
-      "思考",
-      "看法",
-      "观点",
-      "帮助",
-      "本质",
-      "人类"
-    ],
-    "labelSlugs": [
-      "感悟",
-      "反思",
-      "思考",
-      "看法",
-      "观点",
-      "帮助",
-      "本质",
-      "人类"
-    ],
-    "category": "观点",
-    "categorySlug": "观点",
-    "markdownPath": "blogData/markdown/5.md"
   },
   {
     "id": 3,
