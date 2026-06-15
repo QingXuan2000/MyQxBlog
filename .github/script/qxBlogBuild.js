@@ -1442,6 +1442,12 @@ function extractCategory(gqlCategory) {
     return { name: gqlCategory.name || '', slug: gqlCategory.slug || '' };
 }
 
+function getGitHubRepo() {
+    const repo = process.env.GITHUB_REPOSITORY || '';
+    const [owner, name] = repo.split('/');
+    return { owner: owner || '', name: name || '' };
+}
+
 function runGhApiGraphQL(queryJson) {
     const tempPath = path.join(BLOG_DATA_DIR, `.gql-tmp-${Date.now()}.json`);
     ensureDir(path.dirname(tempPath));
@@ -1463,9 +1469,10 @@ function runGhApiGraphQL(queryJson) {
 }
 
 function fetchGitHubDiscussion(discussionNumber) {
+    const { owner, name } = getGitHubRepo();
     const query = `
         query ($number: Int!) {
-            repository(owner: "", name: "") {
+            repository(owner: "${owner}", name: "${name}") {
                 discussion(number: $number) {
                     number
                     title
@@ -1502,10 +1509,11 @@ function fetchGitHubDiscussion(discussionNumber) {
 }
 
 function fetchGitHubDiscussionsAll(limit) {
+    const { owner, name } = getGitHubRepo();
     const pageSize = Math.min(limit || 100, 100);
     const query = `
         query ($first: Int!) {
-            repository(owner: "", name: "") {
+            repository(owner: "${owner}", name: "${name}") {
                 discussions(first: $first, orderBy: { field: UPDATED_AT, direction: DESC }) {
                     nodes {
                         number
