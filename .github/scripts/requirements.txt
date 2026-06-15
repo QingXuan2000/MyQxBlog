@@ -1,0 +1,4 @@
+markdown
+pygments
+beautifulsoup4
+pymdown-extensions
