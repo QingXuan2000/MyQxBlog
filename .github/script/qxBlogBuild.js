@@ -1664,12 +1664,18 @@ async function buildFromGitHubDiscussions() {
         return;
     }
 
-    // 关闭事件：与删除相同，但保留 md 文件
-    if (discussionAction === 'closed' && discussionId) {
+    // 关闭事件（answered）：与删除相同，但保留 md 文件
+    if (discussionAction === 'answered' && discussionId) {
         const articleId = discussionNumberToArticleId(discussionId);
         log('Config', `Closing article mapped from discussion #${discussionId} → #${articleId}`);
         await closeArticle(articleId);
         return;
+    }
+
+    // 恢复事件（unanswered）：重新构建文章
+    if (discussionAction === 'unanswered' && discussionId) {
+        const articleId = discussionNumberToArticleId(discussionId);
+        log('Config', `Reopening article mapped from discussion #${discussionId} → #${articleId}`);
     }
 
     log('Start', 'QxBlog CI Build Script Starting...');

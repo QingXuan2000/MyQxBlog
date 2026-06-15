@@ -2,7 +2,7 @@ name: "[CI] QxBlog 构建与部署"
 
 on:
   discussion:
-    types: [created, edited, deleted, reopened, closed, category_changed]
+    types: [created, edited, deleted, category_changed, answered, unanswered]
 
 jobs:
   build-and-deploy:
