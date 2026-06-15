@@ -1,0 +1,72 @@
+name: "[CI] QxBlog 构建与部署"
+
+on:
+  discussion:
+    types: [created, edited, deleted, reopened, closed, category_changed]
+
+jobs:
+  build-and-deploy:
+    name: "[Build & Deploy] QxBlog"
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: "[Checkout] 检出代码仓库"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "[Setup] 配置 Bun 环境"
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: "[Cache] 缓存 node_modules"
+        uses: actions/cache@v4
+        with:
+          path: .github/script/node_modules
+          key: bun-modules-${{ runner.os }}-${{ hashFiles('.github/script/bun.lock') }}
+
+      - name: "[Install] 安装 Bun 依赖"
+        working-directory: .github/script
+        run: bun install
+
+      - name: "[Build] 启动构建脚本"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISCUSSION_TITLE: ${{ github.event.discussion.title }}
+          DISCUSSION_BODY: ${{ github.event.discussion.body }}
+          DISCUSSION_DATE: ${{ github.event.discussion.updated_at }}
+          DISCUSSION_AUTHOR: ${{ github.event.discussion.user.login }}
+          DISCUSSION_LABELS: ${{ toJson(github.event.discussion.labels.*.name) }}
+          DISCUSSION_CATEGORY_NAME: ${{ github.event.discussion.category.name }}
+          DISCUSSION_CATEGORY_SLUG: ${{ github.event.discussion.category.slug }}
+          DISCUSSION_NUMBER: ${{ github.event.discussion.number }}
+          DISCUSSION_ACTION: ${{ github.event.action }}
+        run: bun .github/script/qxBlogBuild.js ci build
+
+      - name: "[Push] 提交并推送更改"
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[Update] ${{ github.event.action == 'deleted' && '删除文章' || (github.event.action == 'closed' && '关闭文章' || '更新文章') }}: ${{ github.event.discussion.title }}"
+          file_pattern: '*'
+          push_options: '--force-with-lease'
+
+      - name: "[Prepare] 准备部署文件"
+        run: |
+          mkdir -p _site
+          cp -r index.html 404.html favicon.svg sitemap.xml robots.txt _site/ 2>/dev/null || true
+          cp -r css js fonts img posts tags categories archive about articles blogData config _site/
+
+      - name: "[Upload] 上传 Pages 产物"
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: "[Deploy] 部署到 GitHub Pages"
+        uses: actions/deploy-pages@v4

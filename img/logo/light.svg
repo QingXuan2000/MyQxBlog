@@ -1,0 +1,22 @@
+<svg width="100" height="100" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer hexagon -->
+  <polygon points="570,310 440,535 180,535 50,310 180,85 440,85" stroke="black" stroke-width="18" stroke-linejoin="round"/>
+  <!-- Inner hexagon (rotated 30°) -->
+  <polygon points="440,385 310,460 180,385 180,235 310,160 440,235" stroke="black" stroke-width="8" stroke-linejoin="round"/>
+  <!-- Center node -->
+  <circle cx="310" cy="310" r="10" fill="black"/>
+  <!-- Outer vertex nodes -->
+  <circle cx="570" cy="310" r="6" fill="black"/>
+  <circle cx="440" cy="535" r="6" fill="black"/>
+  <circle cx="180" cy="535" r="6" fill="black"/>
+  <circle cx="50" cy="310" r="6" fill="black"/>
+  <circle cx="180" cy="85" r="6" fill="black"/>
+  <circle cx="440" cy="85" r="6" fill="black"/>
+  <!-- Inner vertex nodes -->
+  <circle cx="440" cy="385" r="4" fill="black"/>
+  <circle cx="310" cy="460" r="4" fill="black"/>
+  <circle cx="180" cy="385" r="4" fill="black"/>
+  <circle cx="180" cy="235" r="4" fill="black"/>
+  <circle cx="310" cy="160" r="4" fill="black"/>
+  <circle cx="440" cy="235" r="4" fill="black"/>
+</svg>

@@ -1,0 +1,70 @@
+{
+  "site": {
+    "name": "QxBlog",
+    "title": "QxBlog",
+    "author": "QingXuanJun",
+    "url": "https://blog.qxbit.me",
+    "description": "基于 Issues 驱动的静态博客，分享代码、设计与思考。",
+    "keywords": "博客,技术,前端,代码,设计,QxBlog",
+    "siteCreatedAt": "2026-03-01T00:00:00Z"
+  },
+  "hero": {
+    "tag": "<Blog />",
+    "title": "「用代码，写世界。」",
+    "subtitle": "Thoughts on code, design, and everything in between."
+  },
+  "about": {
+    "sections": [
+      {
+        "head": "关于我",
+        "text": "一名前端工程师，热爱代码与设计。<br>用技术构建数字世界中的每一个细节。"
+      },
+      {
+        "head": "关于本站",
+        "text": "基于 Issues 驱动的静态博客。<br>通过 GitHub Actions 自动构建部署。"
+      }
+    ],
+    "friendLinks": [
+      {
+        "name": "Example Friend 1",
+        "url": "https://example1.com"
+      },
+      {
+        "name": "Example Friend 2",
+        "url": "https://example2.com"
+      }
+    ]
+  },
+  "footerContent": [
+    "Copyright © 2025-2026 QingXuanJun. All rights reserved."
+  ],
+  "sidebar": {
+    "motto": "用代码，写世界。",
+    "links": [
+      {
+        "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"></path><polyline points=\"9 22 9 12 15 12 15 22\"></polyline></svg> 首页",
+        "href": "index.html"
+      },
+      {
+        "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"></path><polyline points=\"14 2 14 8 20 8\"></polyline><line x1=\"16\" y1=\"13\" x2=\"8\" y2=\"13\"></line><line x1=\"16\" y1=\"17\" x2=\"8\" y2=\"17\"></line><polyline points=\"10 9 9 9 8 9\"></polyline></svg> 文章",
+        "href": "articles/index.html"
+      },
+      {
+        "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z\"></path><line x1=\"7\" y1=\"7\" x2=\"7.01\" y2=\"7\"></line></svg> 标签",
+        "href": "tags/index.html"
+      },
+      {
+        "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 19.5A2.5 2.5 0 0 1 6.5 17H20\"></path><path d=\"M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z\"></path><path d=\"M9 7h6M9 11h6M9 15h4\"></path></svg> 分类",
+        "href": "categories/index.html"
+      },
+      {
+        "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"size-6\" style=\"width:18px;height:18px\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z\" /></svg> 归档",
+        "href": "archive/index.html"
+      },
+      {
+        "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\"></path><circle cx=\"12\" cy=\"7\" r=\"4\"></circle></svg> 关于",
+        "href": "about/index.html"
+      }
+    ]
+  }
+}

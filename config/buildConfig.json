@@ -1,0 +1,15 @@
+{
+    "author": "QingXuan2000",
+    "timezoneOffset": "+08:00",
+    "githubStartId": 1,
+    "maxArticlesPerPage": 20,
+    "robots": {
+        "userAgent": "*",
+        "allow": "/",
+        "disallow": [
+            "/blogData/",
+            "/config/"
+        ],
+        "additionalRules": []
+    }
+}
