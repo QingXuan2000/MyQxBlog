@@ -2,39 +2,45 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://blog.qxbit.me</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/articles/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/categories/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/archive/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/about/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://blog.qxbit.me/posts/4.html</loc>
+    <lastmod>2026-06-15T06:04:44.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/posts/3.html</loc>
@@ -56,97 +62,97 @@
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/入门/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/避坑/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/解惑/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/答疑/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/帮助/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/游戏/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/日志/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/看法/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/观点/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/快讯/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/动态/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/公告/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/tags/活动/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://blog.qxbit.me/categories/教程/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/categories/观点/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://blog.qxbit.me/categories/教程/</loc>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://blog.qxbit.me/categories/经历/</loc>
-    <lastmod>2026-06-15T06:02:36.300Z</lastmod>
+    <lastmod>2026-06-15T06:04:56.657Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
