@@ -1,5 +1,40 @@
 [
   {
+    "label": "感悟",
+    "slug": "感悟",
+    "count": 1
+  },
+  {
+    "label": "反思",
+    "slug": "反思",
+    "count": 1
+  },
+  {
+    "label": "观点",
+    "slug": "观点",
+    "count": 2
+  },
+  {
+    "label": "帮助",
+    "slug": "帮助",
+    "count": 2
+  },
+  {
+    "label": "本质",
+    "slug": "本质",
+    "count": 1
+  },
+  {
+    "label": "AI",
+    "slug": "ai",
+    "count": 1
+  },
+  {
+    "label": "人类",
+    "slug": "人类",
+    "count": 1
+  },
+  {
     "label": "入门",
     "slug": "入门",
     "count": 1
@@ -20,11 +55,6 @@
     "count": 2
   },
   {
-    "label": "帮助",
-    "slug": "帮助",
-    "count": 1
-  },
-  {
     "label": "游戏",
     "slug": "游戏",
     "count": 1
@@ -37,11 +67,6 @@
   {
     "label": "看法",
     "slug": "看法",
-    "count": 1
-  },
-  {
-    "label": "观点",
-    "slug": "观点",
     "count": 1
   },
   {
