@@ -1,5 +1,18 @@
 [
   {
+    "id": 3,
+    "slug": "x4-基石的入坑指北",
+    "title": "X4：基石的入坑指北",
+    "author": "QingXuanJun",
+    "date": "2026-06-15T05:51:04.000Z",
+    "updated": "2026-06-15T05:51:04.000Z",
+    "labels": [],
+    "labelSlugs": [],
+    "category": "教程",
+    "categorySlug": "教程",
+    "markdownPath": "blogData/markdown/3.md"
+  },
+  {
     "id": 2,
     "slug": "关于我本人",
     "title": "关于我本人",
