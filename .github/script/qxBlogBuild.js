@@ -143,8 +143,8 @@ if (!buildCfg.author) {
 const GITHUB_START_ID = Number(buildCfg.githubStartId ?? buildCfg.githubStartPageNumber ?? 1) || 1;
 const ALLOWED_BUILD_AUTHOR = (buildCfg.author || '').trim();
 
-function issueNumberToArticleId(issueNumber) {
-    return issueNumber + (GITHUB_START_ID - 1);
+function discussionNumberToArticleId(discussionNumber) {
+    return discussionNumber + (GITHUB_START_ID - 1);
 }
 
 function isBuildAuthorAllowed(authorLogin) {
@@ -164,7 +164,7 @@ log('Config', 'Configuration loaded', {
 const MAX_PER_PAGE = buildCfg.maxArticlesPerPage || MAX_ARTICLES_PER_PAGE;
 
 const SITE_URL = siteCfg.site?.url || 'https://example.com';
-const SITE_DESCRIPTION = siteCfg.site?.description || '基于 Issues 驱动的静态博客，分享代码、设计与思考。';
+const SITE_DESCRIPTION = siteCfg.site?.description || '基于 Discussions 驱动的静态博客，分享代码、设计与思考。';
 const SITE_KEYWORDS = siteCfg.site?.keywords || '博客,技术,前端,代码,设计';
 const SITE_AUTHOR = siteCfg.site?.author || 'Anonymous';
 const SITE_CREATED_AT = siteCfg.site?.siteCreatedAt || new Date().toISOString();
@@ -1574,8 +1574,8 @@ function applyCiDiscussionEventPayload(discussion) {
     return next;
 }
 
-async function processGitHubIssueToArticle(discussion, articles, markdownDir) {
-    const articleId = issueNumberToArticleId(discussion.number);
+async function processGitHubDiscussionToArticle(discussion, articles, markdownDir) {
+    const articleId = discussionNumberToArticleId(discussion.number);
     const localDate = new Date(discussion.createdAt).toISOString();
     const updatedAt = discussion.updatedAt ? new Date(discussion.updatedAt).toISOString() : localDate;
     const labelsArray = Array.isArray(discussion.labels)
@@ -1640,34 +1640,34 @@ ${discussion.body || ''}`;
     return article;
 }
 
-async function buildFromGitHubIssues() {
-    const issueAction = process.env.DISCUSSION_ACTION || process.env.ISSUE_ACTION || '';
-    const issueId = process.env.DISCUSSION_NUMBER
+async function buildFromGitHubDiscussions() {
+    const discussionAction = process.env.DISCUSSION_ACTION || process.env.ISSUE_ACTION || '';
+    const discussionId = process.env.DISCUSSION_NUMBER
         ? parseInt(process.env.DISCUSSION_NUMBER)
         : (process.env.ISSUE_ID ? parseInt(process.env.ISSUE_ID) : null);
 
-    const issueAuthor = process.env.DISCUSSION_AUTHOR || process.env.ISSUE_AUTHOR || '';
-    if (!isBuildAuthorAllowed(issueAuthor)) {
+    const discussionAuthor = process.env.DISCUSSION_AUTHOR || process.env.ISSUE_AUTHOR || '';
+    if (!isBuildAuthorAllowed(discussionAuthor)) {
         log('Cancel', 'Build cancelled: discussion author is not allowed to trigger CI', {
             reason: 'AUTHOR_MISMATCH',
-            issueAuthor: issueAuthor || '(empty)',
+            discussionAuthor: discussionAuthor || '(empty)',
             allowedAuthor: ALLOWED_BUILD_AUTHOR,
         });
         return;
     }
 
     // 删除事件：移除 HTML、元数据及 md 文件
-    if (issueAction === 'deleted' && issueId) {
-        const articleId = issueNumberToArticleId(issueId);
-        log('Config', `Deleting article mapped from discussion #${issueId} → #${articleId}`);
+    if (discussionAction === 'deleted' && discussionId) {
+        const articleId = discussionNumberToArticleId(discussionId);
+        log('Config', `Deleting article mapped from discussion #${discussionId} → #${articleId}`);
         await deleteArticle(articleId);
         return;
     }
 
     // 关闭事件：与删除相同，但保留 md 文件
-    if (issueAction === 'closed' && issueId) {
-        const articleId = issueNumberToArticleId(issueId);
-        log('Config', `Closing article mapped from discussion #${issueId} → #${articleId}`);
+    if (discussionAction === 'closed' && discussionId) {
+        const articleId = discussionNumberToArticleId(discussionId);
+        log('Config', `Closing article mapped from discussion #${discussionId} → #${articleId}`);
         await closeArticle(articleId);
         return;
     }
@@ -1676,34 +1676,34 @@ async function buildFromGitHubIssues() {
     log('Info', 'Root directory', { root: ROOT });
 
     // 构建模式判断：单文章 vs 全部
-    const buildMode = issueId ? 'single' : 'all';
+    const buildMode = discussionId ? 'single' : 'all';
     log('Config', `Build mode: ${buildMode}`, {
         mode: buildMode,
-        issueId: issueId || 'N/A'
+        discussionId: discussionId || 'N/A'
     });
 
     ensureDir(POSTS_DIR);
 
-    const issueRE = /^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?!?:/i;
+    const discussionRE = /^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?!?:/i;
 
     try {
         let targetDiscussions;
 
-        if (issueId) {
-            log('GitHub', `Fetching latest discussion #${issueId}...`);
+        if (discussionId) {
+            log('GitHub', `Fetching latest discussion #${discussionId}...`);
             let discussion;
             try {
-                discussion = fetchGitHubDiscussion(issueId);
+                discussion = fetchGitHubDiscussion(discussionId);
                 discussion = applyCiDiscussionEventPayload(discussion);
                 targetDiscussions = [discussion];
             } catch (err) {
-                log('Error', `Discussion #${issueId} not found or failed to fetch`, { error: err.message });
+                log('Error', `Discussion #${discussionId} not found or failed to fetch`, { error: err.message });
                 process.exit(1);
             }
-            log('GitHub', `Single discussion mode - Building discussion #${issueId}`, {
-                issueNumber: issueId,
-                issueTitle: discussion.title,
-                action: issueAction,
+            log('GitHub', `Single discussion mode - Building discussion #${discussionId}`, {
+                discussionNumber: discussionId,
+                discussionTitle: discussion.title,
+                action: discussionAction,
                 category: discussion.category,
             });
         } else {
@@ -1717,7 +1717,7 @@ async function buildFromGitHubIssues() {
 
             targetDiscussions = discussions;
             log('GitHub', `All discussions mode - Found ${discussions.length} total discussions`, {
-                issueNumbers: discussions.map(i => i.number),
+                discussionNumbers: discussions.map(i => i.number),
             });
         }
 
@@ -1758,10 +1758,10 @@ async function buildFromGitHubIssues() {
                 continue;
             }
 
-            const issueCreator = discussion.author?.login || '';
-            if (!isBuildAuthorAllowed(issueCreator)) {
+            const discussionCreator = discussion.author?.login || '';
+            if (!isBuildAuthorAllowed(discussionCreator)) {
                 log('Skip', `Discussion #${discussion.number} skipped (author mismatch)`, {
-                    issueAuthor: issueCreator,
+                    discussionAuthor: discussionCreator,
                     allowedAuthor: ALLOWED_BUILD_AUTHOR,
                 });
                 skippedCount++;
@@ -1770,7 +1770,7 @@ async function buildFromGitHubIssues() {
 
             processedCount++;
 
-            await processGitHubIssueToArticle(discussion, articles, markdownDir);
+            await processGitHubDiscussionToArticle(discussion, articles, markdownDir);
         }
 
         log('Summary', `Discussion processing complete (${buildMode} mode)`, {
@@ -2116,12 +2116,12 @@ localCommand
         
         log('Complete', '所有文章已删除');
     } else {
-        const issueId = parseInt(id);
-        if (isNaN(issueId)) {
+        const discussionId = parseInt(id);
+        if (isNaN(discussionId)) {
             log('Error', `Invalid article ID: ${id}`);
             process.exit(1);
         }
-        await deleteArticle(issueId);
+        await deleteArticle(discussionId);
     }
   });
 
@@ -2133,7 +2133,7 @@ ciCommand
   .command('build')
   .description('从 GitHub Discussions 构建文章')
   .action(async () => {
-    await buildFromGitHubIssues();
+    await buildFromGitHubDiscussions();
   });
 
 program.parseAsync().catch(err => {

@@ -602,6 +602,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding: 0 1rem;
 }
 
 .qx-hero-tag {
@@ -1218,8 +1219,21 @@ body {
 }
 
 .qx-category-label {
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0;
+}
+
+.qx-post-labels .qx-category-label {
+    font-weight: 700;
+}
+
+.qx-post-labels .qx-article-card-label {
+    font-size: .85rem;
+    opacity: .6;
+}
+
+.qx-post-labels .qx-article-card-label:hover {
+    opacity: 1;
 }
 
 /* ========== Pagination ========== */
