@@ -1503,7 +1503,7 @@ body {
     margin: 0 0 24px 0;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--text-body);
-    opacity: .25;
+    opacity: .9;
     letter-spacing: 0;
     display: flex;
     align-items: baseline;
@@ -1515,6 +1515,36 @@ body {
     font-size: .8rem;
     font-weight: 500;
     opacity: .6;
+}
+
+.qx-archive-month {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.qx-archive-month::before {
+    content: "";
+    position: absolute;
+    left: .25rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+}
+
+.qx-archive-month-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1rem 0 .5rem;
+    color: var(--text-body);
+    opacity: .9;
+}
+
+.qx-archive-month-count {
+    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
+    font-size: .7rem;
+    font-weight: 500;
+    opacity: .5;
 }
 
 .qx-archive-items {
