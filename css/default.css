@@ -638,32 +638,6 @@ body {
     }
 }
 
-.qx-hero-roles {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
-    font-size: clamp(.8rem, 1.3vw, 1rem);
-    opacity: .55;
-}
-
-.qx-hero-role {
-    transition: opacity .2s;
-    text-decoration: underline;
-    text-decoration-color: currentColor;
-    text-underline-offset: 3px;
-    padding-bottom: 5px;
-}
-
-.qx-hero-role:hover {
-    opacity: 1;
-}
-
-.qx-hero-role-sep {
-    opacity: .3;
-}
-
 .qx-hero-meta {
     display: flex;
     flex-direction: column;

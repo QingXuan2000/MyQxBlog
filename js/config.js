@@ -55,13 +55,6 @@ export class QxConfig {
             if (tagEl) tagEl.textContent = d.hero.tag;
             const titleEl = document.getElementById('hero-title');
             if (titleEl) titleEl.textContent = d.hero.title;
-            const rolesEl = document.getElementById('hero-roles');
-            if (rolesEl && d.hero.roles && d.hero.roles.length > 0) {
-                const rolesHTML = d.hero.roles.map((role, i) =>
-                    `<span class="qx-hero-role">${role}</span>${i < d.hero.roles.length - 1 ? '<span class="qx-hero-role-sep">/</span>' : ''}`
-                ).join('');
-                rolesEl.innerHTML = rolesHTML;
-            }
             const nameEl = document.getElementById('hero-name');
             if (nameEl) nameEl.textContent = `"${d.site.author}"`;
         }
