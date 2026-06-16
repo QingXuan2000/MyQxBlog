@@ -587,22 +587,29 @@ body {
 
 .qx-hero {
     position: relative;
-    display: flex;
-    align-items: center;
-    height: calc(100vh - 56px);
-    padding: 0 8vw;
-    gap: 0;
-    overflow: hidden;
-    box-shadow: 0 1px 0 var(--text-body);
-    container-type: inline-size;
-}
-
-.qx-hero-left {
-    flex: 0 0 55%;
+    min-height: calc(100vh - 56px);
+    padding: 80px 8vw 60px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 0 1rem;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 1px 0 var(--text-body);
+}
+
+.qx-hero-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 48px;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.qx-hero-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .qx-hero-tag {
@@ -610,13 +617,12 @@ body {
     font-size: clamp(.75rem, 1.2vw, .95rem);
     font-weight: 500;
     color: var(--text-body);
-    opacity: .3;
+    opacity: .5;
     letter-spacing: var(--tracking-mono);
     line-height: 1.2;
 }
 
 .qx-hero-title {
-    /* 降级方案：使用 vw 单位 */
     font-size: clamp(1.8rem, 6.5vw, 6rem);
     font-weight: 900;
     line-height: 1.05;
@@ -624,219 +630,265 @@ body {
     color: var(--text-body);
     word-wrap: break-word;
     overflow-wrap: break-word;
-    hyphens: auto;
 }
 
-/* 支持容器查询的浏览器使用 cqw 单位 */
-@supports (container-type: inline-size) {
-    .qx-hero-title {
-        font-size: clamp(1.8rem, 6.5cqw, 6rem);
-    }
-}
-
-/* 支持 text-wrap: balance 的浏览器使用该特性 */
 @supports (text-wrap: balance) {
     .qx-hero-title {
         text-wrap: balance;
     }
 }
 
-.qx-hero-sub {
-    /* 降级方案：使用 vw 单位 */
-    font-size: clamp(.9rem, 1.6vw, 1.25rem);
+.qx-hero-roles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
+    font-size: clamp(.8rem, 1.3vw, 1rem);
+    opacity: .55;
+}
+
+.qx-hero-role {
+    transition: opacity .2s;
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 3px;
+    padding-bottom: 5px;
+}
+
+.qx-hero-role:hover {
+    opacity: 1;
+}
+
+.qx-hero-role-sep {
+    opacity: .3;
+}
+
+.qx-hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
+    font-size: .85rem;
+}
+
+.qx-hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.qx-hero-meta-key {
     color: var(--text-body);
-    opacity: .4;
-    line-height: 1.65;
-    letter-spacing: var(--tracking-ui);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    opacity: .6;
+    font-weight: 500;
 }
 
-/* 支持容器查询的浏览器使用 cqw 单位 */
-@supports (container-type: inline-size) {
-    .qx-hero-sub {
-        font-size: clamp(.9rem, 1.6cqw, 1.25rem);
-    }
+.qx-hero-meta-op {
+    opacity: .3;
 }
 
-.qx-hero-right {
-    flex: 1;
+.qx-hero-meta-val {
+    color: var(--text-body);
+    opacity: .85;
+    word-break: break-all;
+}
+
+/* ---- Right Visual ---- */
+
+.qx-hero-visual {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
-/* ---- Line-Art Composition ---- */
-
-.qx-line-art {
-    width: 65vmin;
-    max-width: 100%;
-    height: 65vmin;
-    max-height: 100%;
+.qx-hero-geo {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
     color: var(--text-body);
-    animation: la-float 12s ease-in-out infinite;
+    animation: qx-hg-float 10s ease-in-out infinite;
 }
 
-/* -- Core polyhedron: stroke-dash draw + slow rotation -- */
-
-.qx-la-core {
-    animation: la-core-draw 2.4s cubic-bezier(.4,0,.2,1) forwards,
-               la-core-rotate 8s ease-in-out 2.4s infinite;
-    transform-origin: 250px 270px;
+@keyframes qx-hg-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-6px) rotate(.5deg); }
+    75% { transform: translateY(6px) rotate(-.5deg); }
 }
 
-@keyframes la-core-draw {
-    0%   { opacity: 0; }
-    30%  { opacity: .05; }
-    85%  { opacity: .3; }
-    100% { opacity: .35; }
+.qx-hero-geo {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    color: var(--text-body);
 }
 
-@keyframes la-core-rotate {
-    0%, 100% { transform: rotate(0deg); }
-    33%      { transform: rotate(2deg); }
-    66%      { transform: rotate(-1.5deg); }
+.qx-hg-shape {
+    opacity: 1;
 }
 
-/* -- Rings: fade in + subtle oscillate -- */
+/* ---- Hero Visual Animations ---- */
 
-.qx-la-ring {
-    transform-origin: 250px 280px;
-    animation: la-ring-fade 1.8s .5s cubic-bezier(.4,0,.2,1) both,
-               la-ring-sway 7s 2.3s ease-in-out infinite;
+.qx-hero-geo {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    color: var(--text-body);
+    animation: qx-hg-float 10s ease-in-out infinite;
 }
 
-.qx-la-ring-2 {
-    animation: la-ring-fade 1.8s .7s cubic-bezier(.4,0,.2,1) both,
-               la-ring-sway 8.5s 2.5s ease-in-out infinite reverse;
+@keyframes qx-hg-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-6px) rotate(.5deg); }
+    75% { transform: translateY(6px) rotate(-.5deg); }
 }
 
-@keyframes la-ring-fade {
-    0%   { opacity: 0; }
-    100% { opacity: inherit; }
+.qx-hg-orbit {
+    animation: qx-hg-spin 30s linear infinite;
+    transform-origin: 200px 200px;
 }
 
-@keyframes la-ring-sway {
-    0%, 100% { transform: rotate(0deg); }
-    50%      { transform: rotate(4deg); }
+.qx-hg-orbit-2 {
+    animation: qx-hg-spin-rev 25s linear infinite;
+    transform-origin: 200px 200px;
 }
 
-/* -- Satellite triangles: pop-in + gentle drift -- */
-
-.qx-la-sat {
-    transform-origin: var(--sox, center);
-    animation: la-sat-pop .7s .9s cubic-bezier(.4,0,.2,1) both,
-               la-sat-drift 6s 1.6s ease-in-out infinite;
+.qx-hg-orbit-3 {
+    animation: qx-hg-pulse 4s ease-in-out infinite;
+    transform-origin: 200px 200px;
 }
 
-.qx-la-sat-1 { --sox: 410px 220px; }
-.qx-la-sat-2 {
-    --sox: 85px 215px;
-    animation: la-sat-pop .7s 1.05s cubic-bezier(.4,0,.2,1) both,
-               la-sat-drift 7.2s 1.75s ease-in-out infinite reverse;
-}
-.qx-la-sat-3 {
-    --sox: 395px 415px;
-    animation: la-sat-pop .7s 1.2s cubic-bezier(.4,0,.2,1) both,
-               la-sat-drift 6.8s 1.9s ease-in-out infinite;
+@keyframes qx-hg-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
-@keyframes la-sat-pop {
-    0%   { opacity: 0; transform: scale(.6); }
-    100% { opacity: inherit; transform: scale(1); }
+@keyframes qx-hg-spin-rev {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
 }
 
-@keyframes la-sat-drift {
+@keyframes qx-hg-pulse {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(1.03); }
+}
+
+.qx-hg-center {
+    animation: qx-hg-center-pulse 3s ease-in-out infinite;
+    transform-origin: 200px 200px;
+}
+
+@keyframes qx-hg-center-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.9; }
+}
+
+.qx-hg-float-1 {
+    animation: qx-hg-float-1-move 8s ease-in-out infinite;
+}
+
+@keyframes qx-hg-float-1-move {
+    0%, 100% { transform: translate(0, 0) rotate(15deg); }
+    50% { transform: translate(5px, -8px) rotate(20deg); }
+}
+
+.qx-hg-float-2 {
+    animation: qx-hg-float-2-move 10s ease-in-out infinite;
+}
+
+@keyframes qx-hg-float-2-move {
     0%, 100% { transform: translate(0, 0); }
-    33%      { transform: translate(3px, -5px); }
-    66%      { transform: translate(-4px, 3px); }
+    50% { transform: translate(-6px, 6px); }
 }
 
-/* -- Nodes: staggered fade-in -- */
-
-.qx-la-nodes {
-    animation: la-nodes-fade 1.5s .3s ease both;
+.qx-hg-float-3 {
+    animation: qx-hg-float-3-move 9s ease-in-out infinite;
 }
 
-@keyframes la-nodes-fade {
-    0%   { opacity: 0; }
-    100% { opacity: .18; }
+@keyframes qx-hg-float-3-move {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-4px, -5px); }
 }
 
-/* -- Accent arcs: slow draw + fade -- */
-
-.qx-la-arcs {
-    animation: la-arcs-fade 2s .6s cubic-bezier(.4,0,.2,1) both;
+.qx-hg-float-4 {
+    animation: qx-hg-float-4-move 11s ease-in-out infinite;
 }
 
-@keyframes la-arcs-fade {
-    0%   { opacity: 0; }
-    100% { opacity: .12; }
+@keyframes qx-hg-float-4-move {
+    0%, 100% { transform: translate(0, 0) rotate(-10deg); }
+    50% { transform: translate(6px, 4px) rotate(-5deg); }
 }
 
-/* -- Whole composition: gentle float -- */
+.qx-hg-dots circle:nth-child(1) {
+    animation: qx-hg-dot-pulse 2s ease-in-out infinite;
+}
 
-@keyframes la-float {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-8px); }
+.qx-hg-dots circle:nth-child(2) {
+    animation: qx-hg-dot-pulse 2s ease-in-out infinite 0.5s;
+}
+
+.qx-hg-dots circle:nth-child(3) {
+    animation: qx-hg-dot-pulse 2s ease-in-out infinite 1s;
+}
+
+.qx-hg-dots circle:nth-child(4) {
+    animation: qx-hg-dot-pulse 2s ease-in-out infinite 1.5s;
+}
+
+@keyframes qx-hg-dot-pulse {
+    0%, 100% { opacity: 0.2; r: 4; }
+    50% { opacity: 0.5; r: 6; }
+}
+
+.qx-hg-connectors line {
+    animation: qx-hg-line-dash 3s linear infinite;
+}
+
+@keyframes qx-hg-line-dash {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: 12; }
+}
+
+.qx-hg-connector {
+    opacity: 1;
+}
+
+.qx-hg-code {
+    opacity: 1;
 }
 
 /* ---- Mobile ---- */
 
 @media (max-width: 768px) {
     .qx-hero {
-        position: relative;
-        justify-content: center;
-        height: auto;
+        padding: 48px 8vw 80px;
         min-height: calc(100vh - 56px);
-        padding: 48px 8vw;
     }
 
-    .qx-hero-right {
-        position: absolute;
-        inset: 0;
-        flex: none;
-        z-index: 0;
+    .qx-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
     }
 
-    .qx-hero-left {
-        position: relative;
-        flex: none;
-        z-index: 1;
-        text-align: center;
-        align-items: center;
+    .qx-hero-main {
+        gap: 18px;
     }
 
-    .qx-line-art {
-        width: min(92vw, 70vh);
-        height: min(92vw, 70vh);
-        max-width: 100%;
-        max-height: 100%;
+    .qx-hero-visual {
+        order: -1;
     }
 
+    .qx-hero-geo {
+        max-width: 280px;
+    }
 }
 
 @media (max-width: 480px) {
     .qx-hero {
         padding: 32px 6vw;
-    }
-
-    .qx-hero-left {
-        gap: 14px;
-    }
-
-    /* 降级方案 */
-    .qx-hero-title {
-        font-size: clamp(1.6rem, 9vw, 2.8rem);
-    }
-}
-
-/* 支持容器查询的浏览器使用 cqw 单位 */
-@supports (container-type: inline-size) {
-    @media (max-width: 480px) {
-        .qx-hero-title {
-            font-size: clamp(1.6rem, 9cqw, 2.8rem);
-        }
     }
 }
 
@@ -2166,13 +2218,6 @@ body {
 
 [data-theme="light"] .katex {
     color: inherit;
-}
-
-.qx-line-art {
-    width: min(88vw, 62vh);
-    height: min(88vw, 62vh);
-    max-width: 100%;
-    max-height: 100%;
 }
 
 /* ========== Mobile border-radius override ========== */

@@ -3,15 +3,12 @@
     "name": "QxBlog",
     "title": "QxBlog",
     "author": "QingXuanJun",
-    "url": "https://blog.qxbit.me",
-    "description": "基于 Issues 驱动的静态博客，分享代码、设计与思考。",
-    "keywords": "博客,技术,前端,代码,设计,QxBlog",
-    "siteCreatedAt": "2026-03-01T00:00:00Z"
+    "url": "https://blog.qxbit.me"
   },
   "hero": {
     "tag": "<Blog />",
-    "title": "「保持专注，保持思考。」",
-    "subtitle": "Stay focused, stay reflective."
+    "title": "[ 保持专注，保持思考 ]",
+    "roles": ["前端开发", "爱好写作", "热爱游戏"]
   },
   "about": {
     "sections": [

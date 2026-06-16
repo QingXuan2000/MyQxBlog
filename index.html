@@ -35,51 +35,132 @@
         </svg>
     </div>
     <section class="qx-hero">
-        <div class="qx-hero-left">
-            <span class="qx-hero-tag">&lt;Blog /&gt;</span>
-            <h1 class="qx-hero-title">「用代码，写世界。」</h1>
-            <p class="qx-hero-sub">Thoughts on code, design, and everything in between.</p>
+        <div class="qx-hero-grid">
+            <div class="qx-hero-main">
+                <div class="qx-hero-tag" id="hero-tag">&lt;Blog /&gt;</div>
+
+                <h1 class="qx-hero-title" id="hero-title">「用代码，写世界。」</h1>
+
+                <div class="qx-hero-roles" id="hero-roles"></div>
+
+                <div class="qx-hero-meta">
+                    <div class="qx-hero-meta-item">
+                        <span class="qx-hero-meta-key">name</span>
+                        <span class="qx-hero-meta-op">=</span>
+                        <span class="qx-hero-meta-val" id="hero-name">"QxBlog"</span>
+                    </div>
+                    <div class="qx-hero-meta-item">
+                        <span class="qx-hero-meta-key">posts</span>
+                        <span class="qx-hero-meta-op">=</span>
+                        <span class="qx-hero-meta-val" id="hero-posts">"-"</span>
+                    </div>
+                    <div class="qx-hero-meta-item">
+                        <span class="qx-hero-meta-key">tags</span>
+                        <span class="qx-hero-meta-op">=</span>
+                        <span class="qx-hero-meta-val" id="hero-tags">"-"</span>
+                    </div>
+                    <div class="qx-hero-meta-item">
+                        <span class="qx-hero-meta-key">categories</span>
+                        <span class="qx-hero-meta-op">=</span>
+                        <span class="qx-hero-meta-val" id="hero-categories">"-"</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="qx-hero-visual">
+                <svg class="qx-hero-geo" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="hg-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="currentColor" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="currentColor" stop-opacity="0.05"/>
+                        </linearGradient>
+                        <linearGradient id="hg-gradient-2" x1="100%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="currentColor" stop-opacity="0.1"/>
+                            <stop offset="100%" stop-color="currentColor" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Outer orbit ring -->
+                    <g class="qx-hg-orbit">
+                        <ellipse cx="200" cy="200" rx="160" ry="160" stroke="currentColor" stroke-width="1" stroke-dasharray="8,6" opacity="0.12"/>
+                    </g>
+
+                    <!-- Middle orbit ring -->
+                    <g class="qx-hg-orbit-2">
+                        <ellipse cx="200" cy="200" rx="120" ry="120" stroke="currentColor" stroke-width="1" opacity="0.15" transform="rotate(45 200 200)"/>
+                    </g>
+
+                    <!-- Inner orbit ring -->
+                    <g class="qx-hg-orbit-3">
+                        <circle cx="200" cy="200" r="70" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
+                    </g>
+
+                    <!-- Central hexagon -->
+                    <g class="qx-hg-center">
+                        <polygon points="200,150 242,175 242,225 200,250 158,225 158,175" stroke="currentColor" stroke-width="1.5" fill="url(#hg-gradient-1)" opacity="0.6"/>
+                        <polygon points="200,165 227,182 227,218 200,235 173,218 173,182" stroke="currentColor" stroke-width="1" fill="url(#hg-gradient-2)" opacity="0.4"/>
+                    </g>
+
+                    <!-- Floating shapes group 1 -->
+                    <g class="qx-hg-float-1">
+                        <rect x="50" y="80" width="50" height="50" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.25" transform="rotate(15 75 105)"/>
+                        <circle cx="75" cy="105" r="4" fill="currentColor" opacity="0.3"/>
+                    </g>
+
+                    <!-- Floating shapes group 2 -->
+                    <g class="qx-hg-float-2">
+                        <circle cx="320" cy="90" r="30" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.25"/>
+                        <circle cx="320" cy="90" r="18" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.15"/>
+                    </g>
+
+                    <!-- Floating shapes group 3 -->
+                    <g class="qx-hg-float-3">
+                        <polygon points="330,260 370,320 290,320" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.25"/>
+                    </g>
+
+                    <!-- Floating shapes group 4 -->
+                    <g class="qx-hg-float-4">
+                        <rect x="60" y="260" width="70" height="45" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.2" transform="rotate(-10 95 282)"/>
+                    </g>
+
+                    <!-- Connector lines -->
+                    <g class="qx-hg-connectors" opacity="0.6">
+                        <line x1="125" y1="150" x2="158" y2="175" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
+                        <line x1="200" y1="150" x2="200" y2="105" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
+                        <line x1="275" y1="150" x2="290" y2="180" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
+                        <line x1="125" y1="250" x2="158" y2="225" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
+                        <line x1="200" y1="250" x2="200" y2="295" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
+                        <line x1="275" y1="250" x2="290" y2="220" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
+                    </g>
+
+                    <!-- Orbiting dots -->
+                    <g class="qx-hg-dots">
+                        <circle cx="360" cy="200" r="5" fill="currentColor" opacity="0.25"/>
+                        <circle cx="200" cy="40" r="4" fill="currentColor" opacity="0.2"/>
+                        <circle cx="40" cy="200" r="5" fill="currentColor" opacity="0.25"/>
+                        <circle cx="200" cy="360" r="4" fill="currentColor" opacity="0.2"/>
+                    </g>
+
+                    <!-- Code symbols -->
+                    <g class="qx-hg-code">
+                        <text x="65" y="100" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor" opacity="0.4">&lt;/&gt;</text>
+                        <text x="305" y="95" font-family="JetBrains Mono, monospace" font-size="10" fill="currentColor" opacity="0.25">{ }</text>
+                        <text x="320" y="295" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor" opacity="0.3">[ ]</text>
+                        <text x="70" y="290" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor" opacity="0.35">#</text>
+                        <text x="190" y="320" font-family="JetBrains Mono, monospace" font-size="9" fill="currentColor" opacity="0.2">...</text>
+                    </g>
+
+                    <!-- Decorative cross marks -->
+                    <g class="qx-hg-marks" opacity="0.15">
+                        <path d="M395,50 L405,50 M400,45 L400,55" stroke="currentColor" stroke-width="1"/>
+                        <path d="M395,350 L405,350 M400,345 L400,355" stroke="currentColor" stroke-width="1"/>
+                        <path d="M50,350 L60,350 M55,345 L55,355" stroke="currentColor" stroke-width="1"/>
+                        <path d="M50,50 L60,50 M55,45 L55,55" stroke="currentColor" stroke-width="1"/>
+                    </g>
+                </svg>
+            </div>
         </div>
-        <div class="qx-hero-right">
-            <svg class="qx-line-art" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g class="qx-la-core">
-                    <polygon points="250,105 160,170 200,380 310,390 360,160" stroke="currentColor" stroke-width="1.2" fill="none"/>
-                    <line x1="160" y1="170" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
-                    <line x1="200" y1="380" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
-                    <line x1="310" y1="390" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
-                    <line x1="360" y1="160" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
-                    <line x1="250" y1="105" x2="250" y2="430" stroke="currentColor" stroke-width="0.8"/>
-                    <line x1="160" y1="170" x2="310" y2="390" stroke="currentColor" stroke-width="0.6"/>
-                    <line x1="360" y1="160" x2="200" y2="380" stroke="currentColor" stroke-width="0.6"/>
-                    <line x1="250" y1="105" x2="200" y2="380" stroke="currentColor" stroke-width="0.6"/>
-                    <line x1="250" y1="105" x2="310" y2="390" stroke="currentColor" stroke-width="0.6"/>
-                    <circle cx="250" cy="105" r="3" fill="currentColor"/>
-                    <circle cx="160" cy="170" r="3" fill="currentColor"/>
-                    <circle cx="200" cy="380" r="3" fill="currentColor"/>
-                    <circle cx="310" cy="390" r="3" fill="currentColor"/>
-                    <circle cx="360" cy="160" r="3" fill="currentColor"/>
-                    <circle cx="250" cy="430" r="3" fill="currentColor"/>
-                </g>
-                <g class="qx-la-sat qx-la-sat-1">
-                    <polygon points="410,180 440,240 380,250" stroke="currentColor" stroke-width="1" fill="none"/>
-                    <circle cx="410" cy="180" r="2" fill="currentColor"/>
-                    <circle cx="440" cy="240" r="2" fill="currentColor"/>
-                    <circle cx="380" cy="250" r="2" fill="currentColor"/>
-                </g>
-                <g class="qx-la-sat qx-la-sat-2">
-                    <polygon points="60,210 100,180 90,250" stroke="currentColor" stroke-width="1" fill="none"/>
-                    <circle cx="60" cy="210" r="2" fill="currentColor"/>
-                    <circle cx="100" cy="180" r="2" fill="currentColor"/>
-                    <circle cx="90" cy="250" r="2" fill="currentColor"/>
-                </g>
-                <g class="qx-la-sat qx-la-sat-3">
-                    <polygon points="370,390 420,410 390,450" stroke="currentColor" stroke-width="0.9" fill="none"/>
-                    <circle cx="370" cy="390" r="2" fill="currentColor"/>
-                    <circle cx="420" cy="410" r="2" fill="currentColor"/>
-                    <circle cx="390" cy="450" r="2" fill="currentColor"/>
-                </g>
-            </svg>
-        </div>
+
         <div class="qx-scroll-hint" aria-hidden="true">
             <span class="qx-scroll-line"></span>
         </div>

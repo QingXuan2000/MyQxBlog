@@ -7,11 +7,63 @@ import { QxCategories } from './categories.js';
 import { QxArchive } from './archive.js';
 import { QxToc } from './toc.js';
 
+const ROOT = new URL('../', import.meta.url).href;
+const BLOG_ARTICLES = new URL('../blogData/articles.json', import.meta.url).href;
+const TAGS_URL = new URL('../blogData/tags.json', import.meta.url).href;
+const CATEGORIES_URL = new URL('../blogData/categories.json', import.meta.url).href;
+
+async function loadHeroMeta() {
+    const postsEl = document.getElementById('hero-posts');
+    const tagsEl = document.getElementById('hero-tags');
+    const categoriesEl = document.getElementById('hero-categories');
+
+    // Load posts count
+    if (postsEl) {
+        try {
+            const res = await fetch(BLOG_ARTICLES);
+            if (res.ok) {
+                const data = await res.json();
+                const list = Array.isArray(data) ? data : Object.values(data || {});
+                postsEl.textContent = `"${list.length}"`;
+            }
+        } catch (e) {
+            postsEl.textContent = '"-"';
+        }
+    }
+
+    // Load tags count
+    if (tagsEl) {
+        try {
+            const res = await fetch(TAGS_URL);
+            if (res.ok) {
+                const data = await res.json();
+                tagsEl.textContent = `"${data.length}"`;
+            }
+        } catch (e) {
+            tagsEl.textContent = '"-"';
+        }
+    }
+
+    // Load categories count
+    if (categoriesEl) {
+        try {
+            const res = await fetch(CATEGORIES_URL);
+            if (res.ok) {
+                const data = await res.json();
+                categoriesEl.textContent = `"${data.length}"`;
+            }
+        } catch (e) {
+            categoriesEl.textContent = '"-"';
+        }
+    }
+}
+
 QxConfig.renderNav();
 
 document.addEventListener('DOMContentLoaded', async () => {
     const config = new QxConfig();
     await config.load();
+    await loadHeroMeta();
     let pageSize;
     const buildRes = await fetch(new URL('../config/buildConfig.json', import.meta.url));
     if (!buildRes.ok) {
