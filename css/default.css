@@ -625,7 +625,7 @@ body {
 .qx-hero-title {
     font-size: clamp(1.8rem, 6.5vw, 6rem);
     font-weight: 900;
-    line-height: 1.05;
+    line-height: 1.15;
     letter-spacing: 0;
     color: var(--text-body);
     word-wrap: break-word;

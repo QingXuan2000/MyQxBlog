@@ -24,10 +24,10 @@ async function loadHeroMeta() {
             if (res.ok) {
                 const data = await res.json();
                 const list = Array.isArray(data) ? data : Object.values(data || {});
-                postsEl.textContent = `"${list.length}"`;
+                postsEl.textContent = `${list.length}`;
             }
         } catch (e) {
-            postsEl.textContent = '"-"';
+            postsEl.textContent = '-';
         }
     }
 
@@ -37,10 +37,10 @@ async function loadHeroMeta() {
             const res = await fetch(TAGS_URL);
             if (res.ok) {
                 const data = await res.json();
-                tagsEl.textContent = `"${data.length}"`;
+                tagsEl.textContent = `${data.length}`;
             }
         } catch (e) {
-            tagsEl.textContent = '"-"';
+            tagsEl.textContent = '-';
         }
     }
 
@@ -50,10 +50,10 @@ async function loadHeroMeta() {
             const res = await fetch(CATEGORIES_URL);
             if (res.ok) {
                 const data = await res.json();
-                categoriesEl.textContent = `"${data.length}"`;
+                categoriesEl.textContent = `${data.length}`;
             }
         } catch (e) {
-            categoriesEl.textContent = '"-"';
+            categoriesEl.textContent = '-';
         }
     }
 }
