@@ -8,8 +8,22 @@
     <title>QxBlog - 首页</title>
     <link rel="stylesheet" href="./css/default.css">
     <style>
-        .qx-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--bg-body);transition:opacity .3s,visibility .3s}.qx-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
-        .qx-prism-dot{animation:qx-prism-dot-pulse 3s ease-in-out infinite}@keyframes qx-prism-dot-pulse{0%,100%{opacity:0.3}50%{opacity:0.8}}
+        .qx-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-body);
+            transition: opacity .3s, visibility .3s
+        }
+
+        .qx-loader.is-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none
+        }
     </style>
     <script type="module" src="./js/default.js"></script>
     <script>
@@ -24,144 +38,99 @@
 <body>
     <div class="qx-loader">
         <svg class="qx-loader-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22" transform="rotate(-18, 310, 310)"/></g>
-            <g class="qx-loader-orbit-wrap"><ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16" transform="rotate(28, 310, 310)"/></g>
-            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535"/><line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310"/><line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85"/><line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85"/>
-            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85"/>
-            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235"/>
-            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s"/><circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s"/><circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s"/><circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s"/><circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s"/><circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s"/>
-            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="460" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="385" r="3.2"/><circle class="qx-loader-idot" cx="180" cy="235" r="3.2"/><circle class="qx-loader-idot" cx="310" cy="160" r="3.2"/><circle class="qx-loader-idot" cx="440" cy="235" r="3.2"/>
-            <circle class="qx-loader-core" cx="310" cy="310" r="8"/>
+            <g class="qx-loader-orbit-wrap">
+                <ellipse class="qx-loader-orbit" cx="310" cy="310" rx="230" ry="85" stroke-width="2.5" opacity="0.22"
+                    transform="rotate(-18, 310, 310)" />
+            </g>
+            <g class="qx-loader-orbit-wrap">
+                <ellipse class="qx-loader-orbit" cx="310" cy="310" rx="170" ry="120" stroke-width="2.2" opacity="0.16"
+                    transform="rotate(28, 310, 310)" />
+            </g>
+            <line class="qx-loader-radial" x1="310" y1="310" x2="570" y2="310" />
+            <line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="535" />
+            <line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="535" />
+            <line class="qx-loader-radial" x1="310" y1="310" x2="50" y2="310" />
+            <line class="qx-loader-radial" x1="310" y1="310" x2="180" y2="85" />
+            <line class="qx-loader-radial" x1="310" y1="310" x2="440" y2="85" />
+            <polygon class="qx-loader-outer" points="570,310 440,535 180,535 50,310 180,85 440,85" />
+            <polygon class="qx-loader-inner" points="440,385 310,460 180,385 180,235 310,160 440,235" />
+            <circle class="qx-loader-dot" cx="570" cy="310" r="5.5" style="animation-delay:0s" />
+            <circle class="qx-loader-dot" cx="440" cy="535" r="5.5" style="animation-delay:.5s" />
+            <circle class="qx-loader-dot" cx="180" cy="535" r="5.5" style="animation-delay:1s" />
+            <circle class="qx-loader-dot" cx="50" cy="310" r="5.5" style="animation-delay:1.5s" />
+            <circle class="qx-loader-dot" cx="180" cy="85" r="5.5" style="animation-delay:2s" />
+            <circle class="qx-loader-dot" cx="440" cy="85" r="5.5" style="animation-delay:2.5s" />
+            <circle class="qx-loader-idot" cx="440" cy="385" r="3.2" />
+            <circle class="qx-loader-idot" cx="310" cy="460" r="3.2" />
+            <circle class="qx-loader-idot" cx="180" cy="385" r="3.2" />
+            <circle class="qx-loader-idot" cx="180" cy="235" r="3.2" />
+            <circle class="qx-loader-idot" cx="310" cy="160" r="3.2" />
+            <circle class="qx-loader-idot" cx="440" cy="235" r="3.2" />
+            <circle class="qx-loader-core" cx="310" cy="310" r="8" />
         </svg>
     </div>
-    <section class="qx-hero">
-        <div class="qx-hero-grid">
-            <div class="qx-hero-main">
-                <div class="qx-hero-tag" id="hero-tag">&lt;Blog /&gt;</div>
+    <section class="qx-site-intro">
+        <div class="qx-site-intro-grid">
+            <div class="qx-site-intro-main">
+                <header class="qx-site-intro-header">
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="verticalLines" width="40" height="100" patternUnits="userSpaceOnUse">
+                                <line x1="0" y1="0" x2="0" y2="100" stroke="currentColor" stroke-width="1" />
+                            </pattern>
+                        </defs>
+                        
+                        <rect width="100%" height="100%" fill="url(#verticalLines)" />
+                    </svg>
+                </header>
 
-                <h1 class="qx-hero-title" id="hero-title">「用代码，写世界。」</h1>
+                <section class="qx-site-intro-section">
+                    <h1 class="qx-site-intro-meta-val" id="hero-name">QxBlog</h1>
+                    <p class="qx-site-intro-title" id="hero-title">占位符</p>
+                </section>
 
-                <div class="qx-hero-meta">
-                    <div class="qx-hero-meta-item">
-                        <span class="qx-hero-meta-key">name</span>
-                        <span class="qx-hero-meta-op">=</span>
-                        <span class="qx-hero-meta-val" id="hero-name">"QxBlog"</span>
+                <section class="qx-site-intro-section-bottom-left">
+                    <span class="qx-page-hero-tag">&lt;blogDatabase/&gt;</span>
+                    <div class="qx-site-intro-meta">
+                        <div class="qx-site-intro-meta-item">
+                            <span class="qx-site-intro-meta-key">blog</span>
+                            <span class="qx-site-intro-meta-op">=</span>
+                            <span class="qx-site-intro-meta-val" id="blog-name">-</span>
+                        </div>
+                        <div class="qx-site-intro-meta-item">
+                            <span class="qx-site-intro-meta-key">author</span>
+                            <span class="qx-site-intro-meta-op">=</span>
+                            <span class="qx-site-intro-meta-val" id="blog-author">-</span>
+                        </div>
+                        <div class="qx-site-intro-meta-item">
+                            <span class="qx-site-intro-meta-key">posts</span>
+                            <span class="qx-site-intro-meta-op">=</span>
+                            <span class="qx-site-intro-meta-val" id="hero-posts">-</span>
+                        </div>
+                        <div class="qx-site-intro-meta-item">
+                            <span class="qx-site-intro-meta-key">tags</span>
+                            <span class="qx-site-intro-meta-op">=</span>
+                            <span class="qx-site-intro-meta-val" id="hero-tags">-</span>
+                        </div>
+                        <div class="qx-site-intro-meta-item">
+                            <span class="qx-site-intro-meta-key">categories</span>
+                            <span class="qx-site-intro-meta-op">=</span>
+                            <span class="qx-site-intro-meta-val" id="hero-categories">-</span>
+                        </div>
                     </div>
-                    <div class="qx-hero-meta-item">
-                        <span class="qx-hero-meta-key">posts</span>
-                        <span class="qx-hero-meta-op">=</span>
-                        <span class="qx-hero-meta-val" id="hero-posts">-</span>
-                    </div>
-                    <div class="qx-hero-meta-item">
-                        <span class="qx-hero-meta-key">tags</span>
-                        <span class="qx-hero-meta-op">=</span>
-                        <span class="qx-hero-meta-val" id="hero-tags">-</span>
-                    </div>
-                    <div class="qx-hero-meta-item">
-                        <span class="qx-hero-meta-key">categories</span>
-                        <span class="qx-hero-meta-op">=</span>
-                        <span class="qx-hero-meta-val" id="hero-categories">-</span>
-                    </div>
-                </div>
-            </div>
+                </section>
 
-            <div class="qx-hero-visual">
-                <svg class="qx-hero-geo" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="hg-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="currentColor" stop-opacity="0.15"/>
-                            <stop offset="100%" stop-color="currentColor" stop-opacity="0.05"/>
-                        </linearGradient>
-                        <linearGradient id="hg-gradient-2" x1="100%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="currentColor" stop-opacity="0.1"/>
-                            <stop offset="100%" stop-color="currentColor" stop-opacity="0.02"/>
-                        </linearGradient>
-                    </defs>
+                <section class="qx-site-intro-section-bottom-center">
+                    
+                </section>
 
-                    <!-- Outer orbit ring -->
-                    <g class="qx-hg-orbit">
-                        <ellipse cx="200" cy="200" rx="160" ry="160" stroke="currentColor" stroke-width="1" stroke-dasharray="8,6" opacity="0.12"/>
-                    </g>
-
-                    <!-- Middle orbit ring -->
-                    <g class="qx-hg-orbit-2">
-                        <ellipse cx="200" cy="200" rx="120" ry="120" stroke="currentColor" stroke-width="1" opacity="0.15" transform="rotate(45 200 200)"/>
-                    </g>
-
-                    <!-- Inner orbit ring -->
-                    <g class="qx-hg-orbit-3">
-                        <circle cx="200" cy="200" r="70" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
-                    </g>
-
-                    <!-- Central hexagon -->
-                    <g class="qx-hg-center">
-                        <polygon points="200,150 242,175 242,225 200,250 158,225 158,175" stroke="currentColor" stroke-width="1.5" fill="url(#hg-gradient-1)" opacity="0.6"/>
-                        <polygon points="200,165 227,182 227,218 200,235 173,218 173,182" stroke="currentColor" stroke-width="1" fill="url(#hg-gradient-2)" opacity="0.4"/>
-                    </g>
-
-                    <!-- Floating shapes group 1 -->
-                    <g class="qx-hg-float-1">
-                        <rect x="50" y="80" width="50" height="50" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.25" transform="rotate(15 75 105)"/>
-                        <circle cx="75" cy="105" r="4" fill="currentColor" opacity="0.3"/>
-                    </g>
-
-                    <!-- Floating shapes group 2 -->
-                    <g class="qx-hg-float-2">
-                        <circle cx="320" cy="90" r="30" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.25"/>
-                        <circle cx="320" cy="90" r="18" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.15"/>
-                    </g>
-
-                    <!-- Floating shapes group 3 -->
-                    <g class="qx-hg-float-3">
-                        <polygon points="330,260 370,320 290,320" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.25"/>
-                    </g>
-
-                    <!-- Floating shapes group 4 -->
-                    <g class="qx-hg-float-4">
-                        <rect x="60" y="260" width="70" height="45" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.2" transform="rotate(-10 95 282)"/>
-                    </g>
-
-                    <!-- Connector lines -->
-                    <g class="qx-hg-connectors" opacity="0.6">
-                        <line x1="125" y1="150" x2="158" y2="175" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
-                        <line x1="200" y1="150" x2="200" y2="105" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
-                        <line x1="275" y1="150" x2="290" y2="180" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
-                        <line x1="125" y1="250" x2="158" y2="225" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
-                        <line x1="200" y1="250" x2="200" y2="295" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
-                        <line x1="275" y1="250" x2="290" y2="220" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.2"/>
-                    </g>
-
-                    <!-- Orbiting dots -->
-                    <g class="qx-hg-dots">
-                        <circle cx="360" cy="200" r="5" fill="currentColor" opacity="0.25"/>
-                        <circle cx="200" cy="40" r="4" fill="currentColor" opacity="0.2"/>
-                        <circle cx="40" cy="200" r="5" fill="currentColor" opacity="0.25"/>
-                        <circle cx="200" cy="360" r="4" fill="currentColor" opacity="0.2"/>
-                    </g>
-
-                    <!-- Code symbols -->
-                    <g class="qx-hg-code">
-                        <text x="65" y="100" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor" opacity="0.4">&lt;/&gt;</text>
-                        <text x="305" y="95" font-family="JetBrains Mono, monospace" font-size="10" fill="currentColor" opacity="0.25">{ }</text>
-                        <text x="320" y="295" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor" opacity="0.3">[ ]</text>
-                        <text x="70" y="290" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor" opacity="0.35">#</text>
-                        <text x="190" y="320" font-family="JetBrains Mono, monospace" font-size="9" fill="currentColor" opacity="0.2">...</text>
-                    </g>
-
-                    <!-- Decorative cross marks -->
-                    <g class="qx-hg-marks" opacity="0.15">
-                        <path d="M395,50 L405,50 M400,45 L400,55" stroke="currentColor" stroke-width="1"/>
-                        <path d="M395,350 L405,350 M400,345 L400,355" stroke="currentColor" stroke-width="1"/>
-                        <path d="M50,350 L60,350 M55,345 L55,355" stroke="currentColor" stroke-width="1"/>
-                        <path d="M50,50 L60,50 M55,45 L55,55" stroke="currentColor" stroke-width="1"/>
-                    </g>
-                </svg>
+                <section class="qx-site-intro-section-bottom-right">
+                    
+                </section>
             </div>
         </div>
 
-        <div class="qx-scroll-hint" aria-hidden="true">
-            <span class="qx-scroll-line"></span>
-        </div>
+
     </section>
 
     <section class="qx-articles">

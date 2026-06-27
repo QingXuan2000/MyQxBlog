@@ -49,15 +49,26 @@ export class QxConfig {
     _apply() {
         const d = this.data;
 
-        if (document.querySelector('.qx-hero')) {
+        if (document.querySelector('.qx-site-intro')) {
             document.title = `${d.site.title} - 首页`;
+
             const tagEl = document.getElementById('hero-tag');
             if (tagEl) tagEl.textContent = d.hero.tag;
+
             const titleEl = document.getElementById('hero-title');
             if (titleEl) titleEl.textContent = d.hero.title;
+
             const nameEl = document.getElementById('hero-name');
-            if (nameEl) nameEl.textContent = `"${d.site.author}"`;
+
+            if (nameEl) nameEl.textContent = d.site.title;
+
+            const blogNameEl = document.getElementById('blog-name');
+            if (blogNameEl) blogNameEl.textContent = d.site.name;
+
+            const blogAuthorEl = document.getElementById('blog-author');
+            if (blogAuthorEl) blogAuthorEl.textContent = d.site.author;
         }
+
 
         const brand = document.querySelector('.qx-nav-brand');
         if (brand) brand.textContent = d.site.name;
@@ -95,13 +106,13 @@ export class QxConfig {
 
     _renderFooter(d) {
         const footerContent = d.footerContent || [];
-        
+
         if (footerContent.length === 0) {
             return;
         }
-        
+
         const itemsHTML = footerContent.map(item => `<p class="qx-footer-item">${item}</p>`).join('');
-        
+
         const html = `
             <footer class="qx-footer">
                 ${itemsHTML}
