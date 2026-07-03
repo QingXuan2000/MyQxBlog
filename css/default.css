@@ -732,11 +732,13 @@ body {
 @media (max-width: 768px) {
     .qx-site-intro-section {
         padding: 1.2rem 1.5rem 1.5rem 1.5rem;
+        min-height: 150px;
     }
 
     #hero-name {
         font-size: clamp(3.5rem, 10vw, 4rem);
         line-height: 1.1;
+        margin-bottom: 0.8rem;
     }
 
     .qx-site-intro-section-bottom-left {
