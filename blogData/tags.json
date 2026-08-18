@@ -1,5 +1,35 @@
 [
   {
+    "label": "进阶",
+    "slug": "进阶",
+    "count": 1
+  },
+  {
+    "label": "资源",
+    "slug": "资源",
+    "count": 1
+  },
+  {
+    "label": "工具",
+    "slug": "工具",
+    "count": 1
+  },
+  {
+    "label": "软件",
+    "slug": "软件",
+    "count": 1
+  },
+  {
+    "label": "帮助",
+    "slug": "帮助",
+    "count": 4
+  },
+  {
+    "label": "AI",
+    "slug": "ai",
+    "count": 2
+  },
+  {
     "label": "感悟",
     "slug": "感悟",
     "count": 2
@@ -25,11 +55,6 @@
     "count": 3
   },
   {
-    "label": "帮助",
-    "slug": "帮助",
-    "count": 3
-  },
-  {
     "label": "本质",
     "slug": "本质",
     "count": 2
@@ -38,11 +63,6 @@
     "label": "人类",
     "slug": "人类",
     "count": 2
-  },
-  {
-    "label": "AI",
-    "slug": "ai",
-    "count": 1
   },
   {
     "label": "入门",

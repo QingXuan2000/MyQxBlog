@@ -1,5 +1,32 @@
 [
   {
+    "id": 6,
+    "slug": "deepseek-harness-rust启动器",
+    "title": "DeepSeek Harness Rust启动器",
+    "author": "QingXuanJun",
+    "date": "2026-08-18T07:24:53.000Z",
+    "updated": "2026-08-18T07:24:53.000Z",
+    "labels": [
+      "进阶",
+      "资源",
+      "工具",
+      "软件",
+      "帮助",
+      "AI"
+    ],
+    "labelSlugs": [
+      "进阶",
+      "资源",
+      "工具",
+      "软件",
+      "帮助",
+      "ai"
+    ],
+    "category": "资源",
+    "categorySlug": "资源",
+    "markdownPath": "blogData/markdown/6.md"
+  },
+  {
     "id": 5,
     "slug": "中国中职教育需要被改变",
     "title": "中国中职教育需要被改变",
