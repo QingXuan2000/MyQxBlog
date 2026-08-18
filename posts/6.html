@@ -19,7 +19,7 @@
     <meta name="twitter:title" content="QxBlog - DeepSeek Harness Rust启动器">
     <meta name="twitter:description" content="DeepSeek Harness Launcher DeepSeek Harness Launcher（简称 DSHL）是一款使用 Rust 和 Tauri 开发的桌面 启动器，用于启动 dsh Web 服务并在原生窗口中打开 DeepSeek Harness Web UI。 它将以下命令行流程封装为桌面应用： dsh">
     <meta property="article:published_time" content="2026-08-18T07:24:53.000Z">
-    <meta property="article:modified_time" content="2026-08-18T07:24:53.000Z">
+    <meta property="article:modified_time" content="2026-08-18T07:28:18.000Z">
     <meta property="article:tag" content="进阶">
     <meta property="article:tag" content="资源">
     <meta property="article:tag" content="工具">
@@ -34,7 +34,7 @@
   "description": "基于 Discussions 驱动的静态博客，分享代码、设计与思考。",
   "url": "https://blog.qxbit.me/posts/6.html",
   "datePublished": "2026-08-18T07:24:53.000Z",
-  "dateModified": "2026-08-18T07:24:53.000Z",
+  "dateModified": "2026-08-18T07:28:18.000Z",
   "author": {
     "@type": "Person",
     "name": "QingXuanJun"
@@ -124,14 +124,6 @@
 <figure data-rehype-pretty-code-figure=""><pre tabindex="0" data-language="sh" data-theme="github-light github-dark"><code data-language="sh" data-theme="github-light github-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0">dsh</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF"> web</span></span></code></pre></figure>
 <p>用户不需要每次打开终端、手动等待服务启动或单独管理日志。启动器会自动解析<br>
 dsh 运行方式，启动本地服务，等待 HTTP 接口就绪，然后加载 Web UI。</p>
-<h2 id="界面演示"><a class="qx-heading-anchor" href="#界面演示">界面演示</a></h2>
-<h3 id="加载过场"><a class="qx-heading-anchor" href="#加载过场">加载过场</a></h3>
-<p>启动器会显示服务启动状态、端口检查结果和日志尾部，服务准备完成后自动进入<br>
-主界面。</p>
-<p><img src="images/1.png" alt="加载过场"></p>
-<h3 id="主界面"><a class="qx-heading-anchor" href="#主界面">主界面</a></h3>
-<p>服务启动完成后，DSHL 会在 Tauri 原生窗口中打开 DSH Web UI。</p>
-<p><img src="images/2.png" alt="主界面"></p>
 <h2 id="核心功能"><a class="qx-heading-anchor" href="#核心功能">核心功能</a></h2>
 <h3 id="自动启动-dsh"><a class="qx-heading-anchor" href="#自动启动-dsh">自动启动 dsh</a></h3>
 <p>启动器优先使用系统 PATH 中的全局 <span data-rehype-pretty-code-figure=""><code data-language="text" data-theme="github-light github-dark"><span data-line=""><span>dsh</span></span></code></span>。如果没有检测到全局命令，则回退到：</p>
