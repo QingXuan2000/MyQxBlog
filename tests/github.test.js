@@ -135,6 +135,17 @@ test('rejects malformed remote snapshots before replacing or deleting source fil
   }
 });
 
+test('publishes discussions from non-answerable categories where isAnswered is null', async (t) => {
+  const root = await fixture(t);
+  const result = await engine.syncDiscussions({
+    root,
+    env,
+    fetchImpl: async () => response([discussion(3, { isAnswered: null })]),
+  });
+  assert.deepEqual(await readdir(path.join(root, 'content/posts')), ['3.md']);
+  assert.equal(result.synced, 1);
+});
+
 test('delete events force their marked source out of the reconciled snapshot and keep originals', async (t) => {
   const root = await fixture(t);
   await writeFile(path.join(root, 'content/posts/1.md'), synced(1));

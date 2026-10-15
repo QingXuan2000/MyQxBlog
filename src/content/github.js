@@ -45,10 +45,14 @@ function eventRemoval(event, allowedAuthor) {
 
 function sourceFor(discussion, config, startId, repository, allowedAuthor) {
   const labels = labelNames(discussion.labels);
-  if (typeof discussion.isAnswered !== 'boolean' || typeof discussion.isClosed !== 'boolean')
+  // 非问答类分类的 Discussion，isAnswered 为 null；此时视为“未采纳”，仅强校验 isClosed。
+  if (
+    typeof discussion.isClosed !== 'boolean' ||
+    (discussion.isAnswered != null && typeof discussion.isAnswered !== 'boolean')
+  )
     throw new Error(`GitHub discussion #${discussion.number} has no publication state`);
   if (
-    discussion.isAnswered ||
+    discussion.isAnswered === true ||
     discussion.isClosed ||
     labels.some((label) => label.toLowerCase() === 'no-article') ||
     discussion.author?.login?.toLowerCase() !== allowedAuthor.toLowerCase()
