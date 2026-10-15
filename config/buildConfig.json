@@ -7,7 +7,6 @@
         "userAgent": "*",
         "allow": "/",
         "disallow": [
-            "/blogData/",
             "/config/"
         ],
         "additionalRules": []

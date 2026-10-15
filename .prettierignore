@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.preview/
+.artifacts/
+public/
+package-lock.json

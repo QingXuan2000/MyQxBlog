@@ -1,0 +1,72 @@
+@font-face {
+  font-family: Inter;
+  src: url('../../fonts/Inter/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url('../../fonts/Inter/InterVariable-Italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../../fonts/JetBrainsMono/JetBrainsMono[wght].ttf') format('truetype');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  --paper: #f8f8f2;
+  --paper-raised: #fffffa;
+  --ink: #24271f;
+  --muted: #71756a;
+  --faint: #979b90;
+  --line: #dedfd5;
+  --line-strong: #b8bcae;
+  --accent: #647545;
+  --accent-soft: #e9eddf;
+  --code-bg: #eeefe7;
+  --selection: #dce5c7;
+  --sans:
+    Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', sans-serif;
+  --mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --page-width: 1280px;
+  --gutter: clamp(24px, 5vw, 80px);
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #171914;
+  --paper-raised: #20231c;
+  --ink: #e9ebe0;
+  --muted: #a3aa98;
+  --faint: #78816e;
+  --line: #363c30;
+  --line-strong: #505947;
+  --accent: #b5c58d;
+  --accent-soft: #2d3524;
+  --code-bg: #20251b;
+  --selection: #495b32;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --paper: #171914;
+    --paper-raised: #20231c;
+    --ink: #e9ebe0;
+    --muted: #a3aa98;
+    --faint: #78816e;
+    --line: #363c30;
+    --line-strong: #505947;
+    --accent: #b5c58d;
+    --accent-soft: #2d3524;
+    --code-bg: #20251b;
+    --selection: #495b32;
+  }
+}

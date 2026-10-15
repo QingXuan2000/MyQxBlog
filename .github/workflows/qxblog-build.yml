@@ -1,72 +1,87 @@
-name: "[CI] QxBlog 构建与部署"
+name: Build and deploy QxBlog
 
 on:
+  push:
+    branches: [main]
   discussion:
-    types: [created, edited, deleted, category_changed, answered, unanswered]
+    types:
+      [
+        created,
+        edited,
+        deleted,
+        category_changed,
+        answered,
+        unanswered,
+        labeled,
+        unlabeled,
+        closed,
+        reopened,
+      ]
+  workflow_dispatch:
+
+concurrency:
+  group: qxblog-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
-  build-and-deploy:
-    name: "[Build & Deploy] QxBlog"
+  build:
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-      pages: write
-      id-token: write
-
+      discussions: read
+      pages: read
     steps:
-      - name: "[Checkout] 检出代码仓库"
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "[Setup] 配置 Bun 环境"
-        uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
         with:
-          bun-version: latest
-
-      - name: "[Cache] 缓存 node_modules"
-        uses: actions/cache@v4
-        with:
-          path: .github/script/node_modules
-          key: bun-modules-${{ runner.os }}-${{ hashFiles('.github/script/bun.lock') }}
-
-      - name: "[Install] 安装 Bun 依赖"
-        working-directory: .github/script
-        run: bun install
-
-      - name: "[Build] 启动构建脚本"
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Sync Discussions
+        if: github.event_name == 'discussion' || github.event_name == 'workflow_dispatch'
+        run: npm run sync
         env:
           GH_TOKEN: ${{ github.token }}
-          DISCUSSION_TITLE: ${{ github.event.discussion.title }}
-          DISCUSSION_BODY: ${{ github.event.discussion.body }}
-          DISCUSSION_DATE: ${{ github.event.discussion.updated_at }}
-          DISCUSSION_AUTHOR: ${{ github.event.discussion.user.login }}
-          DISCUSSION_LABELS: ${{ toJson(github.event.discussion.labels.*.name) }}
-          DISCUSSION_CATEGORY_NAME: ${{ github.event.discussion.category.name }}
-          DISCUSSION_CATEGORY_SLUG: ${{ github.event.discussion.category.slug }}
-          DISCUSSION_NUMBER: ${{ github.event.discussion.number }}
           DISCUSSION_ACTION: ${{ github.event.action }}
-        run: bun .github/script/qxBlogBuild.js ci build
-
-      - name: "[Push] 提交并推送更改"
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "[Update] ${{ github.event.action == 'deleted' && '删除文章' || (github.event.action == 'closed' && '关闭文章' || '更新文章') }}: ${{ github.event.discussion.title }}"
-          file_pattern: '*'
-          push_options: '--force-with-lease'
-
-      - name: "[Prepare] 准备部署文件"
+          DISCUSSION_NUMBER: ${{ github.event.discussion.number }}
+      - name: Save synchronized content
+        if: github.event_name == 'discussion' || github.event_name == 'workflow_dispatch'
         run: |
-          mkdir -p _site
-          cp -r index.html 404.html favicon.svg sitemap.xml robots.txt _site/ 2>/dev/null || true
-          cp -r css js fonts img posts tags categories archive about articles blogData config _site/
-
-      - name: "[Upload] 上传 Pages 产物"
-        uses: actions/upload-pages-artifact@v3
+          git add -- content/posts
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "content: synchronize GitHub Discussions"
+            git push
+          fi
+      - run: npm test
+      - name: Read Pages configuration
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Build static site
+        run: npm run build -- --base "$PAGES_BASE_PATH"
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+      - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: dist
 
-      - name: "[Deploy] 部署到 GitHub Pages"
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
         uses: actions/deploy-pages@v4
