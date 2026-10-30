@@ -1,0 +1,9 @@
+<svg width="64" height="64" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    :root { --c: #333; }
+    @media (prefers-color-scheme: dark) { :root { --c: #ccc; } }
+  </style>
+  <polygon points="570,310 440,535 180,535 50,310 180,85 440,85" stroke="var(--c)" stroke-width="46" stroke-linejoin="round"/>
+  <polygon points="440,385 310,460 180,385 180,235 310,160 440,235" stroke="var(--c)" stroke-width="26" opacity="0.5" stroke-linejoin="round"/>
+  <circle cx="310" cy="310" r="40" fill="var(--c)"/>
+</svg>
