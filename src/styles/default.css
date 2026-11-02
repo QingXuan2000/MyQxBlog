@@ -2723,6 +2723,15 @@ html.qx-cursor-on [role='button'] {
   cursor: none;
 }
 
+/* iframe 自身（跨域隔离区）回退光标：与全站极客风几何光标统一 */
+html.qx-cursor-on iframe {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect x='6' y='6' width='28' height='28' fill='none' stroke='rgba(238,238,238,0.45)' stroke-width='1' shape-rendering='crispEdges'/%3E%3Crect x='18' y='18' width='4' height='4' fill='rgba(238,238,238,0.95)' shape-rendering='crispEdges'/%3E%3C/svg%3E") 20 20, auto;
+}
+
+html[data-theme='light'].qx-cursor-on iframe {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect x='6' y='6' width='28' height='28' fill='none' stroke='rgba(26,26,26,0.45)' stroke-width='1' shape-rendering='crispEdges'/%3E%3Crect x='18' y='18' width='4' height='4' fill='rgba(26,26,26,0.95)' shape-rendering='crispEdges'/%3E%3C/svg%3E") 20 20, auto;
+}
+
 html.qx-cursor-on input,
 html.qx-cursor-on textarea,
 html.qx-cursor-on select {
@@ -3172,44 +3181,6 @@ html.qx-cursor-on select {
   color: var(--text-body);
 }
 
-.qx-comments-actions {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.qx-comments-origin-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
-  border: 1px solid color-mix(in srgb, var(--text-body) 18%, transparent);
-  border-radius: 0;
-  background: transparent;
-  color: var(--text-body);
-  opacity: 0.65;
-  font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
-  font-size: 0.78rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.qx-comments-origin-btn:hover {
-  opacity: 1;
-  border-color: var(--text-body);
-  background: color-mix(in srgb, var(--text-body) 4%, transparent);
-}
-
-.qx-comments-arrow {
-  font-size: 0.85rem;
-  transition: transform 0.2s ease;
-}
-
-.qx-comments-origin-btn:hover .qx-comments-arrow {
-  transform: translate(2px, -2px);
-}
-
 .qx-comments-container {
   width: 100%;
 }
@@ -3288,9 +3259,7 @@ html.qx-cursor-on select {
 /* 移动端响应式兼容 */
 @media (max-width: 640px) {
   .qx-comments-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
   }
 
   .qx-comments-title-wrap {
@@ -3301,15 +3270,5 @@ html.qx-cursor-on select {
 
   .qx-comments-subtitle {
     margin-left: 0;
-  }
-
-  .qx-comments-actions {
-    width: 100%;
-  }
-
-  .qx-comments-origin-btn {
-    width: 100%;
-    justify-content: center;
-    padding: 8px 14px;
   }
 }

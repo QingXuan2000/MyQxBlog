@@ -57,7 +57,9 @@ export function initCursor(doc = globalThis.document, win = globalThis.window) {
               if (node.nodeType !== 1) continue;
               if (node.matches?.('dialog[open]') || node.querySelector?.('dialog[open]')) {
                 promote();
-                return;
+              }
+              if (node.matches?.('iframe') || node.querySelector?.('iframe')) {
+                bindIframeWatchers();
               }
             }
           }
@@ -108,6 +110,22 @@ export function initCursor(doc = globalThis.document, win = globalThis.window) {
     if (!raf) raf = win.requestAnimationFrame(frame);
   };
 
+  const onLeave = () => {
+    shown = false;
+    layer.classList.remove('is-on', 'is-active', 'is-down');
+  };
+
+  const bindIframeWatchers = () => {
+    const iframes = doc.querySelectorAll('iframe');
+    for (const frame of iframes) {
+      frame.removeEventListener('pointerenter', onLeave);
+      frame.removeEventListener('mouseenter', onLeave);
+      frame.addEventListener('pointerenter', onLeave, { passive: true });
+      frame.addEventListener('mouseenter', onLeave, { passive: true });
+    }
+  };
+  bindIframeWatchers();
+
   const onMove = (event) => {
     if (event.pointerType === 'touch') return;
     pointerX = event.clientX;
@@ -138,6 +156,10 @@ export function initCursor(doc = globalThis.document, win = globalThis.window) {
   const onOver = (event) => {
     const element = event.target instanceof win.Element ? event.target : null;
     if (!element) return;
+    if (element.tagName === 'IFRAME' || element.closest('iframe')) {
+      onLeave();
+      return;
+    }
     const text = resolveLabel(element);
     if (!text) {
       layer.classList.remove('is-active');
@@ -150,16 +172,13 @@ export function initCursor(doc = globalThis.document, win = globalThis.window) {
 
   const onDown = () => layer.classList.add('is-down');
   const onUp = () => layer.classList.remove('is-down');
-  const onLeave = () => {
-    shown = false;
-    layer.classList.remove('is-on', 'is-active', 'is-down');
-  };
 
   doc.addEventListener('pointermove', onMove, { passive: true });
   doc.addEventListener('pointerover', onOver, { passive: true });
   doc.addEventListener('pointerdown', onDown, { passive: true });
   doc.addEventListener('pointerup', onUp, { passive: true });
   doc.documentElement.addEventListener('pointerleave', onLeave, { passive: true });
+  win.addEventListener('blur', onLeave);
 
   // 键盘操作时把自绘光标藏起来，焦点跟随说明用户在用 Tab，还回系统光标。
   doc.addEventListener(

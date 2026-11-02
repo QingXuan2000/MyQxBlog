@@ -99,6 +99,69 @@ main {
   border-radius: 0 !important;
 }
 
+/* ==========================================================================
+   QxBlog 赛博朋克极客风自定义光标 (SVG 自绘光标，与全站纯直角终端风格统一)
+   ========================================================================== */
+
+/* 默认光标：正中心 4x4 实心方点 + 28x28 直角方环，热点定于几何中心 (20, 20) */
+html,
+body,
+#comments,
+main,
+.gsc-main,
+.gsc-comments,
+.gsc-comment,
+.gsc-comment-content,
+.gsc-comment-box,
+.gsc-timeline,
+.gsc-header {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect x='6' y='6' width='28' height='28' fill='none' stroke='rgba(238,238,238,0.45)' stroke-width='1' shape-rendering='crispEdges'/%3E%3Crect x='18' y='18' width='4' height='4' fill='rgba(238,238,238,0.95)' shape-rendering='crispEdges'/%3E%3C/svg%3E") 20 20, auto !important;
+}
+
+/* 交互光标（可点击/悬停元素）：方环张大至 36x36 高亮显示 */
+a,
+button,
+[role='button'],
+.btn,
+.btn-primary,
+.gsc-reactions-button,
+.gsc-social-reaction,
+summary,
+.SelectMenu-item,
+.tabnav-tab,
+.Link--primary,
+.Link--secondary,
+.Link--muted,
+.color-text-link {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect x='2' y='2' width='36' height='36' fill='none' stroke='rgba(238,238,238,0.9)' stroke-width='1.5' shape-rendering='crispEdges'/%3E%3Crect x='18' y='18' width='4' height='4' fill='%23ffffff' shape-rendering='crispEdges'/%3E%3C/svg%3E") 20 20, pointer !important;
+}
+
+/* 按下激活态（按住鼠标）：方环收缩至 20x20 紧致态 */
+a:active,
+button:active,
+[role='button']:active,
+.btn:active,
+.gsc-reactions-button:active,
+.gsc-social-reaction:active {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect x='10' y='10' width='20' height='20' fill='none' stroke='rgba(238,238,238,0.95)' stroke-width='1.5' shape-rendering='crispEdges'/%3E%3Crect x='18' y='18' width='4' height='4' fill='%23ffffff' shape-rendering='crispEdges'/%3E%3C/svg%3E") 20 20, pointer !important;
+}
+
+/* 文本输入态：纯净文本编辑工字标 */
+input[type='text'],
+input[type='search'],
+textarea,
+.gsc-comment-box-textarea,
+[contenteditable='true'] {
+  cursor: text !important;
+}
+
+/* 禁用态 */
+button:disabled,
+.btn:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed !important;
+}
+
 .gsc-comment,
 .gsc-comment-box,
 .gsc-reply-box {
