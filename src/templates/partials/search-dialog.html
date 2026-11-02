@@ -1,0 +1,27 @@
+<dialog class="qx-search" data-search-dialog aria-labelledby="search-title">
+  <div class="qx-search__inner">
+    <div class="qx-search__bar">
+      <span class="qx-search__tag">SEARCH</span>
+      <span class="qx-search__rule" aria-hidden="true"></span>
+      <span class="qx-search__hint">ctrl / ⌘ + K</span>
+      <button class="qx-search__close" type="button" data-search-close data-cursor="ESC" aria-label="关闭搜索" title="关闭搜索（Esc）">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
+      </button>
+    </div>
+    <div class="qx-search__form">
+      <span class="qx-search__prompt" aria-hidden="true">▸</span>
+      <label class="sr-only" for="site-search">搜索文章</label>
+      <input id="site-search" data-search-input class="qx-search__input" type="search" placeholder="输入关键词…" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-describedby="search-status">
+    </div>
+    <div class="qx-search__meta">
+      <p id="search-status" class="qx-search__status" data-search-status aria-live="polite">输入关键词，寻找感兴趣的文章。</p>
+      <span class="qx-search__count" data-search-count aria-hidden="true"></span>
+    </div>
+    <div id="search-results" class="qx-search__list" data-search-results></div>
+    <div class="qx-search__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+      <span><kbd>↵</kbd> 阅读</span>
+      <span><kbd>esc</kbd> 关闭</span>
+    </div>
+  </div>
+</dialog>

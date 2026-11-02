@@ -1,0 +1,47 @@
+<div class="qx-transition is-boot" aria-hidden="true">
+    <div class="qx-transition__grid"></div>
+
+    <div class="qx-transition__header">
+        <span class="qx-transition__sys">SYS.BOOT // <%= (config.site && (config.site.title || config.site.name)) || 'QXBLOG' %></span>
+        <span class="qx-transition__badge">CORE_INIT [OK]</span>
+    </div>
+
+    <span class="qx-transition__rail qx-transition__rail--fwd"><span style="animation-duration:9s"><%= railFwd %></span></span>
+
+    <div class="qx-transition__hud">
+        <div class="qx-transition__corners">
+            <span class="qx-corner qx-corner--tl"></span>
+            <span class="qx-corner qx-corner--tr"></span>
+            <span class="qx-corner qx-corner--bl"></span>
+            <span class="qx-corner qx-corner--br"></span>
+        </div>
+
+        <div class="qx-transition__meta">
+            <div class="qx-transition__target">
+                <span class="qx-transition__target-icon">LOADING &gt;&gt;</span>
+                <span class="qx-transition__target-path"></span>
+            </div>
+
+            <div class="qx-transition__count-wrap">
+                <span class="qx-transition__count">000</span>
+                <span class="qx-transition__unit">%</span>
+            </div>
+
+            <div class="qx-transition__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                <i class="qx-transition__bar-fill"></i>
+            </div>
+
+            <div class="qx-transition__status">
+                <span class="qx-transition__prompt">&gt;</span>
+                <span class="qx-transition__label">INITIALIZING SYSTEM...</span>
+            </div>
+        </div>
+    </div>
+
+    <span class="qx-transition__rail qx-transition__rail--rev"><span style="animation-duration:12s"><%= railRev %></span></span>
+
+    <div class="qx-transition__footer">
+        <span class="qx-transition__tag">PROTOCOL: HTTP/3 · SECURE LINK</span>
+        <span class="qx-transition__hex">0x00</span>
+    </div>
+</div>

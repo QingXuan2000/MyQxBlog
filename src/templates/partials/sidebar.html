@@ -1,0 +1,15 @@
+<aside class="qx-sidebar" data-sidebar aria-label="侧边栏">
+    <div class="qx-sidebar-inner">
+        <div class="qx-sidebar-avatar">
+            <svg class="qx-sidebar-avatar-geo" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <%- avatarGeo %>
+            </svg>
+            <img class="qx-sidebar-avatar-img" src="<%= avatarUrl %>" alt="头像">
+        </div>
+        <p class="qx-sidebar-name"><%= config.site.author %></p>
+        <p class="qx-sidebar-motto"><%= (config.sidebar && config.sidebar.motto) || '' %></p>
+        <nav class="qx-sidebar-nav" data-site-nav aria-label="主导航">
+            <%- sidebarLinksHTML %>
+        </nav>
+    </div>
+</aside>

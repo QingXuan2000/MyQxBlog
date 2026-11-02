@@ -42,6 +42,14 @@
   font-display: swap;
 }
 
+/* Allegro - 首页大字字体 */
+@font-face {
+  font-family: 'Allegro';
+  src: url('../../fonts/Allegro/Allegro-2.otf') format('opentype');
+  font-style: normal;
+  font-display: swap;
+}
+
 /* 这里不要写 @view-transition { navigation: auto }。
    它会给每次跨文档跳转都启用原生转场，而下面那些 ::view-transition-* 规则
    （1s 左滑）只服务于换主题这种同文档过渡。两者叠在页面导航上会变成
@@ -121,9 +129,9 @@
   --bg-body: #1a1a1a;
   --text-body: #eee;
 
-  --code-bg: #0b0f14;
+  --code-bg: #141414;
   --code-fg: #c9d1d9;
-  --code-border: rgba(255, 255, 255, 0.06);
+  --code-border: rgba(255, 255, 255, 0.08);
   --code-accent: #2d333b;
   --code-inline-bg: rgba(255, 255, 255, 0.06);
   --code-inline-border: rgba(255, 255, 255, 0.08);
@@ -425,10 +433,10 @@ a:hover {
   position: absolute;
   top: 0;
   left: 0;
-  width: 0.45rem;
-  height: 0.45rem;
+  width: 0.5rem;
+  height: 0.5rem;
   background: var(--text-body);
-  border-radius: 0;
+  border-radius: 50%;
   transform: translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0);
   will-change: transform;
   pointer-events: none;
@@ -445,21 +453,20 @@ a:hover {
 }
 
 .qx-waves-svg {
-  /* 比容器高出三成，上下各溢出 16%。波浪在垂直方向被撑开，两端被容器裁掉，
-       边缘就不会出现一条整整齐齐的结束线。 */
   position: absolute;
-  top: -16%;
+  top: 0;
   left: 0;
   display: block;
   width: 100%;
-  height: 132%;
+  height: 100%;
+  pointer-events: none;
 }
 
-.qx-wave-line {
+.qx-wave-line,
+.a__line {
   fill: none;
   stroke: var(--text-body);
-  stroke-width: 2px;
-  opacity: 0.26;
+  stroke-width: 1px;
   vector-effect: non-scaling-stroke;
 }
 
@@ -488,8 +495,8 @@ a:hover {
   border: 0;
   /* 等宽字形的笔画本身粗细均匀，加到 900 会糊成一团，压到 500 更像终端输出。
        字距必须归零，负值会让等宽字母的侧边距互相吃掉，直接粘在一起。 */
-  font-family: var(--font-mono);
-  font-weight: 500;
+  font-family: 'Allegro', var(--font-mono);
+  font-weight: 400;
   font-size: min(15vw, var(--hero-fit, 15vw), 15rem);
   line-height: 1.08;
   letter-spacing: 0;
@@ -506,6 +513,8 @@ a:hover {
 .s-hero .s__title__word {
   display: block;
   white-space: nowrap;
+  letter-spacing: 1.3vw;
+  margin-bottom: -25px;
 }
 
 /* ---- 4. 二进制分隔条 ---- */
@@ -980,7 +989,9 @@ a:hover {
 .qx-main > .qx-tags,
 .qx-main > .qx-archive,
 .qx-main > .qx-about,
-.qx-main > .qx-post {
+.qx-main > .qx-post,
+.qx-main > .wrapper,
+.qx-main > .qx-404-wrapper {
   flex: 1 0 auto;
 }
 
@@ -1090,6 +1101,7 @@ a:hover {
 .qx-post-labels .qx-article-card-label {
   font-size: 0.85rem;
   opacity: 0.6;
+  white-space: nowrap;
 }
 
 .qx-post-labels .qx-article-card-label:hover {
@@ -1589,8 +1601,10 @@ a:hover {
 
 .qx-post-labels {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
+  white-space: nowrap;
 }
 
 .qx-post-footer {
@@ -2133,10 +2147,18 @@ pre[data-theme] code span {
 
 /* ========== 404 Page ========== */
 
-.wrapper {
+.wrapper,
+.qx-404-wrapper {
+  flex: 1 0 auto;
+  min-height: var(--qx-fill);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   padding: 48px 24px;
   position: relative;
+  box-sizing: border-box;
 }
 
 .number {
@@ -2211,32 +2233,6 @@ pre[data-theme] code span {
   color: var(--bg-body);
 }
 
-.glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(200px, 40vw, 320px);
-  height: clamp(200px, 40vw, 320px);
-  border-radius: 0;
-  border: 1px solid var(--text-body);
-  opacity: 0.06;
-  pointer-events: none;
-  animation: pulse 4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.04;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.08);
-    opacity: 0.1;
-  }
-}
-
 /* ========== 空状态 ========== */
 
 .empty-state {
@@ -2289,8 +2285,8 @@ dialog.qx-search {
 }
 
 dialog.qx-search::backdrop {
-  background: color-mix(in srgb, var(--bg-body) 70%, transparent);
-  backdrop-filter: blur(2px);
+  background: transparent;
+  backdrop-filter: none;
 }
 
 /* 唤出时整块从视口顶部压下来，移出时原路向上收走。
@@ -2753,6 +2749,8 @@ html.qx-cursor-on select {
 /* 整屏底色当作一块幕布：进出都用 transform，幕布上边线就是推进前沿。
    进（离开当前页）自下而上盖住，出（抵达新页）继续向上抽走，方向始终一致。 */
 
+/* ========== 页面转场与首屏加载幕布 (纯粹几何终端风格 · 无光晕) ========== */
+
 .qx-transition {
   position: fixed;
   inset: 0;
@@ -2760,33 +2758,32 @@ html.qx-cursor-on select {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: clamp(10px, 1.6vh, 18px);
+  justify-content: space-between;
+  padding: clamp(20px, 4vh, 48px) 0;
   overflow: hidden;
   pointer-events: none;
   background: var(--bg-body);
-  border-top: 1px solid color-mix(in srgb, var(--text-body) 32%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--text-body) 32%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--text-body) 20%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--text-body) 20%, transparent);
   transform: translate3d(0, 100%, 0);
-  transition: transform 0.22s cubic-bezier(0.76, 0, 0.24, 1);
+  transition: transform 0.38s cubic-bezier(0.85, 0, 0.15, 1);
   will-change: transform;
+  box-sizing: border-box;
 }
 
 .qx-transition.is-active {
   transform: translate3d(0, 0, 0);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .qx-transition.is-out {
   transform: translate3d(0, -100%, 0);
+  transition: transform 0.42s cubic-bezier(0.85, 0, 0.15, 1);
 }
-
-/* 首屏这一版由服务端直接渲染成盖住状态，脚本没就绪也不会白闪。
-   is-boot 的兜底动画在 2.4s 后才起跑。脚本正常时早被 reset 移除，
-   脚本挂了也不会把页面永久盖住。 */
 
 .qx-transition.is-boot {
   transform: translate3d(0, 0, 0);
-  animation: qx-boot-escape 0.22s cubic-bezier(0.76, 0, 0.24, 1) 2.4s forwards;
+  animation: qx-boot-escape 0.42s cubic-bezier(0.85, 0, 0.15, 1) 2.2s forwards;
 }
 
 .qx-transition.is-boot.is-out {
@@ -2797,31 +2794,80 @@ html.qx-cursor-on select {
   animation-play-state: running;
 }
 
-.qx-transition.is-boot .qx-transition__bar i {
-  transform: scaleX(1);
-}
-
 @keyframes qx-boot-escape {
   from {
     transform: translate3d(0, 0, 0);
   }
-
   to {
     transform: translate3d(0, -100%, 0);
   }
 }
 
-/* 二进制跑马灯，字符和透明度与首页分隔条同源 */
+/* 背景科技点阵（纯几何无光晕） */
+.qx-transition__grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--text-body) 10%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.6;
+  pointer-events: none;
+}
 
-.qx-transition__rail {
+/* 顶部与底部 HUD 状态条 */
+.qx-transition__header,
+.qx-transition__footer {
+  position: relative;
+  z-index: 2;
   width: 100%;
-  overflow: hidden;
+  padding: 0 clamp(16px, 4vw, 48px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-family: var(--font-mono);
   font-size: 10px;
   line-height: 1;
   letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text-body) 45%, transparent);
+  box-sizing: border-box;
+}
+
+.qx-transition__sys {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qx-transition__badge {
+  padding: 2px 6px;
+  border: 1px solid color-mix(in srgb, var(--text-body) 24%, transparent);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.qx-transition__tag {
+  letter-spacing: 0.16em;
+}
+
+.qx-transition__hex {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--text-body) 75%, transparent);
+}
+
+/* 二进制跑马灯 */
+.qx-transition__rail {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.15em;
   white-space: nowrap;
-  color: color-mix(in srgb, var(--text-body) 26%, transparent);
+  color: color-mix(in srgb, var(--text-body) 20%, transparent);
+  user-select: none;
 }
 
 .qx-transition__rail span {
@@ -2842,57 +2888,159 @@ html.qx-cursor-on select {
   from {
     transform: translate3d(0, 0, 0);
   }
-
   to {
     transform: translate3d(-50%, 0, 0);
   }
 }
 
-/* 计数 + 目标路径 + 进度线 */
+/* 核心 HUD 面板（纯直角框架 · 无模糊 · 无投影） */
+.qx-transition__hud {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 4.5vh, 44px) clamp(32px, 6vw, 64px);
+  background: var(--bg-body);
+  border: 1px solid color-mix(in srgb, var(--text-body) 18%, transparent);
+}
+
+.qx-transition__corners .qx-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--text-body);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.qx-corner--tl {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.qx-corner--tr {
+  top: -1px;
+  right: -1px;
+  border-width: 2px 2px 0 0;
+}
+
+.qx-corner--bl {
+  bottom: -1px;
+  left: -1px;
+  border-width: 0 0 2px 2px;
+}
+
+.qx-corner--br {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
 
 .qx-transition__meta {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   font-family: var(--font-mono);
 }
 
-.qx-transition__count {
-  font-size: clamp(20px, 3vw, 30px);
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--text-body) 88%, transparent);
+.qx-transition__target {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  color: color-mix(in srgb, var(--text-body) 45%, transparent);
+  max-width: clamp(220px, 60vw, 460px);
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.qx-transition__label {
-  min-height: 1em;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--text-body) 42%, transparent);
+.qx-transition__target-icon {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--text-body) 35%, transparent);
+  flex-shrink: 0;
+}
+
+.qx-transition__target-path {
+  color: var(--text-body);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qx-transition__count-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  line-height: 1;
+}
+
+.qx-transition__count {
+  font-size: clamp(38px, 6.5vw, 64px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-body);
+}
+
+.qx-transition__unit {
+  font-size: clamp(14px, 2vw, 20px);
+  font-weight: 500;
+  color: color-mix(in srgb, var(--text-body) 45%, transparent);
 }
 
 .qx-transition__bar {
+  position: relative;
+  width: clamp(200px, 32vw, 340px);
+  height: 2px;
+  background: color-mix(in srgb, var(--text-body) 15%, transparent);
+  overflow: hidden;
+  margin: 4px 0 8px;
+}
+
+.qx-transition__bar-fill {
   display: block;
-  width: clamp(120px, 20vw, 200px);
-  height: 1px;
-  background: color-mix(in srgb, var(--text-body) 16%, transparent);
+  height: 100%;
+  width: 100%;
+  background: var(--text-body);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.08s linear;
+}
+
+.qx-transition__status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: clamp(220px, 60vw, 460px);
   overflow: hidden;
 }
 
-.qx-transition__bar i {
-  display: block;
-  height: 100%;
-  background: color-mix(in srgb, var(--text-body) 72%, transparent);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.22s cubic-bezier(0.76, 0, 0.24, 1);
+.qx-transition__prompt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--text-body) 40%, transparent);
+  flex-shrink: 0;
 }
 
-.qx-transition.is-active .qx-transition__bar i {
-  transform: scaleX(1);
+.qx-transition__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text-body) 68%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ---------- 悬停位移，按要求关闭 ---------- */

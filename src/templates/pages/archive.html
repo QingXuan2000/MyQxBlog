@@ -1,0 +1,28 @@
+<%- pageHeroHTML %>
+<section class="qx-archive">
+    <div class="qx-archive-list">
+        <% if (sections.length) { %>
+            <% for (const year of sections) { %>
+            <section class="qx-archive-year">
+                <h2><%= year.year %> <span class="qx-archive-year-count"><%= year.total %></span></h2>
+                <% for (const month of year.months) { %>
+                <section class="qx-archive-month">
+                    <h3 class="qx-archive-month-title"><%= month.month %> 月 <span class="qx-archive-month-count"><%= month.posts.length %></span></h3>
+                    <ul class="qx-archive-items">
+                        <% for (const post of month.posts) { %>
+                        <li class="qx-archive-item" data-reveal>
+                            <time class="qx-archive-date" datetime="<%= post.date %>"><%= post.dateDisplay %></time>
+                            <a href="<%= post.url %>" class="qx-archive-link" data-cursor="READ"><%= post.title %></a>
+                            <div class="qx-archive-tags"><%- post.categoryHTML %></div>
+                        </li>
+                        <% } %>
+                    </ul>
+                </section>
+                <% } %>
+            </section>
+            <% } %>
+        <% } else { %>
+            <%- emptyStateHTML %>
+        <% } %>
+    </div>
+</section>

@@ -1,0 +1,13 @@
+<% if (post && post.toc && post.toc.length) { %>
+<!-- TOC Sidebar -->
+<aside class="qx-toc-sidebar" id="post-toc" data-toc aria-label="文章目录">
+    <div class="qx-toc-inner">
+        <h3 class="qx-toc-head">目录</h3>
+        <nav class="qx-toc-nav">
+            <% for (const item of post.toc) { %>
+            <a href="#<%= item.id %>" class="qx-toc-link <%= item.depth === 3 ? 'qx-toc-indent-2' : 'qx-toc-indent-1' %>"><span class="qx-ul"><%= item.text %></span></a>
+            <% } %>
+        </nav>
+    </div>
+</aside>
+<% } %>

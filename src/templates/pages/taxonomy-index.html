@@ -1,0 +1,15 @@
+<%- pageHeroHTML %>
+<section class="qx-tags">
+    <div class="<%= listClass %>">
+        <% if (groups.length) { %>
+            <% for (const group of groups) { %>
+            <a href="<%= group.url %>" class="qx-tag-item" data-reveal data-cursor="BROWSE">
+                <span class="qx-tag-name"><%= group.name %></span>
+                <span class="qx-tag-count"><%= group.count %></span>
+            </a>
+            <% } %>
+        <% } else { %>
+            <%- emptyStateHTML %>
+        <% } %>
+    </div>
+</section>

@@ -1,0 +1,28 @@
+<header class="qx-header">
+    <nav class="qx-nav">
+        <a href="<%= localUrl(config, 'index.html') %>" class="qx-nav-logo">
+            <img class="qx-nav-logo-img qx-nav-logo-light" src="<%= localUrl(config, 'img/logo/light.svg') %>" alt="Logo">
+            <img class="qx-nav-logo-img qx-nav-logo-dark" src="<%= localUrl(config, 'img/logo/dark.svg') %>" alt="Logo">
+        </a>
+        <span class="qx-nav-brand"><%= config.site.name %></span>
+        <nav class="qx-nav-menu" aria-label="全站导航">
+            <%- navMenuHTML %>
+        </nav>
+        <div class="qx-nav-actions">
+            <button class="qx-nav-btn js-search-toggle" type="button" data-cursor="SEARCH" data-search-open title="搜索" aria-label="搜索">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+            <button class="qx-nav-btn js-theme-toggle" type="button" data-cursor="THEME" data-theme-toggle title="切换主题" aria-label="切换主题">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <% if (post) { %>
+            <button class="qx-nav-btn js-toc-toggle" type="button" data-cursor="TOC" data-toc-toggle title="文章目录" aria-label="文章目录" aria-expanded="false" aria-controls="post-toc" <%- post.toc && post.toc.length ? '' : 'style="display:none;"' %>>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            </button>
+            <% } %>
+            <button class="qx-nav-btn js-sidebar-toggle" type="button" data-cursor="MENU" data-menu-toggle title="侧边栏" aria-label="打开侧边栏" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </nav>
+</header>

@@ -1,0 +1,21 @@
+<%- pageHeroHTML %>
+<section class="qx-about">
+    <% for (const s of sections) { %>
+    <div class="qx-about-section">
+        <h2 class="qx-about-head"><%= s.head %></h2>
+        <p class="qx-about-text"><%- s.text %></p>
+    </div>
+    <% } %>
+    <div class="qx-about-section">
+        <h2 class="qx-about-head">友情链接</h2>
+        <div class="qx-friend-links">
+            <% if (friendLinks.length) { %>
+                <% for (const f of friendLinks) { %>
+                <a href="<%= f.url %>" class="qx-friend-link" target="_blank" rel="noopener"><%= f.name %></a>
+                <% } %>
+            <% } else { %>
+                <p class="muted">暂无友情链接。</p>
+            <% } %>
+        </div>
+    </div>
+</section>

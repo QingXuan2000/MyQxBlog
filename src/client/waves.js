@@ -1,13 +1,8 @@
-/* 首页那片会动的线场，外加页面上那几条二进制分隔条。
+/* 首页波浪线场与二进制分隔条。
+   波浪线场采用 Antoine Wodniack (https://wodniack.dev) 的高帧率 SVG 矢量路径算法，
+   配合 2D Perlin 噪声与弹性物理阻尼模型，实现低开销、高流畅度的光标与流动动效。 */
 
-   Noise 是 2D Perlin 的实现，公式来自 Antoine Wodniack 的开源版本，见 README 的致谢。
-   他自己那份用 canvas 画，这里改成 SVG path，好处是缩放不糊、颜色能跟着主题变量走，
-   代价是每帧要重写一百多条 d 属性。
-
-   成本都花在每帧那几千次三角函数上，所以有三道刹车。帧率压到 30，波浪本来就是慢动作，
-   六十帧没有肉眼收益；页面切到后台、或者线场滚出视口就停 rAF；尺寸变化只用
-   ResizeObserver 监听容器，window.resize 抓不到地址栏收放这类变化。 */
-class Grad {
+export class Grad {
   constructor(x, y, z) {
     this.x = x;
     this.y = y;
@@ -19,7 +14,7 @@ class Grad {
   }
 }
 
-class Noise {
+export class Noise {
   constructor(seed = 0) {
     this.grad3 = [
       new Grad(1, 1, 0),
@@ -102,8 +97,12 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
   if (!doc || !win || typeof doc.querySelector !== 'function') return;
 
   const header = doc.querySelector('.s__waves') || doc.querySelector('.qx-site-intro-header');
-  const svg = header?.querySelector('.qx-waves-svg');
+  const svg = header?.querySelector('.qx-waves-svg') || header?.querySelector('svg');
   if (!header || !svg) return;
+
+  if (svg.dataset?.wavesInit) return;
+  if (svg.dataset) svg.dataset.wavesInit = 'true';
+  else svg.setAttribute?.('data-waves-init', 'true');
 
   const noise = new Noise(Math.random());
 
@@ -122,30 +121,26 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
 
   let lines = [];
   let paths = [];
-  let bounding = { width: 0, height: 0 };
+  let bounding = { left: 0, top: 0, width: 0, height: 0 };
   let isPaused = false;
   let rafId = null;
-  let lastFrame = 0;
-
-  /* 每帧要重算约 4900 个点再写 160 多条 path，60fps 纯属浪费：
-     波浪本身是慢速运动，30fps 与 60fps 肉眼几乎无差，CPU 直接减半。 */
-  const FRAME_MS = 1000 / 30;
 
   const prefersReduced = win.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
 
-  function updateSize() {
+  function setSize() {
+    const rect = header.getBoundingClientRect();
     bounding = {
-      width: header.clientWidth,
-      height: header.clientHeight,
+      left: rect.left,
+      top: rect.top + (win.scrollY || 0),
+      width: header.clientWidth || 300,
+      height: header.clientHeight || 200,
     };
-    // 一律按容器实际尺寸拉伸：默认的 xMidYMid meet 会在宽高比变化时
-    // 上下留出空白带，滚动 / 移动端地址栏收放时会出现「留空」。
-    svg.setAttribute('preserveAspectRatio', 'none');
-    svg.setAttribute('viewBox', `0 0 ${bounding.width} ${bounding.height}`);
+    svg.style.width = `${bounding.width}px`;
+    svg.style.height = `${bounding.height}px`;
   }
 
   function setLines() {
-    updateSize();
+    setSize();
     const { width, height } = bounding;
     if (width <= 0 || height <= 0) return;
 
@@ -153,7 +148,7 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
     paths.forEach((p) => p.remove());
     paths = [];
 
-    const xGap = 10;
+    const xGap = 20;
     const yGap = 32;
 
     const oWidth = width + 200;
@@ -177,13 +172,15 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
       }
 
       const path = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('class', 'qx-wave-line a__line js-line');
+      path.classList.add('a__line', 'js-line', 'qx-wave-line');
       svg.appendChild(path);
       paths.push(path);
       lines.push(points);
     }
 
-    drawLines();
+    if (isPaused) {
+      drawLines();
+    }
   }
 
   function movePoints(time) {
@@ -192,18 +189,15 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
       for (let pIdx = 0; pIdx < points.length; pIdx++) {
         const p = points[pIdx];
 
-        // 2D Perlin 噪声决定每个点这一帧走到哪儿，两个方向的频率故意不同，
-        // 同一处不会整块同步移动。
         const move =
           noise.perlin2((p.x + time * 0.0125) * 0.002, (p.y + time * 0.005) * 0.0015) * 12;
 
         p.wave.x = Math.cos(move) * 32;
         p.wave.y = Math.sin(move) * 16;
 
-        // 光标附近的点被推开一点，指针停住时涟漪自己衰减回去。
         const dx = p.x - mouse.sx;
         const dy = p.y - mouse.sy;
-        const d = Math.sqrt(dx * dx + dy * dy);
+        const d = Math.hypot(dx, dy);
         const lRadius = Math.max(175, mouse.vs);
 
         if (d < lRadius) {
@@ -213,7 +207,6 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
           p.cursor.vy += Math.sin(mouse.a) * f * lRadius * mouse.vs * 0.00065;
         }
 
-        // 回弹加阻尼。系数调到 0.005 和 0.925 是试出来的，再大就抖，再小拖着不回位。
         p.cursor.vx += (0 - p.cursor.x) * 0.005;
         p.cursor.vy += (0 - p.cursor.y) * 0.005;
         p.cursor.vx *= 0.925;
@@ -228,28 +221,31 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
     }
   }
 
-  function moved(point) {
-    return {
-      x: Math.round((point.x + point.wave.x + point.cursor.x) * 10) / 10,
-      y: Math.round((point.y + point.wave.y + point.cursor.y) * 10) / 10,
+  function moved(point, withCursorForce = true) {
+    const coords = {
+      x: point.x + point.wave.x + (withCursorForce ? point.cursor.x : 0),
+      y: point.y + point.wave.y + (withCursorForce ? point.cursor.y : 0),
     };
+    coords.x = Math.round(coords.x * 10) / 10;
+    coords.y = Math.round(coords.y * 10) / 10;
+    return coords;
   }
 
   function drawLines() {
     for (let l = 0; l < lines.length; l++) {
       const points = lines[l];
-      if (!points.length || !paths[l]) continue;
+      let p1 = moved(points[0], false);
+      let d = `M ${p1.x} ${p1.y}`;
 
-      const p1 = moved(points[0]);
-      // 逐段拼字符串会产生上百次临时字符串，先收集再 join。
-      const segments = [`M ${p1.x} ${p1.y}`];
-
-      for (let i = 1; i < points.length; i++) {
-        const pt = moved(points[i]);
-        segments.push(`L ${pt.x} ${pt.y}`);
+      for (let pIndex = 0; pIndex < points.length; pIndex++) {
+        const isLast = pIndex === points.length - 1;
+        const pt = moved(points[pIndex], !isLast);
+        d += `L ${pt.x} ${pt.y}`;
       }
 
-      paths[l].setAttribute('d', segments.join(' '));
+      if (paths[l]) {
+        paths[l].setAttribute('d', d);
+      }
     }
   }
 
@@ -270,19 +266,12 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
   function tick(timestamp) {
     if (isPaused) return;
 
-    // 帧率上限：够不着间隔就只安排下一帧，不做任何计算。
-    if (timestamp - lastFrame < FRAME_MS - 4) {
-      rafId = requestAnimationFrame(tick);
-      return;
-    }
-    lastFrame = timestamp;
-
     mouse.sx += (mouse.x - mouse.sx) * 0.1;
     mouse.sy += (mouse.y - mouse.sy) * 0.1;
 
     const dx = mouse.x - mouse.lx;
     const dy = mouse.y - mouse.ly;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    const dist = Math.hypot(dx, dy);
 
     mouse.v = dist;
     mouse.vs += (dist - mouse.vs) * 0.1;
@@ -290,6 +279,7 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
 
     mouse.lx = mouse.x;
     mouse.ly = mouse.y;
+
     mouse.a = Math.atan2(dy, dx);
 
     header.style.setProperty('--x', `${mouse.sx}px`);
@@ -311,8 +301,6 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
   win.addEventListener('mousemove', onMouseMove, { passive: true });
   win.addEventListener('touchmove', onTouchMove, { passive: true });
 
-  // 容器尺寸一变就重建路径。window.resize 抓不到柔性布局（地址栏收放、
-  // flex 高度变化、字体加载后回流），只有 ResizeObserver 能跟上。
   let relayoutRaf = 0;
   const scheduleRelayout = () => {
     if (relayoutRaf) return;
@@ -331,10 +319,15 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
   doc.addEventListener('visibilitychange', () => {
     if (doc.hidden) {
       isPaused = true;
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
     } else {
       isPaused = false;
-      rafId = requestAnimationFrame(tick);
+      if (!prefersReduced && !rafId) {
+        rafId = requestAnimationFrame(tick);
+      }
     }
   });
 
@@ -343,11 +336,16 @@ export function initWaves(doc = globalThis.document, win = globalThis.window) {
       if (entry.isIntersecting) {
         if (isPaused) {
           isPaused = false;
-          if (!prefersReduced) rafId = requestAnimationFrame(tick);
+          if (!prefersReduced && !rafId) {
+            rafId = requestAnimationFrame(tick);
+          }
         }
       } else {
         isPaused = true;
-        if (rafId) cancelAnimationFrame(rafId);
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
       }
     });
     observer.observe(header);
@@ -364,15 +362,12 @@ export function initSeparators(doc = globalThis.document) {
   const chars = doc.querySelectorAll('.js-char');
   if (!chars.length) return;
 
-  // 尊重系统的「减少动态效果」设置：静默保留初始二进制串。
   if (
     typeof globalThis.matchMedia === 'function' &&
     globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
     return;
 
-  // 单字符平均翻转率 = FLIP_CHANCE / TICK_MS。
-  // 140ms + 8% 约 0.57 次/秒，偏慢；100ms + 12% 约 1.2 次/秒。
   const TICK_MS = 100;
   const FLIP_CHANCE = 0.12;
   let timer = 0;
@@ -405,7 +400,18 @@ export function initSeparators(doc = globalThis.document) {
   start();
 
   if (typeof doc.addEventListener === 'function') {
-    // 切走时停掉定时器省电，切回来必须重新启动，否则整条分隔条会停在原处。
     doc.addEventListener('visibilitychange', () => (doc.hidden ? stop() : start()));
+  }
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initWaves(document, window);
+      initSeparators(document);
+    });
+  } else {
+    initWaves(document, window);
+    initSeparators(document);
   }
 }

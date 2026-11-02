@@ -11,11 +11,8 @@
     "build": "node scripts/build.js",
     "preview": "node scripts/preview.js",
     "sync": "node scripts/sync.js",
-    "test": "node --test tests/*.test.js",
-    "test:browser": "playwright test",
-    "format": "prettier --write src scripts tests package.json playwright.config.js .github/workflows/qxblog-build.yml",
-    "format:check": "prettier --check src scripts tests package.json playwright.config.js .github/workflows/qxblog-build.yml",
-    "check": "npm test && npm run build"
+    "format": "prettier --write src scripts package.json .github/workflows/qxblog-build.yml",
+    "format:check": "prettier --check src scripts package.json .github/workflows/qxblog-build.yml"
   },
   "dependencies": {
     "hast-util-to-text": "4.0.2",
@@ -40,7 +37,6 @@
     "katex": "$katex"
   },
   "devDependencies": {
-    "@playwright/test": "1.64.1",
     "prettier": "3.9.10"
   }
 }

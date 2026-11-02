@@ -1,0 +1,38 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="qx-base" content="<%= config.basePath || '/' %>">
+<title><%= pageTitle %></title>
+<meta name="description" content="<%= summary %>">
+<meta name="author" content="<%= post && post.author || config.site.author %>">
+<meta name="color-scheme" content="light dark">
+<% if (path === '404.html') { %>
+<meta name="robots" content="noindex">
+<% } %>
+<link rel="canonical" href="<%= canonical %>">
+<meta property="og:type" content="<%= post ? 'article' : 'website' %>">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="<%= config.site.name %>">
+<meta property="og:title" content="<%= title || config.site.title || config.site.name %>">
+<meta property="og:description" content="<%= summary %>">
+<meta property="og:url" content="<%= canonical %>">
+<meta property="og:image" content="<%= absoluteUrl(config, 'img/Avatar.png') %>">
+<% if (post) { %>
+<meta property="article:published_time" content="<%= post.date %>">
+<meta property="article:modified_time" content="<%= post.updated || post.date %>">
+<% } %>
+<meta name="twitter:card" content="summary">
+<link rel="icon" type="image/svg+xml" href="<%= localUrl(config, 'favicon.svg') %>">
+<link rel="alternate" type="application/rss+xml" title="<%= config.site.name %> RSS" href="<%= localUrl(config, 'feed.xml') %>">
+<link rel="stylesheet" href="<%= localUrl(config, 'assets/styles/default.css') %>">
+<% if (post) { %>
+<link rel="stylesheet" href="<%= localUrl(config, 'assets/katex/katex.min.css') %>">
+<% } %>
+<script>
+    (function () {
+        var t = localStorage.getItem('qx-theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+<script type="application/ld+json"><%- jsonLdMarkup %></script>
+<script type="module" src="<%= localUrl(config, 'assets/client/main.js') %>"></script>

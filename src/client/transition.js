@@ -1,25 +1,30 @@
 /**
- * 页面转场和首屏加载共用同一块幕布。
- *
- * 幕布是一整屏底色，上下各一条 1px 前沿线，中间是二进制跑马灯、等宽计数和进度线。
- *
- * 首屏那一次，幕布由服务端直接渲染成盖住的状态，脚本把计数从 000 推到 100，
- * 等 load 之后再向上抽走。加载动画和揭幕是同一个动作，中间不留空档。
- * 站内跳转则反过来，点下链接先自下而上盖住，盖满了才换页，新页面接着把幕布抽走。
- *
- * 跳转时会往 sessionStorage 写一个标记，新页面读到它才知道该演揭幕那一段。
- * 隐私模式下写不进去，退化成直接打开，少了动画不影响访问。
+ * 页面转场和首屏加载幕布。
+ * 纯粹、无光晕、无圆角的精准几何终端风格。
+ * 实时显示正在加载的目标页面路径（中文 URL 自动解码），并展示自检加载过程阶段状态机。
  */
 const ENTER_MS = 220;
-const EXIT_MS = 240;
-const TICK_MS = 25;
-const STEP = 5;
-const BOOT_TICK_MS = 20;
-const BOOT_STEP = 10;
-const BOOT_MAX_MS = 1400;
+const EXIT_MS = 380;
+const BOOT_TICK_MS = 16;
+const BOOT_STEP = 3;
+const BOOT_MAX_MS = 950;
 const MEMO_KEY = 'qx-nav';
+const MEMO_TARGET = 'qx-nav-target';
 
-/* 跑马灯要用的字符。六位一组，偶尔插一段斜杠，和首页分隔条是同一套字符集。 */
+const BOOT_STAGES = [
+  { max: 24, text: '[01/05] SYS.INIT // LOADING CORE MATRIX...' },
+  { max: 54, text: '[02/05] VECTORS // COMPILING SHADER NODES...' },
+  { max: 78, text: '[03/05] NOISE // CALIBRATING WAVE FIELD...' },
+  { max: 99, text: '[04/05] SYSTEM // MOUNTING DOMAIN MODULES...' },
+  { max: 100, text: '[05/05] [ READY ] ACCESS GRANTED' },
+];
+
+const NAV_STAGES = [
+  { max: 40, text: 'ROUTING // PREPARING PAYLOAD...' },
+  { max: 80, text: 'TRANSMIT // SWITCHING VIEWPORT...' },
+  { max: 100, text: '[ OK ] DESTINATION REACHED' },
+];
+
 function railText(groups) {
   const chunks = [];
   for (let i = 0; i < groups; i += 1) {
@@ -40,7 +45,6 @@ function buildRail(doc, className, seconds) {
   const inner = doc.createElement('span');
   inner.style.animationDuration = `${seconds}s`;
   const text = railText(44);
-  // 同一段文本重复两次，配合 translate3d(-50%)，循环处才接得上。
   inner.textContent = `${text} ${text}`;
   rail.appendChild(inner);
   return rail;
@@ -49,9 +53,14 @@ function buildRail(doc, className, seconds) {
 function pathOf(href, win) {
   try {
     const url = new win.URL(href, win.location.href);
-    // 目录地址以 / 结尾时补 index.html（避免读到单斜杠）。
-    const path = url.pathname.endsWith('/') ? `${url.pathname}index.html` : url.pathname;
-    return `${path}${url.search}`;
+    let path = url.pathname.endsWith('/') ? `${url.pathname}index.html` : url.pathname;
+    let full = `${path}${url.search}`;
+    try {
+      full = decodeURIComponent(full);
+    } catch {
+      // 容错：遇到畸变百分比编码时退回原路径
+    }
+    return full.replace(/^\/+/, '');
   } catch {
     return '';
   }
@@ -73,20 +82,60 @@ function isInternal(anchor, win) {
   return true;
 }
 
-/* 没有服务端渲染的幕布时自己造一块，结构和行为都照着模板里的那份来。 */
 function createLayer(doc) {
   const layer = doc.createElement('div');
   layer.className = 'qx-transition';
   layer.setAttribute('aria-hidden', 'true');
 
-  const meta = doc.createElement('span');
-  meta.className = 'qx-transition__meta';
-  meta.innerHTML =
-    '<span class="qx-transition__count">000</span><span class="qx-transition__label"></span><span class="qx-transition__bar"><i></i></span>';
+  layer.innerHTML = `
+    <div class="qx-transition__grid"></div>
+    <div class="qx-transition__header">
+      <span class="qx-transition__sys">SYS.BOOT // QXBLOG</span>
+      <span class="qx-transition__badge">CORE_INIT [OK]</span>
+    </div>
+  `;
 
   layer.appendChild(buildRail(doc, 'qx-transition__rail--fwd', 9));
-  layer.appendChild(meta);
+
+  const hud = doc.createElement('div');
+  hud.className = 'qx-transition__hud';
+  hud.innerHTML = `
+    <div class="qx-transition__corners">
+      <span class="qx-corner qx-corner--tl"></span>
+      <span class="qx-corner qx-corner--tr"></span>
+      <span class="qx-corner qx-corner--bl"></span>
+      <span class="qx-corner qx-corner--br"></span>
+    </div>
+    <div class="qx-transition__meta">
+      <div class="qx-transition__target">
+        <span class="qx-transition__target-icon">LOADING &gt;&gt;</span>
+        <span class="qx-transition__target-path"></span>
+      </div>
+      <div class="qx-transition__count-wrap">
+        <span class="qx-transition__count">000</span>
+        <span class="qx-transition__unit">%</span>
+      </div>
+      <div class="qx-transition__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+        <i class="qx-transition__bar-fill"></i>
+      </div>
+      <div class="qx-transition__status">
+        <span class="qx-transition__prompt">&gt;</span>
+        <span class="qx-transition__label">INITIALIZING SYSTEM...</span>
+      </div>
+    </div>
+  `;
+  layer.appendChild(hud);
+
   layer.appendChild(buildRail(doc, 'qx-transition__rail--rev', 12));
+
+  const footer = doc.createElement('div');
+  footer.className = 'qx-transition__footer';
+  footer.innerHTML = `
+    <span class="qx-transition__tag">PROTOCOL: HTTP/3 · SECURE LINK</span>
+    <span class="qx-transition__hex">0x00</span>
+  `;
+  layer.appendChild(footer);
+
   doc.body.appendChild(layer);
   return layer;
 }
@@ -96,7 +145,6 @@ export function initTransition(doc = globalThis.document, win = globalThis.windo
 
   const reduced = win.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const existing = doc.querySelector('.qx-transition');
-  // 降级动效下幕布不参与，服务端幕布需立即撤除（否则盖住整页）。
   if (reduced) {
     existing?.remove();
     return;
@@ -105,7 +153,28 @@ export function initTransition(doc = globalThis.document, win = globalThis.windo
   const layer = existing || createLayer(doc);
   const count = layer.querySelector('.qx-transition__count');
   const label = layer.querySelector('.qx-transition__label');
-  if (!count || !label) return;
+  const targetPathEl = layer.querySelector('.qx-transition__target-path');
+  const barFill = layer.querySelector('.qx-transition__bar-fill') || layer.querySelector('.qx-transition__bar i');
+  const hexEl = layer.querySelector('.qx-transition__hex');
+
+  const updateProgress = (val, pathText, customStageText) => {
+    if (count) count.textContent = String(val).padStart(3, '0');
+    if (hexEl) hexEl.textContent = '0x' + val.toString(16).toUpperCase().padStart(2, '0');
+    if (barFill) barFill.style.transform = `scaleX(${val / 100})`;
+
+    if (pathText !== undefined && targetPathEl) {
+      targetPathEl.textContent = pathText;
+    }
+
+    if (label) {
+      if (customStageText) {
+        label.textContent = customStageText;
+      } else {
+        const stage = BOOT_STAGES.find((s) => val <= s.max);
+        if (stage) label.textContent = stage.text;
+      }
+    }
+  };
 
   const isBoot = layer.classList.contains('is-boot');
   let busy = false;
@@ -115,11 +184,10 @@ export function initTransition(doc = globalThis.document, win = globalThis.windo
     layer.classList.remove('is-active', 'is-out', 'is-boot');
     void layer.offsetWidth;
     layer.style.transition = '';
-    count.textContent = '000';
+    updateProgress(0, '', 'STANDBY');
     busy = false;
   };
 
-  /* 幕布向上抽走，结束后复位到视口下方待命。 */
   const open = () => {
     layer.classList.add('is-out');
     let done = false;
@@ -128,32 +196,34 @@ export function initTransition(doc = globalThis.document, win = globalThis.windo
       done = true;
       layer.removeEventListener('transitionend', onEnd);
       reset();
-      label.textContent = '';
     };
-    // transitionend 从子元素冒泡，只认幕布自身的 transform。
     const onEnd = (event) => {
       if (event.target !== layer || event.propertyName !== 'transform') return;
       finish();
     };
     layer.addEventListener('transitionend', onEnd);
-    win.setTimeout(finish, EXIT_MS + 140);
+    win.setTimeout(finish, EXIT_MS + 100);
   };
 
-  // 新页先盖住，再把遮罩向上抽走（上一次点击标记）。
   let entering = false;
+  let targetPath = '';
   try {
     entering = win.sessionStorage.getItem(MEMO_KEY) === '1';
-    if (entering) win.sessionStorage.removeItem(MEMO_KEY);
+    targetPath = win.sessionStorage.getItem(MEMO_TARGET) || '';
+    if (entering) {
+      win.sessionStorage.removeItem(MEMO_KEY);
+      win.sessionStorage.removeItem(MEMO_TARGET);
+    }
   } catch {
     entering = false;
   }
 
   if (entering) {
     busy = true;
-    label.textContent = pathOf(win.location.pathname, win);
-    count.textContent = '100';
+    const currentName = targetPath || pathOf(win.location.pathname, win);
+    updateProgress(100, currentName, '[ OK ] DESTINATION REACHED');
+
     if (!isBoot) {
-      // 自造幕布需显式盖上；服务端幕布本已盖住。
       layer.style.transition = 'none';
       layer.classList.add('is-active');
       void layer.offsetWidth;
@@ -161,9 +231,9 @@ export function initTransition(doc = globalThis.document, win = globalThis.windo
     }
     win.requestAnimationFrame(() => win.requestAnimationFrame(open));
   } else if (isBoot) {
-    // 首屏这一次要两个条件都满足才揭幕，计数到 100，并且文档 load 完成。
     busy = true;
-    label.textContent = pathOf(win.location.pathname, win);
+    const currentName = pathOf(win.location.pathname, win);
+    updateProgress(0, currentName);
 
     let value = 0;
     let loaded = doc.readyState === 'complete';
@@ -173,14 +243,17 @@ export function initTransition(doc = globalThis.document, win = globalThis.windo
       if (opened || value < 100 || !loaded) return;
       opened = true;
       win.clearInterval(timer);
-      open();
+      updateProgress(100, currentName, '[05/05] [ READY ] ACCESS GRANTED');
+      win.setTimeout(open, 80);
     };
 
     const timer = win.setInterval(() => {
       value = Math.min(100, value + BOOT_STEP);
-      count.textContent = String(value).padStart(3, '0');
-      if (value >= 100) win.clearInterval(timer);
-      maybeLift();
+      updateProgress(value, currentName);
+      if (value >= 100) {
+        win.clearInterval(timer);
+        maybeLift();
+      }
     }, BOOT_TICK_MS);
 
     if (!loaded) {
@@ -194,14 +267,12 @@ export function initTransition(doc = globalThis.document, win = globalThis.windo
       );
     }
 
-    // 页面迟迟不 load 时强制抽走（避免永久盖住）。
     win.setTimeout(() => {
       if (opened) return;
       opened = true;
-      value = 100;
-      count.textContent = '100';
+      updateProgress(100, currentName, '[05/05] [ READY ] ACCESS GRANTED');
       win.clearInterval(timer);
-      open();
+      win.setTimeout(open, 50);
     }, BOOT_MAX_MS);
   }
 
@@ -219,31 +290,29 @@ export function initTransition(doc = globalThis.document, win = globalThis.windo
     busy = true;
     event.preventDefault();
 
-    label.textContent = pathOf(anchor.href, win);
-    count.textContent = '000';
+    const dest = pathOf(anchor.href, win);
+    updateProgress(0, dest, 'ROUTING // PREPARING PAYLOAD...');
     layer.classList.add('is-active');
 
     let value = 0;
     const timer = win.setInterval(() => {
-      value = Math.min(100, value + STEP);
-      count.textContent = String(value).padStart(3, '0');
-    }, TICK_MS);
+      value = Math.min(100, value + 14);
+      const stage = NAV_STAGES.find((s) => value <= s.max);
+      updateProgress(value, dest, stage ? stage.text : 'ROUTING...');
+    }, 20);
 
     win.setTimeout(() => {
       win.clearInterval(timer);
       try {
         win.sessionStorage.setItem(MEMO_KEY, '1');
-      } catch {
-        /* 隐私模式无法写入（仅缺少揭幕段）。 */
-      }
+        win.sessionStorage.setItem(MEMO_TARGET, dest);
+      } catch {}
       win.location.assign(anchor.href);
     }, ENTER_MS);
   });
 
-  // bfcache 回退时强制复位（正常导航的 pageshow 不打断揭幕）。
   win.addEventListener('pageshow', (event) => {
     if (!event.persisted) return;
     reset();
-    label.textContent = '';
   });
 }

@@ -39,24 +39,69 @@ export function searchPosts(posts, query) {
 /* 索引地址靠三次尝试定下来。先读 meta 里的 qx-base，再顺着 stylesheet 的 href
    反推前缀，最后退回当前文档的相对路径。三种都失败就还是 404，面板会提示重试。 */
 function basePathOf(doc) {
-  const configured = doc.querySelector('meta[name="qx-base"]')?.content;
+  const configured = doc.querySelector?.('meta[name="qx-base"]')?.content;
   if (configured) {
     const parts = String(configured).split('/').filter(Boolean);
     return parts.length ? `/${parts.join('/')}/` : '/';
   }
-  const link = doc.querySelector('link[rel="stylesheet"][href*="assets/"]')?.getAttribute?.('href');
+  const link = doc.querySelector?.('link[rel="stylesheet"][href*="assets/"]')?.getAttribute?.('href');
   const match = typeof link === 'string' ? /^(.*?)assets\//.exec(link) : null;
-  if (match) return match[1] || '/';
+  if (match) {
+    const clean = match[1].replace(/^\/+|\/+$/g, '');
+    return clean ? `/${clean}/` : '/';
+  }
   return '/';
 }
 
-function indexPathCandidates(doc) {
+function indexPathCandidates(doc, win = globalThis.window) {
   const base = basePathOf(doc);
-  const candidates = [`${base}assets/search.json`.replace(/(?<!:)\/{2,}/g, '/')];
-  for (const extra of ['assets/search.json', '../assets/search.json']) {
-    const url = new URL(extra, globalThis.location?.href || 'http://localhost/').pathname;
-    if (!candidates.includes(url)) candidates.push(url);
+  const candidates = [];
+  const add = (url) => {
+    if (url && typeof url === 'string' && !candidates.includes(url)) {
+      candidates.push(url);
+    }
+  };
+
+  if (base) {
+    add(`${base.replace(/\/+$/, '')}/assets/search.json`.replace(/(?<!:)\/{2,}/g, '/'));
   }
+
+  const link = doc.querySelector?.('link[rel="stylesheet"][href*="assets/styles/"]')?.getAttribute?.('href') ||
+               doc.querySelector?.('link[rel="stylesheet"][href*="assets/"]')?.getAttribute?.('href');
+  if (link) {
+    const match = /^(.*?)assets\//.exec(link);
+    if (match) {
+      const prefix = match[1] || '';
+      add(`${prefix}assets/search.json`);
+      if (win?.location?.href) {
+        try {
+          add(new URL(`${prefix}assets/search.json`, win.location.href).pathname);
+        } catch {}
+      }
+    }
+  }
+
+  if (win?.location?.pathname) {
+    const parts = win.location.pathname.split('/').filter(Boolean);
+    if (
+      parts.length > 0 &&
+      !parts[0].includes(':') &&
+      !parts[0].includes('.') &&
+      !['posts', 'categories', 'tags', 'articles', 'assets', 'about', 'archive'].includes(parts[0])
+    ) {
+      add(`/${parts[0]}/assets/search.json`);
+    }
+    try {
+      add(new URL('assets/search.json', win.location.href).pathname);
+      add(new URL('../assets/search.json', win.location.href).pathname);
+      add(new URL('../../assets/search.json', win.location.href).pathname);
+    } catch {}
+  }
+
+  add('/assets/search.json');
+  add('assets/search.json');
+  add('../assets/search.json');
+
   return candidates;
 }
 
@@ -73,7 +118,7 @@ export function initSearch(doc = globalThis.document, win = globalThis.window) {
   const counter = dialog.querySelector('[data-search-count]');
 
   const openers = [...doc.querySelectorAll('[data-search-open]')];
-  const candidates = indexPathCandidates(doc);
+  const candidates = indexPathCandidates(doc, win);
   let indexAttempt = 0;
   let indexPromise;
   let revision = 0;
@@ -123,30 +168,57 @@ export function initSearch(doc = globalThis.document, win = globalThis.window) {
     results.replaceChildren();
   }
 
-  function loadIndex() {
-    if (!indexPromise) {
-      const url = candidates[Math.min(indexAttempt, candidates.length - 1)];
-      indexAttempt += 1;
-      indexPromise = win
-        .fetch(url, {
-          credentials: 'same-origin',
-          cache: 'force-cache',
-        })
-        .then((response) => {
-          if (!response.ok) throw new Error('Search index request failed');
-          return response.json();
-        })
-        .then((posts) => {
-          if (!Array.isArray(posts)) throw new Error('Invalid search index');
+      function resolveUrl(rawUrl) {
+    if (!rawUrl || typeof rawUrl !== 'string') return '#';
+    if (/^(?:https?:)?\/\//i.test(rawUrl)) return rawUrl;
+
+    if (win?.location?.protocol === 'file:') {
+      const clean = rawUrl.replace(/^\/+/, '');
+      const currentPath = (win.location.pathname || '').replace(/\\/g, '/');
+      const segments = currentPath.split('/').filter(Boolean);
+      const isFile = segments.length > 0 && /\.[a-z0-9]+$/i.test(segments[segments.length - 1]);
+      const dirSegments = isFile ? segments.slice(0, -1) : segments;
+      const distIdx = dirSegments.lastIndexOf('dist');
+      if (distIdx !== -1) {
+        const depth = dirSegments.length - 1 - distIdx;
+        return (depth > 0 ? '../'.repeat(depth) : './') + clean;
+      }
+      return clean;
+    }
+
+    const base = basePathOf(doc);
+    const cleanBase = base === '/' ? '' : base.replace(/\/+$/, '');
+    const cleanPath = rawUrl.replace(/^\/+/, '');
+
+    if (cleanBase && rawUrl.startsWith(cleanBase)) {
+      return rawUrl;
+    }
+
+    return cleanBase ? `${cleanBase}/${cleanPath}` : `/${cleanPath}`;
+  }
+
+  async function loadIndex() {
+    if (indexPromise) return indexPromise;
+    indexPromise = (async () => {
+      let lastError;
+      for (const url of candidates) {
+        try {
+          const response = await win.fetch(url, {
+            credentials: 'same-origin',
+          });
+          if (!response.ok) continue;
+          const posts = await response.json();
+          if (!Array.isArray(posts)) continue;
           return posts.filter(
             (post) => post && typeof post.title === 'string' && typeof post.url === 'string',
           );
-        })
-        .catch((error) => {
-          indexPromise = undefined;
-          throw error;
-        });
-    }
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      indexPromise = undefined;
+      throw lastError || new Error('Search index request failed');
+    })();
     return indexPromise;
   }
 
@@ -154,12 +226,15 @@ export function initSearch(doc = globalThis.document, win = globalThis.window) {
     const link = doc.createElement('a');
     link.className = 'search-result';
     link.id = `qx-search-result-${index}`;
-    link.href = post.url;
+    link.href = resolveUrl(post.url);
     link.setAttribute('role', 'option');
     link.setAttribute('aria-selected', 'false');
+    const titleWrapper = doc.createElement('span');
     const title = doc.createElement('span');
     title.className = 'search-result-title qx-ul';
     title.textContent = post.title;
+    titleWrapper.append(title);
+
     const excerpt = doc.createElement('span');
     excerpt.className = 'search-result-excerpt';
     excerpt.textContent = post.excerpt || String(post.text || '').slice(0, 140);
@@ -168,7 +243,7 @@ export function initSearch(doc = globalThis.document, win = globalThis.window) {
     meta.textContent = [post.date?.slice(0, 10), ...(Array.isArray(post.labels) ? post.labels : [])]
       .filter(Boolean)
       .join(' · ');
-    link.append(title, excerpt, meta);
+    link.append(titleWrapper, excerpt, meta);
     link.addEventListener('pointermove', () => setActive(index));
     link.addEventListener('focus', () => setActive(index));
     resultLinks.push(link);
@@ -193,8 +268,12 @@ export function initSearch(doc = globalThis.document, win = globalThis.window) {
 
     const matches = searchPosts(posts, query).filter((post) => {
       try {
-        const url = new URL(post.url, win.location.href);
-        return ['http:', 'https:'].includes(url.protocol) && url.origin === win.location.origin;
+        const targetUrl = resolveUrl(post.url);
+        const url = new URL(targetUrl, win.location.href);
+        if (['http:', 'https:'].includes(url.protocol)) {
+          return url.origin === win.location.origin;
+        }
+        return true;
       } catch {
         return false;
       }

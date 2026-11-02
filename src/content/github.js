@@ -121,9 +121,9 @@ export async function syncDiscussions({
   env = process.env,
 } = {}) {
   root = path.resolve(root);
-  const repository = env.GITHUB_REPOSITORY;
+  const repository = env.DISCUSSION_REPOSITORY || env.GITHUB_REPOSITORY;
   if (typeof repository !== 'string' || !/^[\w.-]+\/[\w.-]+$/.test(repository))
-    throw new Error('GITHUB_REPOSITORY must be owner/repository');
+    throw new Error('DISCUSSION_REPOSITORY or GITHUB_REPOSITORY must be owner/repository');
   const token = env.GH_TOKEN || env.GITHUB_TOKEN;
   if (!token) throw new Error('GH_TOKEN or GITHUB_TOKEN is required to sync Discussions');
   const config = await jsonFile(path.join(root, 'config/siteConfig.json'), {});

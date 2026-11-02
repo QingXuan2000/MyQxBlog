@@ -3,6 +3,7 @@ dist/
 .preview/
 .artifacts/
 .superpowers/
+.workbuddy/
 .qxblog-build-*/
 .qxblog-sync-*/
 coverage/

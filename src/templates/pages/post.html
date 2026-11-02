@@ -1,0 +1,34 @@
+<article class="qx-post" data-post-id="<%= post.id %>">
+    <header class="qx-post-header">
+        <div class="qx-post-back-wrapper">
+            <a href="<%= backUrl %>" class="qx-post-back" data-cursor="BACK">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回上一页
+            </a>
+        </div>
+        <h1 class="qx-post-title" data-roll><%= post.title %></h1>
+        <div class="qx-post-meta">
+            <span class="qx-post-date">发布日期：<time datetime="<%= post.date %>"><%= date.full %></time></span>
+            <span class="qx-post-author"><%= post.author || config.site.author %></span>
+        </div>
+        <div class="qx-post-labels">
+            <%- categoryHTML %>
+            <%- labelsHTML %>
+        </div>
+    </header>
+    <div class="qx-post-body" data-post-body>
+        <%- post.html || '' %>
+    </div>
+    <footer class="qx-post-footer">
+        <p class="qx-post-updated">最后更新：<%= updatedDate.full %></p>
+        <% if (newer || older) { %>
+        <nav class="post-navigation qx-post-navigation" aria-label="相邻文章">
+            <% if (newer) { %>
+            <a class="qx-prev-post" href="<%= newer.url %>">上一篇：<%= newer.title %></a>
+            <% } %>
+            <% if (older) { %>
+            <a class="qx-next-post" href="<%= older.url %>">下一篇：<%= older.title %></a>
+            <% } %>
+        </nav>
+        <% } %>
+    </footer>
+</article>

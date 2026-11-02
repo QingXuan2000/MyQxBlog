@@ -4,8 +4,8 @@
    内联样式，净化器会把不认识的属性全部剥掉，公式和高亮就废了。反过来先净化用户写的
    HTML，再让可信的渲染器产出结果，安全性一样，成品还能保住。
 
-   顺带在管道里做了三件小事，媒体加懒加载、剥完属性后把锚点前缀接回、顺手收集目录
-   和纯文本。都是过一遍树的事，分三次遍历不如一次做完。 */
+   顺带在管道里做了几件小事，媒体加懒加载、表格包裹外层容器、剥完属性后把锚点前缀接回、顺手收集目录
+   和纯文本。都是过一遍树的事，分多次遍历不如一次做完。 */
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
@@ -45,6 +45,74 @@ function enhanceMedia() {
       if (node.tagName === 'video')
         Object.assign(node.properties, { controls: true, preload: 'metadata' });
     });
+}
+
+function wrapTables() {
+  return (tree) => {
+    visit(tree, 'element', (node, index, parent) => {
+      if (
+        node.tagName === 'table' &&
+        parent &&
+        !(parent.tagName === 'div' && parent.properties?.className?.includes('qx-table-wrap'))
+      ) {
+        const wrapper = {
+          type: 'element',
+          tagName: 'div',
+          properties: { className: ['qx-table-wrap'] },
+          children: [node],
+        };
+        parent.children.splice(index, 1, wrapper);
+        return [visit.SKIP, index + 1];
+      }
+    });
+  };
+}
+
+function remarkCjkEmphasis() {
+  return (tree) => {
+    visit(tree, (node) => {
+      if (!Array.isArray(node.children) || node.type === 'code' || node.type === 'inlineCode')
+        return;
+      let hasTextWithStrong = false;
+      for (const child of node.children) {
+        if (child.type === 'text' && child.value.includes('**')) {
+          hasTextWithStrong = true;
+          break;
+        }
+      }
+      if (!hasTextWithStrong) return;
+
+      const newChildren = [];
+      for (const child of node.children) {
+        if (child.type === 'text' && child.value.includes('**')) {
+          const parts = child.value.split(/(\*{2,3}[^\*\n]+?\*{2,3})/g);
+          for (const part of parts) {
+            if (part.startsWith('***') && part.endsWith('***') && part.length > 6) {
+              newChildren.push({
+                type: 'emphasis',
+                children: [
+                  {
+                    type: 'strong',
+                    children: [{ type: 'text', value: part.slice(3, -3) }],
+                  },
+                ],
+              });
+            } else if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+              newChildren.push({
+                type: 'strong',
+                children: [{ type: 'text', value: part.slice(2, -2) }],
+              });
+            } else if (part) {
+              newChildren.push({ type: 'text', value: part });
+            }
+          }
+        } else {
+          newChildren.push(child);
+        }
+      }
+      node.children = newChildren;
+    });
+  };
 }
 
 function reconnectSanitizedFragments() {
@@ -119,15 +187,57 @@ function codeCopyButtons() {
   };
 }
 
+function normalizeTables(markdown) {
+  const lines = markdown.split('\n');
+  const result = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    if (/^\|\|(?=[^|])/.test(line)) {
+      line = '|' + line.slice(2);
+    }
+
+    const isDelimiter = /^\s*\|?(\s*:?-+:?\s*\|)+\s*:?-+:?\s*\|?\s*$/.test(line);
+    if (isDelimiter && result.length > 0) {
+      const prevLine = result[result.length - 1];
+      if (prevLine.includes('|')) {
+        const parseRow = (str) => {
+          let s = str.trim();
+          let parts = s.split('|');
+          if (s.startsWith('|')) parts.shift();
+          if (s.endsWith('|')) parts.pop();
+          return parts;
+        };
+        const headerCols = parseRow(prevLine).length;
+        let delimCols = parseRow(line);
+        if (delimCols.length !== headerCols && headerCols > 0) {
+          if (delimCols.length > headerCols) {
+            delimCols = delimCols.slice(0, headerCols);
+          } else {
+            while (delimCols.length < headerCols) {
+              delimCols.push(' :--- ');
+            }
+          }
+          line = '|' + delimCols.join('|') + '|';
+        }
+      }
+    }
+    result.push(line);
+  }
+  return result.join('\n');
+}
+
 // 先净化再跑可信渲染器，使生成的 KaTeX/Shiki 标记得以保留。
 const processor = unified()
   .use(remarkParse)
   .use(remarkGfm)
   .use(remarkMath)
+  .use(remarkCjkEmphasis)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
   .use(rehypeSanitize, schema)
   .use(enhanceMedia)
+  .use(wrapTables)
   .use(reconnectSanitizedFragments)
   .use(rehypeSlug)
   .use(collectContent)
@@ -147,6 +257,7 @@ const processor = unified()
 
 export async function renderMarkdown(body) {
   if (typeof body !== 'string') throw new TypeError('Markdown body must be text');
+  body = normalizeTables(body);
   const result = await processor.process(body);
   const text = result.data.text;
   const chineseCharacters = (

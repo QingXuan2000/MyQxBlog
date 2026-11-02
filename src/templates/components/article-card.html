@@ -1,0 +1,9 @@
+<article class="qx-article-card post-row" data-reveal>
+    <a href="<%= postUrl %>" class="qx-article-card-link" data-cursor="OPEN" aria-label="阅读文章：<%= post.title %>"></a>
+    <div class="qx-article-card-date"><time datetime="<%= post.date %>"><%= date.full %></time></div>
+    <h2 class="qx-article-card-title"><a href="<%= postUrl %>" data-cursor="READ"><span class="qx-ul" data-roll><%= post.title %></span></a></h2>
+    <div class="qx-article-card-labels">
+        <%- categoryHTML %>
+        <%- labelsHTML %>
+    </div>
+</article>

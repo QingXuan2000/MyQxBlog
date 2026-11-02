@@ -47,7 +47,7 @@ await rebuild();
 const config = await loadConfig(process.cwd(), { basePath: values.base });
 serve({ directory: values.out, port: values.port, host: values.host, basePath: config.basePath });
 for (const directory of new Set(
-  ['src', 'config', 'content', 'public', values.content].filter(Boolean),
+  ['src', 'templates', 'config', 'content', 'public', values.content].filter(Boolean),
 )) {
   if (!fs.existsSync(directory)) continue;
   fs.watch(directory, { recursive: true }, () => {
