@@ -136,9 +136,9 @@ html.is-scroll-blocked body {
   --bg-body: #1a1a1a;
   --text-body: #eee;
 
-  --code-bg: #141414;
+  --code-bg: #0b0f14;
   --code-fg: #c9d1d9;
-  --code-border: rgba(255, 255, 255, 0.08);
+  --code-border: rgba(255, 255, 255, 0.06);
   --code-accent: #2d333b;
   --code-inline-bg: rgba(255, 255, 255, 0.06);
   --code-inline-border: rgba(255, 255, 255, 0.08);
@@ -440,10 +440,10 @@ a:hover {
   position: absolute;
   top: 0;
   left: 0;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.45rem;
+  height: 0.45rem;
   background: var(--text-body);
-  border-radius: 50%;
+  border-radius: 0;
   transform: translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0);
   will-change: transform;
   pointer-events: none;
@@ -460,20 +460,21 @@ a:hover {
 }
 
 .qx-waves-svg {
+  /* 比容器高出三成，上下各溢出 16%。波浪在垂直方向被撑开，两端被容器裁掉，
+       边缘就不会出现一条整整齐齐的结束线。 */
   position: absolute;
-  top: 0;
+  top: -16%;
   left: 0;
   display: block;
   width: 100%;
-  height: 100%;
-  pointer-events: none;
+  height: 132%;
 }
 
-.qx-wave-line,
-.a__line {
+.qx-wave-line {
   fill: none;
   stroke: var(--text-body);
-  stroke-width: 1px;
+  stroke-width: 2px;
+  opacity: 0.26;
   vector-effect: non-scaling-stroke;
 }
 
@@ -637,9 +638,14 @@ a:hover {
   }
 
   .s-hero .s__title {
-    line-height: 1.08;
-    padding: clamp(0.5rem, 1.2vh, 0.9rem) var(--title-inset);
-    font-size: min(15vw, var(--hero-fit, 15vw), 5.5rem);
+    line-height: 1.15;
+    padding: clamp(0.6rem, 1.5vh, 1rem) var(--title-inset);
+    font-size: min(13vw, var(--hero-fit, 13vw), 4.5rem);
+  }
+
+  .s-hero .s__title__word {
+    margin-bottom: 0;
+    letter-spacing: clamp(1px, 0.8vw, 4px);
   }
 
   .a-separator {
@@ -662,6 +668,21 @@ a:hover {
 }
 
 @media (max-width: 576px) {
+  .s-hero {
+    min-height: 280px;
+  }
+
+  .s-hero .s__title {
+    line-height: 1.2;
+    padding: 0.6rem var(--title-inset);
+    font-size: min(12vw, var(--hero-fit, 12vw), 3.5rem);
+  }
+
+  .s-hero .s__title__word {
+    margin-bottom: 0;
+    letter-spacing: clamp(1px, 0.5vw, 3px);
+  }
+
   .a-separator .a__code:nth-child(n) {
     display: flex;
   }
@@ -996,9 +1017,7 @@ a:hover {
 .qx-main > .qx-tags,
 .qx-main > .qx-archive,
 .qx-main > .qx-about,
-.qx-main > .qx-post,
-.qx-main > .wrapper,
-.qx-main > .qx-404-wrapper {
+.qx-main > .qx-post {
   flex: 1 0 auto;
 }
 
@@ -1108,7 +1127,6 @@ a:hover {
 .qx-post-labels .qx-article-card-label {
   font-size: 0.85rem;
   opacity: 0.6;
-  white-space: nowrap;
 }
 
 .qx-post-labels .qx-article-card-label:hover {
@@ -1608,10 +1626,8 @@ a:hover {
 
 .qx-post-labels {
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
-  white-space: nowrap;
 }
 
 .qx-post-footer {
@@ -2154,18 +2170,10 @@ pre[data-theme] code span {
 
 /* ========== 404 Page ========== */
 
-.wrapper,
-.qx-404-wrapper {
-  flex: 1 0 auto;
-  min-height: var(--qx-fill);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.wrapper {
   text-align: center;
   padding: 48px 24px;
   position: relative;
-  box-sizing: border-box;
 }
 
 .number {
@@ -2238,6 +2246,32 @@ pre[data-theme] code span {
   opacity: 1;
   background: var(--text-body);
   color: var(--bg-body);
+}
+
+.glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(200px, 40vw, 320px);
+  height: clamp(200px, 40vw, 320px);
+  border-radius: 0;
+  border: 1px solid var(--text-body);
+  opacity: 0.06;
+  pointer-events: none;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.04;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 0.1;
+  }
 }
 
 /* ========== 空状态 ========== */
@@ -2751,12 +2785,7 @@ html.qx-cursor-on select {
   }
 }
 
-/* ---------- 页面转场 ---------- */
-
-/* 整屏底色当作一块幕布：进出都用 transform，幕布上边线就是推进前沿。
-   进（离开当前页）自下而上盖住，出（抵达新页）继续向上抽走，方向始终一致。 */
-
-/* ========== 页面转场与首屏加载幕布 (纯粹几何终端风格 · 无光晕) ========== */
+/* ========== 页面转场与首屏加载幕布 (纯粹几何终端 HUD 风格) ========== */
 
 .qx-transition {
   position: fixed;
@@ -2779,35 +2808,29 @@ html.qx-cursor-on select {
 }
 
 .qx-transition.is-active {
+  pointer-events: auto;
   transform: translate3d(0, 0, 0);
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .qx-transition.is-out {
+  pointer-events: none;
   transform: translate3d(0, -100%, 0);
   transition: transform 0.42s cubic-bezier(0.85, 0, 0.15, 1);
 }
 
 .qx-transition.is-boot {
+  pointer-events: auto;
   transform: translate3d(0, 0, 0);
-  animation: qx-boot-escape 0.42s cubic-bezier(0.85, 0, 0.15, 1) 2.2s forwards;
 }
 
 .qx-transition.is-boot.is-out {
+  pointer-events: none;
   transform: translate3d(0, -100%, 0);
 }
 
 .qx-transition.is-boot .qx-transition__rail span {
   animation-play-state: running;
-}
-
-@keyframes qx-boot-escape {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(0, -100%, 0);
-  }
 }
 
 /* 背景科技点阵（纯几何无光晕） */

@@ -8,8 +8,8 @@
    两条路都走不通时保持原样。字体缺字、没有 canvas、码位出了汉字区，都会退回原文，
    动画少一段总比标题变成乱码强。 */
 const STAGES = 6;
-const STAGE_MS = 82;
-const STAGGER_MS = 32;
+const STAGE_MS = 64;
+const STAGGER_MS = 28;
 
 /* 码位偏移逐级收窄，64、30、16、8、4、1，最后一步归零。
    靠近区块末尾时改成往回偏移，免得越界跑到非汉字码位上去。 */
@@ -24,60 +24,67 @@ const atlasCache = new Map(); // fontKey → { masks, index }
 const chainCache = new Map(); // fontKey|char → 阶梯字符数组
 const GRID = 8; // 比较用的粗网格。只看墨量分布，笔画有一两个像素的位移也不影响判断
 
-/* 只按字族、字重、斜体分桶。字号不改变字形，页面用了几个字号也只算一次。 */
 function fontKey(el, win) {
-  const cs = win.getComputedStyle(el);
-  return `${cs.fontStyle} ${cs.fontWeight} ${cs.fontFamily}`;
+  try {
+    const cs = win.getComputedStyle(el);
+    return `${cs.fontStyle || 'normal'} ${cs.fontWeight || '400'} ${cs.fontFamily || 'sans-serif'}`;
+  } catch {
+    return 'normal 400 sans-serif';
+  }
 }
 
 function paintFont(el, win) {
-  const cs = win.getComputedStyle(el);
-  return `${cs.fontStyle} ${cs.fontWeight} ${SAMPLE_PX}px ${cs.fontFamily}`;
+  try {
+    const cs = win.getComputedStyle(el);
+    return `${cs.fontStyle || 'normal'} ${cs.fontWeight || '400'} ${SAMPLE_PX}px ${cs.fontFamily || 'sans-serif'}`;
+  } catch {
+    return `400 ${SAMPLE_PX}px sans-serif`;
+  }
 }
 
-/* 一次性把候选字符画进一张长条画布，只取一次 ImageData，
-   再切成每格的二值蒙版（有墨 / 无墨）。 */
 function atlasFor(doc, el, win, key) {
   if (atlasCache.has(key)) return atlasCache.get(key);
   let atlas = null;
-  const canvas = doc.createElement('canvas');
-  canvas.width = CELL * CANDIDATES.length;
-  canvas.height = CELL;
-  const ctx = canvas.getContext?.('2d', { willReadFrequently: true });
-  if (ctx) {
-    ctx.font = paintFont(el, win);
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#000';
-    for (let i = 0; i < CANDIDATES.length; i += 1) {
-      ctx.fillText(CANDIDATES[i], i * CELL + CELL / 2, CELL / 2);
-    }
-    const { data } = ctx.getImageData(0, 0, canvas.width, CELL);
-    const masks = [];
-    let index = 0;
-    for (const char of CANDIDATES) {
-      const mask = new Uint8Array(CELL * CELL);
-      let ink = 0;
-      for (let y = 0; y < CELL; y += 1) {
-        for (let x = 0; x < CELL; x += 1) {
-          const alpha = data[(y * canvas.width + index * CELL + x) * 4 + 3];
-          if (alpha > 128) {
-            mask[y * CELL + x] = 1;
-            ink += 1;
+  try {
+    const canvas = doc.createElement('canvas');
+    canvas.width = CELL * CANDIDATES.length;
+    canvas.height = CELL;
+    const ctx = canvas.getContext?.('2d', { willReadFrequently: true });
+    if (ctx) {
+      ctx.font = paintFont(el, win);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#000';
+      for (let i = 0; i < CANDIDATES.length; i += 1) {
+        ctx.fillText(CANDIDATES[i], i * CELL + CELL / 2, CELL / 2);
+      }
+      const { data } = ctx.getImageData(0, 0, canvas.width, CELL);
+      const masks = [];
+      let index = 0;
+      for (const char of CANDIDATES) {
+        const mask = new Uint8Array(CELL * CELL);
+        let ink = 0;
+        for (let y = 0; y < CELL; y += 1) {
+          for (let x = 0; x < CELL; x += 1) {
+            const alpha = data[(y * canvas.width + index * CELL + x) * 4 + 3];
+            if (alpha > 128) {
+              mask[y * CELL + x] = 1;
+              ink += 1;
+            }
           }
         }
+        masks.push({ char, mask, ink, profile: profileOf(mask) });
+        index += 1;
       }
-      masks.push({ char, mask, ink, profile: profileOf(mask) });
-      index += 1;
+      atlas = { masks };
     }
-    atlas = { masks };
+  } catch {
+    atlas = null;
   }
   atlasCache.set(key, atlas);
   return atlas;
 }
 
-/* 把二值掩膜压成 GRID×GRID 的墨量分布：单像素差异会被平均掉，
-   剩下的差异代表整体字形结构，比逐像素 XOR 更接近人眼判断。 */
 function profileOf(mask) {
   const step = CELL / GRID;
   const profile = new Float32Array(GRID * GRID);
@@ -97,68 +104,66 @@ function profileOf(mask) {
 
 const classOf = (char) => (/[0-9]/.test(char) ? 'd' : /[a-z]/.test(char) ? 'l' : 'u');
 
-/* 差异按两字的墨量归一化：绝对值会让「窄字配宽字」也算接近
-   （l 和 B 的 XOR 只差在横笔），归一化后更偏向体量相当的形近字。 */
 function similarity(target, candidate) {
   let diff = 0;
   for (let i = 0; i < target.profile.length; i += 1)
     diff += Math.abs(target.profile[i] - candidate.profile[i]);
   const base = diff / (target.ink + candidate.ink);
-  // 大小写、数字与字母混用会让台阶看起来太跳，轻微降权。
   return classOf(target.char) === classOf(candidate.char) ? base : base + 0.06;
 }
 
-/* 取「最像的 STAGES 个」，再从最不像排到最像：
-   逐级收敛，最后一步回到真字。 */
 function similarChain(doc, el, win, key, char) {
   const cacheKey = `${key}|${char}`;
   if (chainCache.has(cacheKey)) return chainCache.get(cacheKey);
 
-  const atlas = atlasFor(doc, el, win, key);
   let chain = null;
-  if (atlas) {
-    const target = atlas.masks.find((item) => item.char === char);
-    if (target && target.ink > 0) {
-      chain = atlas.masks
-        .filter(
-          (item) =>
-            item.char !== char &&
-            item.ink > 0 &&
-            // 笔画量差一个数量级的字形不参与比较，否则会挑出胖瘦迥异的字
-            item.ink >= target.ink * 0.35 &&
-            item.ink <= target.ink * 2.8,
-        )
-        .map((item) => ({ char: item.char, score: similarity(target, item) }))
-        .sort((a, b) => a.score - b.score)
-        .slice(0, STAGES)
-        .reverse()
-        .map((item) => item.char);
+  try {
+    const atlas = atlasFor(doc, el, win, key);
+    if (atlas) {
+      const target = atlas.masks.find((item) => item.char === char);
+      if (target && target.ink > 0) {
+        chain = atlas.masks
+          .filter(
+            (item) =>
+              item.char !== char &&
+              item.ink > 0 &&
+              item.ink >= target.ink * 0.35 &&
+              item.ink <= target.ink * 2.8,
+          )
+          .map((item) => ({ char: item.char, score: similarity(target, item) }))
+          .sort((a, b) => a.score - b.score)
+          .slice(0, STAGES)
+          .reverse()
+          .map((item) => item.char);
+      }
     }
+  } catch {
+    chain = null;
   }
   chainCache.set(cacheKey, chain);
   return chain;
 }
 
-// 阶段 → 链上位置：链比阶段短时按比例取，避免后半段完全静止。
 const position = (stage, length) =>
   length <= 1 ? 0 : Math.round((stage / (STAGES - 1)) * (length - 1));
 
-function lookalike(char, stage, { doc, el, win, key }) {
-  const chain = similarChain(doc, el, win, key, char);
-  if (chain?.length) return chain[position(stage, chain.length)];
+function lookalike(char, stage, context) {
+  try {
+    const chain = similarChain(context.doc, context.el, context.win, context.key, char);
+    if (chain?.length) return chain[position(stage, chain.length)];
 
-  const code = char.codePointAt(0);
-  if (code >= 0x4e00 && code <= 0x9fff) {
-    const delta = CJK_DELTAS[position(stage, CJK_DELTAS.length)];
-    const next = code + delta > 0x9fff ? code - delta : code + delta;
-    if (next >= 0x4e00 && next <= 0x9fff) return String.fromCodePoint(next);
+    const code = char.codePointAt(0);
+    if (code >= 0x4e00 && code <= 0x9fff) {
+      const delta = CJK_DELTAS[position(stage, CJK_DELTAS.length)];
+      const next = code + delta > 0x9fff ? code - delta : code + delta;
+      if (next >= 0x4e00 && next <= 0x9fff) return String.fromCodePoint(next);
+    }
+  } catch {
+    // 容错返回原字符
   }
   return char;
 }
 
-/* 把整句按给定阶梯拼成当前帧的字符串。
-   始终只有一个文本节点：排版交给浏览器对整行正常处理，
-   不拆成逐字盒子，也就不需要事后「重组」回正常句子。 */
 function frameText(chars, stages, context, stageOf) {
   let out = '';
   for (let index = 0; index < chars.length; index += 1) {
@@ -168,57 +173,69 @@ function frameText(chars, stages, context, stageOf) {
   return out;
 }
 
-function build(el, doc, win) {
-  const text = (el.textContent || '').trim();
-  if (!text || el.dataset.rollReady === '1') return false;
-  el.dataset.rollReady = '1';
+/**
+ * 针对单个元素执行安全解码动画
+ * 核心保障：
+ * 1. 动画触发前决不提前将 DOM 替换为乱码，确保任何异常下常态均为正常文本
+ * 2. 动画过程中具备硬性超时兜底，无论是 rAF 挂起、切后台、报错，均无条件归位真实原文
+ * 3. 动画执行完毕清除所有临时属性
+ */
+function rollElement(el, win) {
+  if (!el || el.dataset.rolling === '1' || el.dataset.rolled === '1') return;
+  el.dataset.rolling = '1';
+
+  const text = el.dataset.rollText || (el.textContent || '').trim();
+  if (!text) {
+    delete el.dataset.rolling;
+    return;
+  }
 
   const chars = [...text];
-  const context = { doc, el, win, key: fontKey(el, win) };
-  // 每个字随机落在前三个阶梯上：加载阶段看到的已经是乱码，
-  // 解码时从这个阶梯继续往前推，不会往回跳。
-  const stages = chars.map(() => Math.floor(Math.random() * 3));
-
-  el.dataset.rollText = text;
-  el.dataset.rollStages = stages.join(',');
-  // 动画期间文字是乱的，把原文挂到 aria-label，读屏拿到的仍是真标题；
-  // 结束后移除，DOM 里只剩一行正常文本。
-  el.setAttribute('aria-label', text);
-  el.textContent = frameText(chars, stages, context, (index) => stages[index]);
-  return true;
-}
-
-function animate(el, win) {
-  const text = el.dataset.rollText;
-  if (text == null || typeof win?.requestAnimationFrame !== 'function') return;
-
-  const chars = [...text];
-  const preset = (el.dataset.rollStages || '').split(',').map((value) => Number(value) || 0);
   const context = { doc: el.ownerDocument, el, win, key: fontKey(el, win) };
-  const start = win.performance?.now?.() ?? Date.now();
+  // 每个字符从随机阶梯（0~2）开始收敛
+  const preset = chars.map(() => Math.floor(Math.random() * 3));
+  el.setAttribute('aria-label', text);
 
-  const step = (now) => {
-    let pending = false;
-    const out = frameText(chars, preset, context, (index, base) => {
-      const elapsed = now - start - index * STAGGER_MS;
-      if (elapsed < 0) {
-        pending = true;
-        return base;
-      }
-      const stage = base + Math.floor(elapsed / STAGE_MS);
-      if (stage < STAGES) pending = true;
-      return stage;
-    });
-    el.textContent = out;
-    if (pending) {
-      win.requestAnimationFrame(step);
-      return;
-    }
-    // 收尾：仍写同一个文本节点，只是内容变回原文（此时 aria-label 已无必要）。
+  const start = win.performance?.now?.() ?? Date.now();
+  const totalDuration = chars.length * STAGGER_MS + STAGES * STAGE_MS + 250;
+
+  let cleaned = false;
+  const finish = () => {
+    if (cleaned) return;
+    cleaned = true;
+    win.clearTimeout(safetyTimer);
     el.textContent = text;
     el.removeAttribute('aria-label');
-    delete el.dataset.rollText;
-    delete el.dataset.rollStages;
+    el.dataset.rolled = '1';
+    delete el.dataset.rolling;
+  };
+
+  // 绝对超时兜底（即使动画帧暂停或抛错，必定恢复原文）
+  const safetyTimer = win.setTimeout(finish, totalDuration + 400);
+
+  const step = (now) => {
+    if (cleaned) return;
+    try {
+      let pending = false;
+      const out = frameText(chars, preset, context, (index, base) => {
+        const elapsed = now - start - index * STAGGER_MS;
+        if (elapsed < 0) {
+          pending = true;
+          return base;
+        }
+        const stage = base + Math.floor(elapsed / STAGE_MS);
+        if (stage < STAGES) pending = true;
+        return stage;
+      });
+      el.textContent = out;
+      if (pending) {
+        win.requestAnimationFrame(step);
+        return;
+      }
+    } catch {
+      // 捕获异常，安全恢复
+    }
+    finish();
   };
 
   win.requestAnimationFrame(step);
@@ -226,55 +243,61 @@ function animate(el, win) {
 
 export function initRoll(doc = globalThis.document, win = globalThis.window) {
   if (!doc?.querySelectorAll) return;
+  if (doc.__qxRollInit) return;
+  doc.__qxRollInit = true;
+
   if (win?.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
 
   const items = [...doc.querySelectorAll('[data-roll]')];
   if (!items.length) return;
 
-  // 超过 28 字的长标题保持静态（避免首帧构建过多字符节点）。
+  // 过滤有效元素并暂存原始文本，绝不预先篡改为乱码！
   const ready = items.filter((el) => {
     const text = (el.textContent || '').trim();
-    return text && [...text].length <= 28 && build(el, doc, win);
+    if (!text || [...text].length > 28) return false;
+    el.dataset.rollText = text;
+    return true;
   });
   if (!ready.length) return;
 
-  // 字体晚到会让字形蒙版算错（形状取自当时的字体），就绪后丢缓存重算。
-  // 这里不再需要重钉字宽 —— 文字始终是整行一个文本节点，宽度本来就由浏览器排版。
+  // 字体就绪后清理缓存，后续解码使用最新字形指标
   doc.fonts?.ready?.then?.(() => {
     atlasCache.clear();
     chainCache.clear();
   });
 
+  let pageReleased = false;
+  const pendingQueue = [];
+
+  const release = () => {
+    if (pageReleased) return;
+    pageReleased = true;
+    while (pendingQueue.length) {
+      const el = pendingQueue.shift();
+      rollElement(el, win);
+    }
+  };
+
+  // 首屏就绪判定：监听 transition.js 的 siteLoaded 事件、load 事件或 readyState
+  if (doc.documentElement.classList.contains('is-loaded') || doc.readyState === 'complete') {
+    release();
+  } else {
+    win.addEventListener('siteLoaded', release, { once: true });
+    win.addEventListener('load', release, { once: true });
+    // 兜底 1.5s 后放行首屏解码
+    win.setTimeout(release, 1500);
+  }
+
+  // 没有 IntersectionObserver 时全量放行
   if (typeof win?.IntersectionObserver !== 'function') {
-    for (const el of ready) animate(el, win);
+    if (pageReleased) {
+      for (const el of ready) rollElement(el, win);
+    } else {
+      for (const el of ready) pendingQueue.push(el);
+    }
     return;
   }
 
-  /* 解码从「加载完成」开始，不等幕布升上去：
-     load 代表文档与关键资源就绪，此时开播最贴合用户对「页面好了」的感知；
-     幕布还在时开播，用户会在幕布抽走的过程中看到标题逐渐成形。 */
-  const queue = [];
-  let released = false;
-
-  const release = () => {
-    if (released) return;
-    released = true;
-    for (const el of queue.splice(0)) animate(el, win);
-  };
-
-  if (doc.readyState === 'complete') {
-    release();
-  } else {
-    win.addEventListener('load', release, { once: true });
-    // 资源卡住时 load 可能很晚，兜底避免标题一直停在乱码上。
-    win.setTimeout(release, 2600);
-  }
-
-  const run = (el) => (released ? animate(el, win) : queue.push(el));
-
-  /* 观察对象是「宿主」：列表卡片的标题挂在 [data-reveal] 里，
-     卡片进入视口时 reveal 会给卡片加 .is-in 做淡入，这里同时启动解码，
-     两者同拍，标题不会提前播完。 */
   const hosts = new Map();
   for (const el of ready) {
     const host = el.closest('[data-reveal]') || el;
@@ -286,11 +309,20 @@ export function initRoll(doc = globalThis.document, win = globalThis.window) {
     (entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
-        for (const el of hosts.get(entry.target) || []) run(el);
-        observer.unobserve(entry.target);
+        const host = entry.target;
+        observer.unobserve(host);
+        const els = hosts.get(host) || [];
+        for (const el of els) {
+          if (pageReleased) {
+            rollElement(el, win);
+          } else {
+            pendingQueue.push(el);
+          }
+        }
       }
     },
-    { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.01 },
+    // 正向扩展边距（50px），确保无论视口尺寸或滚动到页面底端时均能稳定触发
+    { root: null, rootMargin: '50px 0px 50px 0px', threshold: 0.01 },
   );
 
   for (const host of hosts.keys()) observer.observe(host);
