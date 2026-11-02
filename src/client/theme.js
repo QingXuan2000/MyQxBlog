@@ -27,6 +27,7 @@ export function initTheme(doc = globalThis.document, win = globalThis.window) {
       button.setAttribute('aria-label', theme === 'dark' ? '切换到浅色主题' : '切换到深色主题');
       button.setAttribute('title', theme === 'dark' ? '切换到浅色主题' : '切换到深色主题');
     });
+    updateGiscusTheme(theme, doc);
   }
 
   function commit(theme) {

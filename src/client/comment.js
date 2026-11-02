@@ -2,6 +2,9 @@
  * Giscus 评论区客户端初始化与主题同步模块。
  */
 
+const themeUrlCache = new Map();
+let lastSentThemeUrl = null;
+
 async function resolveTheme(theme, target) {
   const isDark = theme === 'dark';
   const defaultFallback = isDark ? 'transparent_dark' : 'light';
@@ -18,34 +21,45 @@ async function resolveTheme(theme, target) {
     return configuredTheme;
   }
 
-  // 尝试拉取配置的自定义直角极客风 CSS 文件
+  // 已探测并缓存过，立即返回无需发起网络请求（实现 0 延迟实时响应）
+  if (themeUrlCache.has(configuredTheme)) {
+    return themeUrlCache.get(configuredTheme);
+  }
+
+  // 首次尝试探测配置的自定义直角极客风 CSS 文件
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 1200);
     const res = await fetch(configuredTheme, {
       method: 'GET',
       signal: controller.signal,
-      cache: 'no-cache',
     });
     clearTimeout(timer);
     if (res.ok) {
-      // 成功拉取到极客风主题，直接使用
+      themeUrlCache.set(configuredTheme, configuredTheme);
       return configuredTheme;
     }
   } catch (_) {
     // 探测失败
   }
 
-  // 没有拉取到的话再回退默认主题
+  // 没有拉取到的话回退默认主题并缓存
+  themeUrlCache.set(configuredTheme, defaultFallback);
   return defaultFallback;
 }
 
-export async function updateGiscusTheme(theme, doc = globalThis.document) {
-  const iframe = doc.querySelector('iframe.giscus-frame');
+export async function updateGiscusTheme(theme, doc = globalThis.document, force = false) {
+  const iframe = doc.querySelector('iframe.giscus-frame') || doc.querySelector('.giscus iframe');
   if (!iframe?.contentWindow) return;
 
   const target = doc.querySelector('[data-giscus-target]');
+  if (!target) return;
+
   const themeUrl = await resolveTheme(theme, target);
+
+  // 避免向 iframe 重复投递相同主题造成不必要的闪烁
+  if (!force && lastSentThemeUrl === themeUrl) return;
+  lastSentThemeUrl = themeUrl;
 
   iframe.contentWindow.postMessage(
     {
@@ -84,6 +98,12 @@ export async function initComment(doc = globalThis.document, win = globalThis.wi
   const currentTheme = doc.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
   const initialTheme = await resolveTheme(currentTheme, target);
 
+  // 提前并发预探测深色和浅色主题，确保后续主题切换 0 延迟即时生效
+  resolveTheme('dark', target);
+  resolveTheme('light', target);
+
+  lastSentThemeUrl = initialTheme;
+
   const script = doc.createElement('script');
   script.src = 'https://giscus.app/client.js';
   script.setAttribute('data-repo', repo);
@@ -103,11 +123,32 @@ export async function initComment(doc = globalThis.document, win = globalThis.wi
 
   target.appendChild(script);
 
+  // 监听 iframe 节点挂载，确保第一时间将当前全局主题推入
+  const observer = typeof win.MutationObserver === 'function'
+    ? new win.MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === 1 && (node.matches?.('iframe') || node.querySelector?.('iframe'))) {
+              const theme = doc.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+              updateGiscusTheme(theme, doc);
+              return;
+            }
+          }
+        }
+      })
+    : null;
+  observer?.observe(target, { childList: true, subtree: true });
+
+  // 监听 giscus 载入与握手消息，确保 iframe 就绪时同步最新全局主题
+  let hasHandshaked = false;
   const handleMessage = async (event) => {
     if (event.origin !== 'https://giscus.app') return;
-    if (event.data?.giscus?.resizeHeight) {
+    if (!event.data?.giscus) return;
+
+    if (!hasHandshaked) {
+      hasHandshaked = true;
       const theme = doc.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-      await updateGiscusTheme(theme, doc);
+      await updateGiscusTheme(theme, doc, true);
     }
   };
   win.addEventListener('message', handleMessage);
