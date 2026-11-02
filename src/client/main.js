@@ -15,6 +15,7 @@ import { initReveal } from './reveal.js';
 import { initRoll } from './roll.js';
 import { initCursor } from './cursor.js';
 import { initTransition } from './transition.js';
+import { initComment } from './comment.js';
 
 export function initClient(doc = globalThis.document, win = globalThis.window) {
   if (!doc || !win) return;
@@ -29,6 +30,7 @@ export function initClient(doc = globalThis.document, win = globalThis.window) {
   initRoll(doc, win);
   initCursor(doc, win);
   initTransition(doc, win);
+  initComment(doc, win);
 }
 
 if (globalThis.document) {

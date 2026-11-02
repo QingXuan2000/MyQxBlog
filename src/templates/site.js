@@ -7,6 +7,7 @@ import {
   taxonomies,
   safeHref,
   configMarkup,
+  absoluteUrl,
 } from './helpers.js';
 import { renderFile } from './engine.js';
 import { layout } from './layout.js';
@@ -232,6 +233,42 @@ function postPage(config, post, posts) {
       }
     : null;
 
+  const giscusConfig = config.comment?.giscus || {};
+  const globalCommentEnabled = Boolean(config.comment?.enable ?? true);
+  const commentEnabled = globalCommentEnabled && post.comment !== false;
+
+  let mapping = giscusConfig.mapping || 'number';
+  let term = '';
+  if (mapping === 'number') {
+    const discNum = post.sourceDiscussionNumber ?? post.discussionNumber;
+    if (discNum !== undefined && discNum !== null) {
+      term = String(discNum);
+    } else {
+      mapping = 'pathname';
+    }
+  } else if (mapping === 'title') {
+    term = post.title;
+  } else if (mapping === 'specific') {
+    term = post.title || String(post.id);
+  }
+
+  const resolveThemeUrl = (val, defaultRelative) => {
+    if (!val) val = defaultRelative;
+    if (val.startsWith('http://') || val.startsWith('https://')) return val;
+    if (val.endsWith('.css') || val.startsWith('/') || val.startsWith('./')) {
+      return absoluteUrl(config, val);
+    }
+    return val;
+  };
+
+  const themeConfig = giscusConfig.theme || {};
+  const giscusThemeLight = typeof giscusConfig.theme === 'string'
+    ? giscusConfig.theme
+    : resolveThemeUrl(themeConfig.light, 'assets/styles/giscus-light.css');
+  const giscusThemeDark = typeof giscusConfig.theme === 'string'
+    ? giscusConfig.theme
+    : resolveThemeUrl(themeConfig.dark, 'assets/styles/giscus-dark.css');
+
   return renderFile('pages/post.html', {
     config,
     post,
@@ -242,6 +279,12 @@ function postPage(config, post, posts) {
     labelsHTML,
     newer,
     older,
+    commentEnabled,
+    giscusConfig,
+    mapping,
+    term,
+    giscusThemeLight,
+    giscusThemeDark,
   });
 }
 

@@ -1,3 +1,4 @@
+import { updateGiscusTheme } from './comment.js';
 /* 深浅主题切换。
 
    首帧的主题由 head 里的内联脚本定好，这里接管之后的交互。主题来源有三处，

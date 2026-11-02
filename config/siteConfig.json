@@ -56,5 +56,25 @@
         "href": "about/index.html"
       }
     ]
+  },
+  "comment": {
+    "enable": true,
+    "giscus": {
+      "repo": "QingXuan2000/MyQxBlog",
+      "repoId": "R_kgDOS66jFw",
+      "category": "讨论区",
+      "categoryId": "DIC_kwDOS66jF84DKN0J",
+      "mapping": "number",
+      "strict": "0",
+      "reactionsEnabled": "1",
+      "emitMetadata": "0",
+      "inputPosition": "top",
+      "lang": "zh-CN",
+      "loading": "lazy",
+      "theme": {
+        "light": "assets/styles/giscus-light.css",
+        "dark": "assets/styles/giscus-dark.css"
+      }
+    }
   }
 }

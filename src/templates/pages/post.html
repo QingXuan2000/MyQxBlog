@@ -31,4 +31,16 @@
         </nav>
         <% } %>
     </footer>
+
+    <% if (commentEnabled) { %>
+    <%- include('partials/comments.html', {
+        post: post,
+        config: config,
+        giscusConfig: giscusConfig,
+        mapping: mapping,
+        term: term,
+        giscusThemeLight: giscusThemeLight,
+        giscusThemeDark: giscusThemeDark
+    }) %>
+    <% } %>
 </article>

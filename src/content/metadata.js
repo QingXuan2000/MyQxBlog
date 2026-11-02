@@ -107,6 +107,20 @@ export function normalizePost(data, body, fallbackId, config = {}) {
     excerpt: textValue(data.excerpt ?? data.description, 'excerpt'),
     draft: data.draft ?? false,
   };
+  if (data.sourceDiscussionNumber !== undefined || data.discussionNumber !== undefined) {
+    const num = Number(data.sourceDiscussionNumber ?? data.discussionNumber);
+    if (!Number.isSafeInteger(num) || num < 1)
+      throw new Error('sourceDiscussionNumber must be a positive integer');
+    post.sourceDiscussionNumber = num;
+  }
+  if (data.sourceRepository !== undefined) {
+    post.sourceRepository = textValue(data.sourceRepository, 'sourceRepository');
+  }
+  if (data.comment !== undefined || data.comments !== undefined) {
+    const c = data.comment ?? data.comments;
+    if (typeof c !== 'boolean') throw new Error('comment must be a boolean');
+    post.comment = c;
+  }
   if (data.discussionUrl !== undefined) {
     const url = new URL(textValue(data.discussionUrl, 'discussionUrl'));
     if (url.protocol !== 'https:' && url.protocol !== 'http:')

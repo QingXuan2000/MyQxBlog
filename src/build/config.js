@@ -55,6 +55,31 @@ export async function loadConfig(root, { basePath } = {}) {
     about: { sections: [], friendLinks: [], ...raw.about },
     sidebar: { links: [], ...raw.sidebar },
     footerContent: raw.footerContent || [],
+    comment: {
+      enable: Boolean(raw.comment?.enable ?? true),
+      giscus: {
+        repo: 'QingXuan2000/MyQxBlog',
+        repoId: '',
+        category: 'Announcements',
+        categoryId: '',
+        mapping: 'number',
+        strict: '0',
+        reactionsEnabled: '1',
+        emitMetadata: '0',
+        inputPosition: 'top',
+        lang: 'zh-CN',
+        loading: 'lazy',
+        ...raw.comment?.giscus,
+        theme: typeof raw.comment?.giscus?.theme === 'string'
+          ? raw.comment.giscus.theme
+          : {
+              light: 'assets/styles/giscus-light.css',
+              dark: 'assets/styles/giscus-dark.css',
+              ...(typeof raw.comment?.giscus?.theme === 'object' ? raw.comment.giscus.theme : {}),
+            },
+      },
+      ...raw.comment,
+    },
     build: { githubStartId: 1, ...buildRaw, maxArticlesPerPage: pageSize, timezoneOffset },
     basePath: prefix,
   };

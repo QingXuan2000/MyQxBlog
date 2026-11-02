@@ -1,0 +1,55 @@
+<section class="qx-comments" id="comments" aria-label="文章评论区">
+    <div class="qx-comments-header">
+        <div class="qx-comments-title">
+            <span class="qx-comments-prompt">&gt;</span>
+            <span class="qx-comments-tag">COMMENTS // <%= term && mapping === 'number' ? ('DISCUSS #' + term) : 'FEEDBACK' %></span>
+        </div>
+        <div class="qx-comments-meta">
+            <% if (post.discussionUrl) { %>
+            <a class="qx-comments-origin qx-ul" href="<%= post.discussionUrl %>" target="_blank" rel="noopener noreferrer" data-cursor="LINK">
+                [GITHUB DISCUSSIONS]
+            </a>
+            <% } %>
+            <span class="qx-comments-badge">GISCUS</span>
+        </div>
+    </div>
+
+    <div class="qx-comments-container">
+        <% if (!giscusConfig.repoId || !giscusConfig.categoryId) { %>
+        <div class="qx-comments-placeholder">
+            <div class="qx-comments-notice">
+                <span class="qx-comments-warn-icon">!</span>
+                <span class="qx-comments-warn-text">GISCUS CONFIGURATION REQUIRED</span>
+            </div>
+            <p class="qx-comments-desc">
+                请在 <code>config/siteConfig.json</code> 的 <code>comment.giscus</code> 中填入 <code>repoId</code> 与 <code>categoryId</code> 以激活文章评论区。
+            </p>
+            <% if (post.discussionUrl) { %>
+            <div class="qx-comments-fallback-action">
+                <a class="qx-comments-btn" href="<%= post.discussionUrl %>" target="_blank" rel="noopener noreferrer">
+                    前往 GitHub 讨论页查看/发表评论 &gt;&gt;
+                </a>
+            </div>
+            <% } %>
+        </div>
+        <% } %>
+
+        <div class="giscus"
+             data-giscus-target
+             data-repo="<%= giscusConfig.repo || '' %>"
+             data-repo-id="<%= giscusConfig.repoId || '' %>"
+             data-category="<%= giscusConfig.category || '' %>"
+             data-category-id="<%= giscusConfig.categoryId || '' %>"
+             data-mapping="<%= mapping %>"
+             <% if (term) { %>data-term="<%= term %>"<% } %>
+             data-strict="<%= giscusConfig.strict || '0' %>"
+             data-reactions-enabled="<%= giscusConfig.reactionsEnabled || '1' %>"
+             data-emit-metadata="<%= giscusConfig.emitMetadata || '0' %>"
+             data-input-position="<%= giscusConfig.inputPosition || 'top' %>"
+             data-lang="<%= giscusConfig.lang || 'zh-CN' %>"
+             data-loading="<%= giscusConfig.loading || 'lazy' %>"
+             data-theme-light="<%= giscusThemeLight %>"
+             data-theme-dark="<%= giscusThemeDark %>">
+        </div>
+    </div>
+</section>

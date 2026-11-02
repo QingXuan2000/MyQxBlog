@@ -3114,3 +3114,141 @@ html.qx-cursor-on select {
     max-width: 100%;
   }
 }
+
+
+/* ========== 文章评论区 (Giscus) ========== */
+
+.qx-comments {
+  margin-top: clamp(40px, 8vh, 72px);
+  padding-top: clamp(24px, 4vh, 36px);
+  border-top: 1px dashed color-mix(in srgb, var(--text-body) 20%, transparent);
+}
+
+.qx-comments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(16px, 3vh, 28px);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+}
+
+.qx-comments-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-body);
+}
+
+.qx-comments-prompt {
+  font-weight: 700;
+  color: color-mix(in srgb, var(--text-body) 45%, transparent);
+}
+
+.qx-comments-tag {
+  letter-spacing: 0.12em;
+}
+
+.qx-comments-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qx-comments-origin {
+  color: color-mix(in srgb, var(--text-body) 60%, transparent);
+  text-decoration: none;
+  font-size: 10px;
+  transition: color 0.15s ease;
+}
+
+.qx-comments-origin:hover {
+  color: var(--text-body);
+}
+
+.qx-comments-badge {
+  padding: 1px 6px;
+  border: 1px solid color-mix(in srgb, var(--text-body) 24%, transparent);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: color-mix(in srgb, var(--text-body) 70%, transparent);
+}
+
+.qx-comments-container {
+  width: 100%;
+}
+
+.qx-comments-placeholder {
+  padding: clamp(20px, 4vh, 32px);
+  background: color-mix(in srgb, var(--text-body) 3%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-body) 12%, transparent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.qx-comments-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-body);
+}
+
+.qx-comments-warn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--text-body);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.qx-comments-desc {
+  color: color-mix(in srgb, var(--text-body) 70%, transparent);
+  margin-bottom: 16px;
+}
+
+.qx-comments-desc code {
+  padding: 1px 5px;
+  background: color-mix(in srgb, var(--text-body) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-body) 15%, transparent);
+  font-size: 11px;
+}
+
+.qx-comments-fallback-action {
+  margin-top: 14px;
+}
+
+.qx-comments-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--text-body);
+  color: var(--bg-body);
+  border: 1px solid var(--text-body);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.qx-comments-btn:hover {
+  opacity: 0.85;
+}
+
+.qx-comments .giscus,
+.qx-comments .giscus-frame {
+  width: 100%;
+  min-height: 150px;
+}
